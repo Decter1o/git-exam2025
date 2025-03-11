@@ -9,9 +9,9 @@ class DB
     private $pdo;
 
     function DBConnect(){
-        $connection_string = "mysql:host=localhost;dbname=Test;charset=utf8";
-        $user_name = "root~";
-        $password = "qwerty";
+        
+        $config = require 'config.php';
+        $connection_string = "mysql:host=" . $config['db']['host'] . ";dbname=" . $config['db']['dbname'] . ";charset=" . $config['db']['charset'];
 
         try {
             $this->pdo = new PDO($connection_string, $user_name, $password, [
@@ -66,90 +66,43 @@ class DB
     }
     
     function VerifyOTP($phone, $otp){
-    $pdo = $this->DBConnect();
-    if ($pdo) {
-        try {
-            // Получаем OTP, если не истек срок
-            $query_string = "SELECT OTP FROM otp WHERE Phone = :phone AND expires_at > NOW()";
-            $sql_query = $pdo->prepare($query_string);
-            $sql_query->execute(['phone' => $phone]);
+        $pdo = $this->DBConnect();
+        if ($pdo) {
+            try {
+                // Получаем OTP, если не истек срок
+                $query_string = "SELECT OTP FROM otp WHERE Phone = :phone AND expires_at > NOW()";
+                $sql_query = $pdo->prepare($query_string);
+                $sql_query->execute(['phone' => $phone]);
 
-            $otp_data = $sql_query->fetch(PDO::FETCH_ASSOC);
+                $otp_data = $sql_query->fetch(PDO::FETCH_ASSOC);
 
-            // Если OTP не найден или просрочен
-            if (!$otp_data) {
-                echo json_encode(["success" => false, "message" => "OTP is invalid or expired"]);
-            }
-            else {
-                // Проверяем правильность OTP
-                if ($otp_data["OTP"] == $otp) {
-                    // Получаем имя пользователя
-                    $verify_query_string = "SELECT UserName, UserSecondName FROM Users WHERE Phone = :phone";
-                    $verify_query = $pdo->prepare($verify_query_string);
-                    $verify_query->execute(['phone' => $phone]);
-    
-                    $verify_data = $verify_query->fetch(PDO::FETCH_ASSOC);
-                    
-                    echo json_encode(["success" => true, "user" => $verify_data]);
-                } else {
-                    echo json_encode(["success" => false, "message" => "OTP is invalid"]);
+                // Если OTP не найден или просрочен
+                if (!$otp_data) {
+                    echo json_encode(["success" => false, "message" => "OTP is invalid or expired"]);
                 }
-            }
-
-        } catch (PDOException $e) {
-            echo json_encode(["error" => "Database connection failed", "details" => $e->getMessage()]);
-        }
-    }
-    else {
-        echo json_encode(["error" => "Database connection error"]);
-    }
-   
-    }
-
-}
-
-class DataReader
-{
-    function DataRead($data){
-        switch ($data["platform"]) {
-            case 'mobile':
-                switch ($data["action"]) {
-                    case 'auth':
-                        $phone = $data["phone"];
-                        $data_reader = new \Data\DB();
-                        $count = $data_reader->CheckPhoneNumber($phone);
+                else {
+                    // Проверяем правильность OTP
+                    if ($otp_data["OTP"] == $otp) {
+                        // Получаем имя пользователя
+                        $verify_query_string = "SELECT UserName, UserSecondName FROM Users WHERE Phone = :phone";
+                        $verify_query = $pdo->prepare($verify_query_string);
+                        $verify_query->execute(['phone' => $phone]);
         
-                        if ($count == 1) {
-                            $otp = new \SMS();
-                            $otp_code = $otp->SendOTP($phone);
-                            if ($otp_code) {
-                                $data_reader->InsertOTP($otp_code, $phone);
-                            } else {
-                                echo json_encode(["status" => "error", "message" => "Failed to send OTP"]);
-                            }
-                        } else {
-                            echo json_encode(["status" => "error", "message" => "Phone number not found or exist"]);
-                        }
-                        break;
-                    case 'verify':
-                        $phone = $data["phone"];
-                        $otp = $data["OTP"];
-                        $data_reader = new \Data\DB();
-                        $count = $data_reader->VerifyOTP($phone, $otp);
-                        break;
-                    default:
+                        $verify_data = $verify_query->fetch(PDO::FETCH_ASSOC);
                         
-                        break;
+                        echo json_encode(["success" => true, "user" => $verify_data]);
+                    } else {
+                        echo json_encode(["success" => false, "message" => "OTP is invalid"]);
+                    }
                 }
-                break;
 
-            case 'website':
-                echo json_encode(["status" => "error", "message" => "Website functionality not implemented."]);
-                break;
-
-            default:
-                echo json_encode(["status" => "error", "message" => "Platform is not recognized"]);
-                break;
+            } catch (PDOException $e) {
+                echo json_encode(["error" => "Database connection failed", "details" => $e->getMessage()]);
+            }
+        }
+        else {
+            echo json_encode(["error" => "Database connection error"]);
         }
     }
 }
+

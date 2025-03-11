@@ -1,12 +1,14 @@
 <?php
 class SMS
 {
-    private $URL = 'https://api.mobizon.kz/service/message/sendSmsMessage';
-    private $API_KEY = 'kz7a193766411bf9e77f1d5580db2f4510f5a2d9e4c648d1410d3303bab35f04a3d724';
-    private $FROM = 'SPetrenko';
-    private $VALIDITY = 5;
-
     private function MobisonKZAPI($phone, $otp){
+        $config = require 'config.php';
+        
+        $this->URL = $config['sms']['URL'];
+        $this->API_KEY = $config['sms']['API_KEY'];
+        $this->FROM = $config['sms']['FROM'];
+        $this->VALIDITY = $config['sms']['VALIDITY'];
+
         $DATA = array(
             'recipient' => $phone,
             'text' => 'Ваш код: ' . $otp,
