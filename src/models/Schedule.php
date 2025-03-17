@@ -1,14 +1,14 @@
 <?php
     class Schedule{
 
-        private $id;
-        private $dayOfWeek;
-        private $startTime;
-        private $endTime;
-        private $trainingTypeId;
-        private $roomname;
-        private $trainerName;
-        private $category;
+        public $id;
+        public $dayOfWeek;
+        public $startTime;
+        public $endTime;
+        public $trainingTypeId;
+        public $roomname;
+        public $trainerName;
+        public $category;
 
         public function __construct($id, $dayOfWeek, $startTime, $endTime, $trainingTypeId, $roomname, $trainerName, $category){
             $this->id = $id;

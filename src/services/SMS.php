@@ -2,7 +2,7 @@
 class SMS
 {
     private function MobisonKZAPI($phone, $otp){
-        $config = require 'config.php';
+        $config = require(__DIR__ . '/../../config/config.php');
         
         $this->URL = $config['sms']['URL'];
         $this->API_KEY = $config['sms']['API_KEY'];

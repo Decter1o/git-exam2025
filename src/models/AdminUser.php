@@ -1,10 +1,10 @@
 <?php
     class AdminUser{
         
-        private $id;
-        private $name;
-        private $password;
-        private $email;
+        public $id;
+        public $name;
+        public $password;
+        public $email;
 
         public function __construct($id, $username, $password, $email){
             $this->id = $id;

@@ -1,6 +1,7 @@
 <?php
-include 'SMS.php';
-include 'Data.php';
+
+include(__DIR__ . '/../services/SMS.php');
+include(__DIR__ . '/../models/Data.php');
 
 header("Content-Type: application/json");
 
@@ -39,13 +40,32 @@ switch ($_SERVER["REQUEST_METHOD"])
                         $count = $data_reader->VerifyOTP($phone, $otp);
                         break;
                     default:
-                        
+                        echo json_encode(["status" => "error", "message" => "Action is not recognized"]);
                         break;
                 }
                 break;
 
             case 'website':
-                echo json_encode(["status" => "error", "message" => "Website functionality not implemented."]);
+                switch ($data["action"]) {
+                    case 'auth':
+                        $username = $data["username"];
+                        $password = $data["password"];
+                        $data_reader = new \Data\DB();
+                        $count = $data_reader-> AdminAuth($username, $password);
+                        if ($count == 1) {
+                            echo json_encode(["success" => true]);
+                        } else {
+                            echo json_encode(["success" => false]);
+                        }
+                        break;
+                    case '':
+                        
+                        break;
+                    
+                    default:
+                        echo json_encode(["status" => "error", "message" => "Action is not recognized"]);
+                        break;
+                }
                 break;
 
             default:
@@ -74,4 +94,4 @@ switch ($_SERVER["REQUEST_METHOD"])
         $response["error"] = "Method Not Allowed";
 }
 
-echo json_encode($response, JSON_UNESCAPED_UNICODE);
+echo json_encode($response, JSON_UNESCAPED_UNICODE); 

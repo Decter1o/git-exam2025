@@ -1,11 +1,11 @@
 <?php
     class VisitorMembership{
 
-        private $id;
-        private $visitorId;
-        private $membershipId;
-        private $startDate;
-        private $endDate;
+        public $id;
+        public $visitorId;
+        public $membershipId;
+        public $startDate;
+        public $endDate;
 
         public function __construct($id, $visitorId, $membershipId, $startDate, $endDate){
             $this->id = $id;

@@ -1,9 +1,9 @@
 <?php
     class TrainingType{
         
-        private $id;
-        private $name;
-        private $description;
+        public $id;
+        public $name;
+        public $description;
 
         public function __construct($id, $name, $description){
             $this->id = $id;

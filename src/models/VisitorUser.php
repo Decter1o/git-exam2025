@@ -1,10 +1,10 @@
 <?php
     class VisitorUser{
         
-        private $id;
-        private $name;
-        private $surname;
-        private $phone_number;
+        public $id;
+        public $name;
+        public $surname;
+        public $phone_number;
 
         public function __construct($id, $name, $surname, $phone_number){
             $this->id = $id;

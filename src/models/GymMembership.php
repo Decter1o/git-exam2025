@@ -1,11 +1,11 @@
 <?php
     class GymMembership{
 
-        private $id;
-        private $type;
-        private $duration;
-        private $price;
-        private $specialGroup;
+        public $id;
+        public $type;
+        public $duration;
+        public $price;
+        public $specialGroup;
 
         public function __construct($id, $type, $duration, $price, $specialGroup){
             $this->id = $id;
