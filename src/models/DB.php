@@ -124,11 +124,11 @@ class DB
         $pdo = $this->DBConnect();
         if($pdo){
             try {
-                $query_string = "SELECT BIN_TO_UUID(id) AS uuid, membership_type, duration, price, special_group FROM gym_memberships";
+                $query_string = "SELECT id, membership_type, duration, price, special_group FROM gym_memberships";
                 $result = $pdo->query($query_string);
                 $memberships = [];
                 while($row = $result->fetch()){
-                    $memberships[] = new GymMembership($row['uuid'], $row['membership_type'], $row['duration'], $row['price'], $row['special_group']);
+                    $memberships[] = new GymMembership($row['id'], $row['membership_type'], $row['duration'], $row['price'], $row['special_group']);
                 }
                 return $memberships;
 
@@ -138,13 +138,13 @@ class DB
         }
     }
 
-    function CreateGymMembership($membership_type, $duration, $price, $special_group){
+    function CreateGymMembership($id, $membership_type, $duration, $price, $special_group){
         $pdo = $this->DBConnect();
         if($pdo){
             try {
-                $query_string = "INSERT INTO gym_memberships (membership_type, duration, price, special_group) VALUES (:membership_type, :duration, :price, :special_group)";
+                $query_string = "INSERT INTO gym_memberships (id, membership_type, duration, price, special_group) VALUES (:id, :membership_type, :duration, :price, :special_group)";
                 $sql_query = $pdo->prepare($query_string);
-                $sql_query->execute(['membership_type' => $membership_type, 'duration' => $duration, 'price' => $price, 'special_group' => $special_group]);
+                $sql_query->execute(['id' => $id, 'membership_type' => $membership_type, 'duration' => $duration, 'price' => $price, 'special_group' => $special_group]);
                 return ["success" => true, "message" => "Membership created successfully"];
             } catch (PDOExeption $e) {
                 return ["error" => "Database connection failed", "details" => $e->getMessage()];
@@ -152,13 +152,13 @@ class DB
         }
     }
 
-    function DeleteGymMembership($uuid){
+    function DeleteGymMembership($id){
         $pdo = $this->DBConnect();
         if($pdo){
             try {
-                $query_string = "DELETE FROM gym_memberships WHERE id = UUID_TO_BIN(:uuid)";
+                $query_string = "DELETE FROM gym_memberships WHERE id = :id";
                 $sql_query = $pdo->prepare($query_string);
-                $sql_query->execute(['uuid' => $uuid]);
+                $sql_query->execute(['id' => $id]);
                 return ["success" => true, "message" => "Membership deleted successfully"];
             } catch (PDOExeption $e) {
                 return ["error" => "Database connection failed", "details" => $e->getMessage()];
@@ -166,13 +166,13 @@ class DB
         }
     }
 
-    function UpdateGymMembership($uuid, $membership_type, $duration, $price, $special_group){
+    function UpdateGymMembership($id, $membership_type, $duration, $price, $special_group){
         $pdo = $this->DBConnect();
         if($pdo){
             try {
-                $query_string = "UPDATE gym_memberships SET membership_type = :membership_type, duration = :duration, price = :price, special_group = :special_group WHERE id = UUID_TO_BIN(:uuid)";
+                $query_string = "UPDATE gym_memberships SET membership_type = :membership_type, duration = :duration, price = :price, special_group = :special_group WHERE id = :id";
                 $sql_query = $pdo->prepare($query_string);
-                $sql_query->execute(['uuid' => $uuid, 'membership_type' => $membership_type, 'duration' => $duration, 'price' => $price, 'special_group' => $special_group]);
+                $sql_query->execute(['id' => $id, 'membership_type' => $membership_type, 'duration' => $duration, 'price' => $price, 'special_group' => $special_group]);
                 return ["success" => true, "message" => "Membership updated successfully"];
             } catch (PDOExeption $e) {
                 return ["error" => "Database connection failed", "details" => $e->getMessage()];
@@ -184,11 +184,11 @@ class DB
         $pdo = $this->DBConnect();
         if($pdo){
             try {
-                $query_string = "SELECT BIN_TO_UUID(id) AS uuid, username, usersurname, phone_number FROM visitor_users";
+                $query_string = "SELECT id, username, usersurname, phone_number FROM visitor_users";
                 $result = $pdo->query($query_string);
                 $visitor_users = [];
                 while($row = $result->fetch()){
-                    $visitor_users[] = new VisitorUser($row['uuid'], $row['username'], $row['usersurname'], $row['phone_number']);
+                    $visitor_users[] = new VisitorUser($row['id'], $row['username'], $row['usersurname'], $row['phone_number']);
                 }
                 return $visitor_users;
             } catch (PDOExeption $e) {
@@ -201,11 +201,11 @@ class DB
         $pdo = $this->DBConnect();
         if($pdo){
             try {
-                $query_string = "SELECT BIN_TO_UUID(id) AS uuid, BIN_TO_UUID(visitor_id) AS visitor_uuid, BIN_TO_UUID(membership_id) AS membership_uuid, start_date, end_date FROM visitor_memberships;";
+                $query_string = "SELECT id, visitor_id, membership_id, start_date, end_date FROM visitor_memberships;";
                 $result = $pdo->query($query_string);
                 $visitor_memberships = [];
                 while($row = $result->fetch()){
-                    $visitor_memberships[] = new VisitorMembership($row['uuid'], $row['visitor_uuid'], $row['membership_uuid'], $row['start_date'], $row['end_date']);
+                    $visitor_memberships[] = new VisitorMembership($row['id'], $row['visitor_id'], $row['membership_id'], $row['start_date'], $row['end_date']);
                 }
                 return $visitor_memberships;
             } catch (PDOExeption $e) {
@@ -218,11 +218,11 @@ class DB
         $pdo = $this->DBConnect();
         if ($pdo) {
             try {
-                $query_string = "SELECT BIN_TO_UUID(id) AS uuid, training_name, description FROM training_types";
+                $query_string = "SELECT id, training_name, description FROM training_types";
                 $result = $pdo->query($query_string);
                 $training_types = [];
                 while ($row = $result->fetch()) {
-                    $training_types[] = new TrainingType($row['uuid'], $row['training_name'], $row['description']);
+                    $training_types[] = new TrainingType($row['id'], $row['training_name'], $row['description']);
                 }
                 return $training_types;
             } catch (PDOExeption $e) {
@@ -234,11 +234,11 @@ class DB
         $pdo = $this->DBConnect();
         if($pdo){
             try {
-                $query_string = "SELECT BIN_TO_UUID(id) AS uuid, BIN_TO_UUID(training_type_id) AS training_type_uuid, start_time, end_time, day_of_week, room_name, trainer_name, category FROM schedule";
+                $query_string = "SELECT id, training_type_id, start_time, end_time, day_of_week, room_name, trainer_name, category FROM schedule";
                 $result = $pdo->query($query_string);
                 $schedules = [];
                 while($row = $result->fetch()){
-                    $schedules[] = new Schedule($row['uuid'], $row['training_type_uuid'], $row['start_time'], $row['end_time'], $row['day_of_week'], $row['room_name'], $row['trainer_name'], $row['category']);
+                    $schedules[] = new Schedule($row['id'], $row['training_type_id'], $row['start_time'], $row['end_time'], $row['day_of_week'], $row['room_name'], $row['trainer_name'], $row['category']);
                 }
                 return $schedules;
             } catch (PDOExeption $e) {

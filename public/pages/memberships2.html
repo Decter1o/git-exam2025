@@ -1,0 +1,288 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Управление абонементами</title>
+    <style>
+        /* Таблица */
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1); /* Тень для таблицы */
+            border-radius: 10px; /* Закругленные углы */
+            overflow: hidden;
+            background-color: #f9f9f9;
+        }
+
+        th, td {
+            padding: 12px 15px; /* Больше отступов для улучшенного восприятия */
+            text-align: left;
+            border-bottom: 1px solid #ddd;
+        }
+
+        th {
+            color: white;
+            background-color: #007b3e; /* Более насыщенный зеленый цвет */
+            font-weight: bold;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+        }
+
+        td {
+            background-color: #fff;
+            color: #333;
+        }
+
+        tr:hover td {
+            background-color: #f1f1f1; /* Цвет при наведении на строку */
+        }
+
+        /* Форма */
+        form {
+            margin-top: 20px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 15px; /* Разделение элементов формы */
+            padding: 20px;
+            border: 1px solid #ddd;
+            border-radius: 10px;
+            background-color: #fff;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+        }
+        .box{
+            width: 100%;
+            display: flex;
+            flex-direction: row;
+            gap: 15px;
+            justify-content: center;
+        }
+        input[type="text"], input[type="number"] {
+            padding: 12px;
+            width: 100%;
+            max-width: 300px; /* Устанавливаем максимальную ширину */
+            border: 1px solid #ddd;
+            border-radius: 8px;
+            transition: border-color 0.3s ease;
+        }
+
+        input[type="text"]:focus, input[type="number"]:focus {
+            border-color: #007b3e; /* Цвет бордера при фокусе */
+            outline: none;
+        }
+
+        button {
+            margin-left: 20px;
+            padding: 15px 20px;
+            background-color: #007b3e; /* Зеленый цвет для кнопок */
+            color: white;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: background-color 0.3s ease;
+            box-shadow: 0 3px 6px rgba(0, 0, 0, 0.1);
+        }
+
+        button:hover {
+            background-color: #005f2b; /* Темнее при наведении */
+        }
+
+        button:focus {
+            outline: none;
+        }
+
+        /* Добавим плавный переход */
+        * {
+            transition: all 0.3s ease;
+        }
+
+        /* Общее */
+        body {
+            font-family: 'Arial', sans-serif;
+            background-color: #f4f4f4; /* Светлый фон для контраста */
+            color: #333;
+            padding: 20px;
+        }
+
+    </style>
+    </head>
+    <body>
+
+    <h1>Абонементы</h1>
+
+    <!-- Таблица для отображения абонементов -->
+    <table id="gymMembershipsTable">
+        <thead>
+        <tr>
+            <th>Тип</th>
+            <th>Длительность</th>
+            <th>Цена</th>
+            <th>Действия</th>
+        </tr>
+        </thead>
+        <tbody></tbody>
+    </table>
+
+    <!-- Форма для добавления или редактирования абонементов -->
+    <form id="membershipForm">
+        <h2>Добавить/Изменить абонемент</h2>
+        <div class = "box">
+            <input type="text" id="type" placeholder="Тип абонемента" required>
+            <input type="text" id="duration" placeholder="Длительность" required>
+            <input type="number" id="price" placeholder="Цена" required>
+        </div>
+        <button type="submit">Сохранить</button>
+    </form>
+
+    <script>
+        // Загружаем абонементы из localStorage
+        function loadGymMemberships() {
+        const memberships = JSON.parse(localStorage.getItem('gym_memberships')) || [];
+        const tableBody = document.querySelector('#gymMembershipsTable tbody');
+        tableBody.innerHTML = ''; // Очищаем таблицу перед обновлением
+
+        memberships.forEach(membership => {
+            const row = document.createElement('tr');
+
+            const typeCell = document.createElement('td');
+            typeCell.textContent = membership.type;
+            row.appendChild(typeCell);
+
+            const durationCell = document.createElement('td');
+            durationCell.textContent = membership.duration;
+            row.appendChild(durationCell);
+
+            const priceCell = document.createElement('td');
+            priceCell.textContent = membership.price;
+            row.appendChild(priceCell);
+
+            // Кнопки для редактирования и удаления
+            const actionCell = document.createElement('td');
+            const editButton = document.createElement('button');
+            editButton.textContent = 'Редактировать';
+            editButton.onclick = () => editMembership(membership.id);
+            actionCell.appendChild(editButton);
+
+            const deleteButton = document.createElement('button');
+            deleteButton.textContent = 'Удалить';
+            deleteButton.onclick = () => deleteMembership(membership.id);
+            actionCell.appendChild(deleteButton);
+
+            row.appendChild(actionCell);
+            tableBody.appendChild(row);
+        });
+        }
+
+        // Добавляем или изменяем абонемент
+        document.getElementById('membershipForm').addEventListener('submit', function (event) {
+        event.preventDefault();
+        const id = document.getElementById('membershipId').value || Date.now().toString();
+        const type = document.getElementById('type').value;
+        const duration = document.getElementById('duration').value;
+        const price = document.getElementById('price').value;
+
+        const membership = { id, type, duration, price };
+        
+        const memberships = JSON.parse(localStorage.getItem('gym_memberships')) || [];
+        const existingMembershipIndex = memberships.findIndex(m => m.id === id);
+
+        // Формируем JSON-объект для отправки запроса
+        const requestData = {
+            platform: "website",
+            action: existingMembershipIndex >= 0 ? "update_membership" : "add_membership",
+            membership_type: type,
+            duration: duration,
+            price: price,
+            uuid: id,
+            special_group: null
+        };
+
+        // Определяем, нужно ли обновить или добавить абонемент
+        if (existingMembershipIndex >= 0) {
+            // Обновляем существующий абонемент
+            memberships[existingMembershipIndex] = membership;
+            sendRequest('POST', `/update_membership/${id}`, requestData);
+        } else {
+            // Добавляем новый абонемент
+            memberships.push(membership);
+            sendRequest('POST', '/add_membership', requestData);
+        }
+
+        // Сохраняем в localStorage
+        localStorage.setItem('gym_memberships', JSON.stringify(memberships));
+
+        // Очищаем форму и перезагружаем таблицу
+        document.getElementById('membershipForm').reset();
+        loadGymMemberships();
+        });
+
+        // Функция для отправки запросов на сервер с использованием Fetch API
+        function sendRequest(method, url, data) {
+        fetch('http://localhost/src/helpers/requestreader.php', {
+            method: method,
+            headers: {
+            'Content-Type': 'application/json'
+            },
+            body: JSON.stringify(data) // Преобразуем объект в JSON
+        })
+        .then(response => {
+            if (response.headers.get('content-type')?.includes('application/json')) {
+            return response.json(); // Если ответ в формате JSON
+            } else {
+            throw new Error('Invalid content-type, expected application/json');
+            }
+        })
+        .then(data => {
+            if (data.success) {
+            console.log('Операция выполнена успешно:', data);
+            } else {
+            console.log('Ошибка при выполнении операции:', data);
+            }
+        })
+        .catch(error => {
+            console.error('Ошибка:', error);
+        });
+        }
+
+        // Функция для редактирования абонемента
+        function editMembership(id) {
+        const memberships = JSON.parse(localStorage.getItem('gym_memberships')) || [];
+        const membership = memberships.find(m => m.id === id);
+
+        // Заполняем форму для редактирования
+        document.getElementById('membershipId').value = membership.id;
+        document.getElementById('type').value = membership.type;
+        document.getElementById('duration').value = membership.duration;
+        document.getElementById('price').value = membership.price;
+        }
+
+        // Функция для удаления абонемента
+        function deleteMembership(id) {
+        const memberships = JSON.parse(localStorage.getItem('gym_memberships')) || [];
+        const updatedMemberships = memberships.filter(m => m.id !== id);
+
+        // Обновляем localStorage
+        localStorage.setItem('gym_memberships', JSON.stringify(updatedMemberships));
+
+        // Формируем JSON-объект для отправки запроса на удаление
+        const requestData = {
+            platform: "website",
+            action: "delete_membership",
+            uuid: id
+        };
+
+        // Отправляем запрос на удаление на сервер
+        sendRequest('POST', `/delete_membership/${id}`, requestData);
+
+        // Перезагружаем таблицу
+        loadGymMemberships();
+        }
+
+        // Загружаем абонементы при загрузке страницы
+        loadGymMemberships();
+
+    </script>
+
+</body>
+</html>
