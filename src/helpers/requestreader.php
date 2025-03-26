@@ -81,15 +81,15 @@ switch ($_SERVER["REQUEST_METHOD"])
                         break;
                     case 'add_membership':
                         $data_reader = new \DB();
-                        $response = $data_reader->CreateGymMembership($data["uuid"], $data["membership_type"], $data["duration"], $data["price"], $data["special_group"]);
+                        $response = $data_reader->CreateGymMembership($data["id"], $data["membership_type"], $data["duration"], $data["price"], $data["special_group"]);
                         break;
                     case 'update_membership':
                         $data_reader = new \DB();
-                        $response = $data_reader->UpdateGymMembership($data["uuid"], $data["membership_type"], $data["duration"], $data["price"], $data["special_group"]);
+                        $response = $data_reader->UpdateGymMembership($data["id"], $data["membership_type"], $data["duration"], $data["price"], $data["special_group"]);
                         break;
                     case 'delete_membership':
                         $data_reader = new \DB();
-                        $response = $data_reader->DeleteGymMembership($data["uuid"]);
+                        $response = $data_reader->DeleteGymMembership($data["id"]);
                         break;
                     default:
                         $response = ["status" => "error", "message" => "Action is not recognized"];
