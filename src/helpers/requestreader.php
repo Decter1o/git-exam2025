@@ -91,6 +91,18 @@ switch ($_SERVER["REQUEST_METHOD"])
                         $data_reader = new \DB();
                         $response = $data_reader->DeleteGymMembership($data["id"]);
                         break;
+                    case 'add_training_type':
+                        $data_reader = new \DB();
+                        $response = $data_reader->CreateTrainingType($data["id"], $data["name"], $data["description"]);
+                        break;
+                    case 'update_training_type':
+                        $data_reader = new \DB();
+                        $response = $data_reader->UpdateTrainingType($data["id"], $data["name"], $data["description"]);
+                        break;
+                    case 'delete_training_type':
+                        $data_reader = new \DB();
+                        $response = $data_reader->DeleteTrainingType($data["id"]);
+                        break;
                     default:
                         $response = ["status" => "error", "message" => "Action is not recognized"];
                         break;

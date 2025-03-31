@@ -230,6 +230,47 @@ class DB
         }
     }
 
+    function CreateTrainingType($id, $training_name, $description){
+        $pdo = $this->DBConnect();
+        if($pdo){
+            try {
+                $query_string = "INSERT INTO training_types (id, training_name, description) VALUES (:id, :training_name, :description)";
+                $sql_query = $pdo->prepare($query_string);
+                $sql_query->execute(['id' => $id, 'training_name' => $training_name, 'description' => $description]);
+                return ["success" => true, "message" => "Training type created successfully"];
+            } catch (PDOExeption $e) {
+                return ["error" => "Database connection failed", "details" => $e->getMessage()];
+            }
+        }
+    }
+    function DeleteTrainingType($id){
+        $pdo = $this->DBConnect();
+        if($pdo){
+            try {
+                $query_string = "DELETE FROM training_types WHERE id = :id";
+                $sql_query = $pdo->prepare($query_string);
+                $sql_query->execute(['id' => $id]);
+                return ["success" => true, "message" => "Training type deleted successfully"];
+            } catch (PDOExeption $e) {
+                return ["error" => "Database connection failed", "details" => $e->getMessage()];
+            }
+        }
+    }
+
+    function UpdateTrainingType($id, $training_name, $description){
+        $pdo = $this->DBConnect();
+        if($pdo){
+            try {
+                $query_string = "UPDATE training_types SET training_name = :training_name, description = :description WHERE id = :id";
+                $sql_query = $pdo->prepare($query_string);
+                $sql_query->execute(['id' => $id, 'training_name' => $training_name, 'description' => $description]);
+                return ["success" => true, "message" => "Training type updated successfully"];
+            } catch (PDOExeption $e) {
+                return ["error" => "Database connection failed", "details" => $e->getMessage()];
+            }
+        }
+    }
+
     function GetSchedule(){
         $pdo = $this->DBConnect();
         if($pdo){

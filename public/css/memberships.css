@@ -1,0 +1,114 @@
+/* Таблица */
+table {
+    width: 100%;
+    border-collapse: collapse;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1); /* Тень для таблицы */
+    border-radius: 10px; /* Закругленные углы */
+    overflow: hidden;
+    background-color: #f9f9f9;
+}
+
+th, td {
+    padding: 12px 15px; /* Больше отступов для улучшенного восприятия */
+    text-align: left;
+    border-bottom: 1px solid #ddd;
+}
+
+th {
+    color: white;
+    background-color: #007b3e; /* Более насыщенный зеленый цвет */
+    font-weight: bold;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+}
+
+td {
+    background-color: #fff;
+    color: #333;
+}
+
+tr:hover td {
+    background-color: #f1f1f1; /* Цвет при наведении на строку */
+}
+
+/* Форма */
+form {
+    margin-top: 20px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 15px; /* Разделение элементов формы */
+    padding: 20px;
+    border: 1px solid #ddd;
+    border-radius: 10px;
+    background-color: #fff;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+}
+.box{
+    width: 100%;
+    display: flex;
+    flex-direction: row;
+    gap: 15px;
+    justify-content: center;
+}
+input{
+    padding: 12px;
+    width: 100%;
+    max-width: 300px; /* Устанавливаем максимальную ширину */
+    border: 1px solid #ddd;
+    border-radius: 8px;
+    transition: border-color 0.3s ease;
+}
+
+input:focus {
+    border-color: #007b3e; /* Зеленый цвет при фокусе */
+    outline: none;
+}
+
+select {
+    text-transform: none;
+    padding: 12px;
+    width: 100%;
+    max-width: 300px; /* Устанавливаем максимальную ширину */
+    border: 1px solid #ddd;
+    border-radius: 8px;
+    transition: border-color 0.3s ease;
+}
+
+select:focus {
+    border-color: #007b3e; /* Цвет бордера при фокусе */
+    outline: none;
+}
+
+button {
+    margin-left: 20px;
+    padding: 15px 20px;
+    background-color: #007b3e; /* Зеленый цвет для кнопок */
+    color: white;
+    border: none;
+    border-radius: 8px;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+    box-shadow: 0 3px 6px rgba(0, 0, 0, 0.1);
+}
+
+button:hover {
+    background-color: #005f2b; /* Темнее при наведении */
+}
+
+button:focus {
+    outline: none;
+}
+
+/* Добавим плавный переход */
+* {
+    transition: all 0.3s ease;
+}
+
+/* Общее */
+body {
+    font-family: 'Arial', sans-serif;
+    background-color: #f4f4f4; /* Светлый фон для контраста */
+    color: #333;
+    padding: 20px;
+}

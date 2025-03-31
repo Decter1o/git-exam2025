@@ -1,0 +1,34 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    <link rel="stylesheet" href="/public/css/training_types.css">
+    <script src="/public/js/training_types.js" defer></script>
+</head>
+<body>
+    <h1>Тренировки</h1>
+    
+    <!-- Таблица для отображения абонементов -->
+    <table id="trainingTypesTable">
+        <thead>
+        <tr>
+            <th>Тренировка</th>
+            <th>Описание</th>
+            <th>Действия</th>
+        </tr>
+        </thead>
+        <tbody></tbody>
+    </table>
+
+    <form id="trainingTypesForm">
+        <h2>Добавить/изменить тренировку</h2>
+        <div class="box">
+            <input type="text" id="name" placeholder="Название тренировки" required>
+            <textarea type="text" id="description" placeholder="Описание тренировки" required></textarea>
+        </div>
+        <button type="submit">Сохранить</button>
+    </form>
+</body>
+</html>
