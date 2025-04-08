@@ -79,6 +79,10 @@ switch ($_SERVER["REQUEST_METHOD"])
                             $response = ["success" => false];
                         }
                         break;
+                    case 'add_visitor':
+                        $data_reader = new \DB();
+                        $response = $data_reader->CreateVisitorUser($data["id"], $data["name"], $data["surname"], $data["phone_number"], $data["membership_id"]);
+                        break;
                     case 'add_membership':
                         $data_reader = new \DB();
                         $response = $data_reader->CreateGymMembership($data["id"], $data["membership_type"], $data["duration"], $data["price"], $data["special_group"]);

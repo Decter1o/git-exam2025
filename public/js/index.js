@@ -4,11 +4,11 @@
     event.preventDefault(); // Останавливаем стандартное поведение формы
 
     // Получаем данные из формы
-    const username = document.getElementById('username').value;
-    const password = document.getElementById('password').value;
+    let username = document.getElementById('username').value;
+    let password = document.getElementById('password').value;
 
     // Формируем JSON-объект
-    const requestData = {
+    let requestData = {
         platform: "website",
         action: "auth",
         username: username,

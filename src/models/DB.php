@@ -115,7 +115,7 @@ class DB
                 $sql_query = $pdo->prepare($query_string);
                 $sql_query->execute(['username' => $username, 'password' => $password]);
                 return $sql_query->fetchColumn();
-            } catch (PDOExeption $e) {
+            } catch (PDOException $e) {
                 echo json_encode(["error" => "Database connection failed", "details" => $e->getMessage()]);
             }
         }
@@ -132,7 +132,7 @@ class DB
                 }
                 return $memberships;
 
-            } catch (PDOExeption $e) {
+            } catch (PDOException $e) {
                 return ["error" => "Database connection failed", "details" => $e->getMessage()];
             }
         }
@@ -146,7 +146,7 @@ class DB
                 $sql_query = $pdo->prepare($query_string);
                 $sql_query->execute(['id' => $id, 'membership_type' => $membership_type, 'duration' => $duration, 'price' => $price, 'special_group' => $special_group]);
                 return ["success" => true, "message" => "Membership created successfully"];
-            } catch (PDOExeption $e) {
+            } catch (PDOException $e) {
                 return ["error" => "Database connection failed", "details" => $e->getMessage()];
             }
         }
@@ -160,7 +160,7 @@ class DB
                 $sql_query = $pdo->prepare($query_string);
                 $sql_query->execute(['id' => $id]);
                 return ["success" => true, "message" => "Membership deleted successfully"];
-            } catch (PDOExeption $e) {
+            } catch (PDOException $e) {
                 return ["error" => "Database connection failed", "details" => $e->getMessage()];
             }
         }
@@ -174,7 +174,7 @@ class DB
                 $sql_query = $pdo->prepare($query_string);
                 $sql_query->execute(['id' => $id, 'membership_type' => $membership_type, 'duration' => $duration, 'price' => $price, 'special_group' => $special_group]);
                 return ["success" => true, "message" => "Membership updated successfully"];
-            } catch (PDOExeption $e) {
+            } catch (PDOException $e) {
                 return ["error" => "Database connection failed", "details" => $e->getMessage()];
             }
         }
@@ -191,7 +191,26 @@ class DB
                     $visitor_users[] = new VisitorUser($row['id'], $row['username'], $row['usersurname'], $row['phone_number']);
                 }
                 return $visitor_users;
-            } catch (PDOExeption $e) {
+            } catch (PDOException $e) {
+                return ["error" => "Database connection failed", "details" => $e->getMessage()];
+            }
+        }
+    }
+
+    function CreateVisitorUser($id, $username, $usersurname, $phone_number, $membership_id, $visitor_membership_id){
+        $pdo = $this->DBConnect();
+        if($pdo){
+            try {
+                $query_string = "CALL CreateVisitor(:id, :username, :usersurname, :phone_number, :membership_id, :visitor_membership_id, @status)";
+                $sql_query = $pdo->prepare($query_string);
+                $sql_query->execute(['id' => $id, 'username' => $username, 'usersurname' => $usersurname, 'phone_number' => $phone_number, 'membership_id' => $membership_id, 'visitor_membership_id' => $visitor_membership_id]);
+
+                $query_string = "SELECT @status";
+                $status_query = $pdo->prepare($query_string);
+                $status_query->execute();
+                $status = $status_query->fetchColumn();
+                return ["success" => true,"status" => $status, "message" => "Visitor user created successfully"];
+            } catch (PDOException $e) {
                 return ["error" => "Database connection failed", "details" => $e->getMessage()];
             }
         }
@@ -201,14 +220,14 @@ class DB
         $pdo = $this->DBConnect();
         if($pdo){
             try {
-                $query_string = "SELECT id, visitor_id, membership_id, start_date, end_date FROM visitor_memberships;";
+                $query_string = "SELECT id, visitor_id, membership_id, visits_left FROM visitor_memberships;";
                 $result = $pdo->query($query_string);
                 $visitor_memberships = [];
                 while($row = $result->fetch()){
-                    $visitor_memberships[] = new VisitorMembership($row['id'], $row['visitor_id'], $row['membership_id'], $row['start_date'], $row['end_date']);
+                    $visitor_memberships[] = new VisitorMembership($row['id'], $row['visitor_id'], $row['membership_id'], $row['visits_left']);
                 }
                 return $visitor_memberships;
-            } catch (PDOExeption $e) {
+            } catch (PDOException $e) {
                 return ["error" => "Database connection failed", "details" => $e->getMessage()];
             }
         }
@@ -225,7 +244,7 @@ class DB
                     $training_types[] = new TrainingType($row['id'], $row['training_name'], $row['description']);
                 }
                 return $training_types;
-            } catch (PDOExeption $e) {
+            } catch (PDOException $e) {
                 return ["error" => "Database connection failed", "details" => $e->getMessage()];}
         }
     }
@@ -238,7 +257,7 @@ class DB
                 $sql_query = $pdo->prepare($query_string);
                 $sql_query->execute(['id' => $id, 'training_name' => $training_name, 'description' => $description]);
                 return ["success" => true, "message" => "Training type created successfully"];
-            } catch (PDOExeption $e) {
+            } catch (PDOException $e) {
                 return ["error" => "Database connection failed", "details" => $e->getMessage()];
             }
         }
@@ -251,7 +270,7 @@ class DB
                 $sql_query = $pdo->prepare($query_string);
                 $sql_query->execute(['id' => $id]);
                 return ["success" => true, "message" => "Training type deleted successfully"];
-            } catch (PDOExeption $e) {
+            } catch (PDOException $e) {
                 return ["error" => "Database connection failed", "details" => $e->getMessage()];
             }
         }
@@ -265,7 +284,7 @@ class DB
                 $sql_query = $pdo->prepare($query_string);
                 $sql_query->execute(['id' => $id, 'training_name' => $training_name, 'description' => $description]);
                 return ["success" => true, "message" => "Training type updated successfully"];
-            } catch (PDOExeption $e) {
+            } catch (PDOException $e) {
                 return ["error" => "Database connection failed", "details" => $e->getMessage()];
             }
         }
@@ -282,7 +301,7 @@ class DB
                     $schedules[] = new Schedule($row['id'], $row['training_type_id'], $row['start_time'], $row['end_time'], $row['day_of_week'], $row['room_name'], $row['trainer_name'], $row['category']);
                 }
                 return $schedules;
-            } catch (PDOExeption $e) {
+            } catch (PDOException $e) {
                 return ["error" => "Database connection failed", "details" => $e->getMessage()];
             }
         }

@@ -4,15 +4,14 @@
         public $id;
         public $visitorId;
         public $membershipId;
-        public $startDate;
-        public $endDate;
+        public $visitsLeft;
+        
 
-        public function __construct($id, $visitorId, $membershipId, $startDate, $endDate){
+        public function __construct($id, $visitorId, $membershipId, $visitsLeft){
             $this->id = $id;
             $this->visitorId = $visitorId;
             $this->membershipId = $membershipId;
-            $this->startDate = $startDate;
-            $this->endDate = $endDate;
+            $this->visitsLeft = $visitsLeft;
         }
 
         public function getId(){
@@ -27,11 +26,7 @@
             return $this->membershipId;
         }
 
-        public function getStartDate(){
-            return $this->startDate;
-        }
-
-        public function getEndDate(){
-            return $this->endDate;
+        public function getVisitsLeft(){
+            return $this->$visitsLeft;
         }
     }

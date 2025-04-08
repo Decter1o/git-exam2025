@@ -1,36 +1,36 @@
 // Загружаем абонементы из localStorage
 function loadGymMemberships() {
-    const memberships = JSON.parse(localStorage.getItem('gym_memberships')) || [];
-    const tableBody = document.querySelector('#gymMembershipsTable tbody');
+    let memberships = JSON.parse(localStorage.getItem('gym_memberships')) || [];
+    let tableBody = document.querySelector('#gymMembershipsTable tbody');
     tableBody.innerHTML = ''; // Очищаем таблицу перед обновлением
 
     memberships.forEach(membership => {
-        const row = document.createElement('tr');
+        let row = document.createElement('tr');
 
-        const typeCell = document.createElement('td');
+        let typeCell = document.createElement('td');
         typeCell.textContent = membership.type;
         row.appendChild(typeCell);
 
-        const durationCell = document.createElement('td');
+        let durationCell = document.createElement('td');
         durationCell.textContent = membership.duration;
         row.appendChild(durationCell);
 
-        const priceCell = document.createElement('td');
+        let priceCell = document.createElement('td');
         priceCell.textContent = membership.price;
         row.appendChild(priceCell);
 
-        const groupCell = document.createElement('td');
+        let groupCell = document.createElement('td');
         groupCell.textContent = membership.specialGroup;
         row.appendChild(groupCell);
 
         // Кнопки для редактирования и удаления
-        const actionCell = document.createElement('td');
-        const editButton = document.createElement('button');
+        let actionCell = document.createElement('td');
+        let editButton = document.createElement('button');
         editButton.textContent = 'Редактировать';
         editButton.onclick = () => editMembership(membership.id);
         actionCell.appendChild(editButton);
 
-        const deleteButton = document.createElement('button');
+        let deleteButton = document.createElement('button');
         deleteButton.textContent = 'Удалить';
         deleteButton.onclick = () => deleteMembership(membership.id);
         actionCell.appendChild(deleteButton);
@@ -43,19 +43,19 @@ function loadGymMemberships() {
 // Добавляем или изменяем абонемент
 document.getElementById('membershipForm').addEventListener('submit', function (event) {
     event.preventDefault();
-    const id = document.getElementById('membershipId')?.value || crypto.randomUUID();
-    const type = document.getElementById('type').value;
-    const duration = document.getElementById('duration').value;
-    const price = document.getElementById('price').value;
-    const specialGroup = document.getElementById('specialGroup').value;
+    let id = document.getElementById('membershipId')?.value || crypto.randomUUID();
+    let type = document.getElementById('type').value;
+    let duration = document.getElementById('duration').value;
+    let price = document.getElementById('price').value;
+    let specialGroup = document.getElementById('specialGroup').value;
 
-    const membership = { id, type, duration, price, specialGroup };
+    let membership = { id, type, duration, price, specialGroup };
 
-    const memberships = JSON.parse(localStorage.getItem('gym_memberships')) || [];
-    const existingMembershipIndex = memberships.findIndex(m => m.id === id);
+    let memberships = JSON.parse(localStorage.getItem('gym_memberships')) || [];
+    let existingMembershipIndex = memberships.findIndex(m => m.id === id);
 
     // Формируем JSON-объект для отправки запроса
-    const requestData = {
+    let requestData = {
         platform: "website",
         action: existingMembershipIndex >= 0 ? "update_membership" : "add_membership",
         membership_type: type,
@@ -113,7 +113,7 @@ function deleteMembership(id) {
     localStorage.setItem('gym_memberships', JSON.stringify(memberships));
 
     // Формируем JSON-объект для отправки запроса на удаление
-    const requestData = {
+    let requestData = {
         platform: "website",
         action: "delete_membership",
         id: id
@@ -128,8 +128,8 @@ function deleteMembership(id) {
 
 // Редактирование абонемента
 function editMembership(id) {
-    const memberships = JSON.parse(localStorage.getItem('gym_memberships')) || [];
-    const membership = memberships.find(m => m.id === id);
+    let memberships = JSON.parse(localStorage.getItem('gym_memberships')) || [];
+    let membership = memberships.find(m => m.id === id);
     if (membership) {
         document.getElementById('type').value = membership.type;
         document.getElementById('duration').value = membership.duration;
