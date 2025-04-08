@@ -20,8 +20,8 @@ function loadVisitors() {
             phoneCell.textContent = '+' + visitor.phone_number;
             row.appendChild(phoneCell);
     
-            let visitor_membershipId = visitor.id;
-            let visitor_membership = visitor_memberships.find(vm => vm.visitorId === visitor_membershipId);
+            let visitor_Id = visitor.id;
+            let visitor_membership = visitor_memberships.find(vm => vm.visitorId === visitor_Id);
             let membership = visitor_membership ? memberships.find(m => m.id === visitor_membership.membershipId) : null;
             let visitor_membershipTypeCell = document.createElement('td');
             visitor_membershipTypeCell.textContent = membership ? membership.type : 'Нет абонемента';
@@ -31,13 +31,30 @@ function loadVisitors() {
             membershipVisitsLeft.textContent = visitor_membership ? visitor_membership.
             visitsLeft + ' занятий' : 'Нет абонемента';            
             row.appendChild(membershipVisitsLeft);
+
+            // Добавляем ячейку для кнопки "Редактировать"
+            let actionsCell = document.createElement('td');
+            let editButton = document.createElement('button');
+            editButton.innerHTML = '<i class="fa-solid fa-pen"></i>';
+            editButton.classList.add('edit-button', 'button'); // Добавляем общий класс 'button'
+            editButton.addEventListener('click', () => UpdateUserForm(visitor)); // Передаем данные посетителя
+            actionsCell.appendChild(editButton);
+
+            // Добавляем кнопку "Удалить"
+            let deleteButton = document.createElement('button');
+            deleteButton.innerHTML = '<i class="fa-solid fa-trash"></i>';
+            deleteButton.classList.add('delete-button', 'button'); // Добавляем общий класс 'button'
+            deleteButton.addEventListener('click', () => deleteVisitor(visitor.id)); // Передаем ID посетителя
+            actionsCell.appendChild(deleteButton);
+
+            row.appendChild(actionsCell);
             tableBody.appendChild(row);
     });
 }
 
 document.addEventListener('DOMContentLoaded', loadVisitors);
 
-function toggleVisitorForm() {
+function AddUserForm() {
     // Проверяем, существует ли форма на странице
     let form = document.querySelector('.visitor-form');
 
@@ -70,20 +87,18 @@ function toggleVisitorForm() {
                         <p>Абонемент:</p>
                         <select id="membership" required>
                             <option value="">Выберите абонемент</option>
-                            <option value="basic">Базовый</option>
-                            <option value="premium">Премиум</option>
                         </select>
                     </div>
                 </div>
             </div>
-            <button class="submit-button">Сохранить</button>
+            <button class="add-submit-button submit-button">Сохранить</button>
         `;
 
         // Добавляем форму в тело страницы
         document.body.appendChild(form);
 
         // Добавляем обработчик для кнопки "Сохранить"
-        form.querySelector('.submit-button').addEventListener('click', () => {
+        form.querySelector('.add-submit-button').addEventListener('click', () => {
             let visitors = JSON.parse(localStorage.getItem('visitors')) || [];
             let visitor_memberships = JSON.parse(localStorage.getItem('visitors_memberships')) || [];
             let memberships = JSON.parse(localStorage.getItem('gym_memberships')) || [];
@@ -91,58 +106,62 @@ function toggleVisitorForm() {
             let visitor_membership_id = crypto.randomUUID();
             let name = document.getElementById('name').value;
             let phone_number = document.getElementById('phone').value;
+            if (phone_number.startsWith('+')) {
+                phone_number = phone_number.slice(1);
+            }
             let surname = document.getElementById('surname').value;
-            let membership_id = document.getElementById('membership').value;
+            let membershipId = document.getElementById('membership').value;
         
-            if (name && phone_number && surname && membership_id) {
-                let days_left = 0;
-                let membership_duration = memberships.find(m => m.id === membership_id).duration;
+            if (name && phone_number && surname && membershipId) {
+                let visitsLeft = 0;
+                let membership_duration = memberships.find(m => m.id === membershipId).duration;
                 
                 switch (membership_duration) {
                     case 'одноразовый':
-                        days_left = 1;
+                        visitsLeft = 1;
                         break;
                     case '1 месяц':
-                        days_left = 12;
+                        visitsLeft = 12;
                         break;
                     case '3 месяца':
-                        days_left = 36;
+                        visitsLeft = 36;
                         break;
                     case '6 месяцев':
-                        days_left = 72;
+                        visitsLeft = 72;
                         break;
                     case '1 год':
-                        days_left = 144;
+                        visitsLeft = 144;
                         break;
                     default:
                         break;
                 }
         
                 let visitor = { id, name, surname, phone_number };
+                visitors.push(visitor);
+                localStorage.setItem('visitors', JSON.stringify(visitors));
                 
-                let visitor_membership = { visitor_membership_id, id, membership_id, days_left };
+                let visitorId = id;
+                id = crypto.randomUUID();
+                let visitor_membership = {id, visitorId, membershipId, visitsLeft };
                 
                 let requestData = {
                     platform: "website",
                     action: "add_visitor",
-                    id: id,
+                    id: visitorId,
                     name: name,
                     surname: surname,
                     phone_number: phone_number,
-                    membership_id: membership_id,
+                    membershipId: membershipId,
                     visitor_membership_id: visitor_membership_id
                 };
         
-                visitors.push(visitor);
                 visitor_memberships.push(visitor_membership);
         
-                localStorage.setItem('visitors', JSON.stringify(visitors));
                 localStorage.setItem('visitors_memberships', JSON.stringify(visitor_memberships));
         
-                sendRequest('POST', '/add_visitor', requestData);
+                sendRequest('POST', requestData);
                 alert(`Посетитель сохранен`);
                 form.remove();
-                document.getElementById('visitorTable').reset();
                 loadVisitors();
             } else {
                 alert('Пожалуйста, заполните все поля!');
@@ -151,7 +170,84 @@ function toggleVisitorForm() {
     }
 }
 
-document.getElementById('add-user').addEventListener('click', toggleVisitorForm);
+function UpdateUserForm(visitor) {
+    // Проверяем, существует ли форма на странице
+    let form = document.querySelector('.visitor-form');
+
+    if (form) {
+        // Если форма уже существует, удаляем ее
+        form.remove();
+    } else {
+        // Создаем новую форму
+        form = document.createElement('div');
+        form.classList.add('visitor-form');
+        form.innerHTML = `
+            <h2>Редактировать посетителя</h2>
+            <div class="container-box">
+                <div class="container">
+                    <div class="box">
+                        <p>Имя:</p>
+                        <input type="text" id="name" value="${visitor.name}" placeholder="Введите имя">
+                    </div>
+                    <div class="box">
+                        <p>Телефон:</p>
+                        <input type="text" id="phone" value="+${visitor.phone_number}" placeholder="Введите телефон">
+                    </div>
+                </div>
+                <div class="container">
+                    <div class="box">
+                        <p>Фамилия:</p>
+                        <input type="text" id="surname" value="${visitor.surname}" placeholder="Введите фамилию">
+                    </div>
+                    <div class="box">
+                        <p>Абонемент:</p>
+                        <select id="membership" required>
+                            <option value="">Выберите абонемент</option>
+                        </select>
+                    </div>
+                </div>
+            </div>
+            <button class="update-submit-button submit-button">Сохранить</button>
+        `;
+
+        // Добавляем форму в тело страницы
+        document.body.appendChild(form);
+
+        // Заполняем список абонементов
+        populateMembershipOptions();
+        document.getElementById('membership').value = visitor.membershipId || '';
+
+        // Обработчик для кнопки "Сохранить"
+        form.querySelector('.update-submit-button').addEventListener('click', () => {
+            let name = document.getElementById('name').value;
+            let phone_number = document.getElementById('phone').value;
+            if (phone_number.startsWith('+')) {
+                phone_number = phone_number.slice(1);
+            }
+            let surname = document.getElementById('surname').value;
+            let membershipId = document.getElementById('membership').value;
+
+            if (name && phone_number && surname && membershipId) {
+                // Обновляем данные посетителя
+                visitor.name = name;
+                visitor.phone_number = phone_number;
+                visitor.surname = surname;
+                visitor.membershipId = membershipId;
+
+                // Сохраняем изменения в localStorage
+                localStorage.setItem('visitors', JSON.stringify(visitors));
+
+                alert('Данные посетителя обновлены');
+                form.remove();
+                loadVisitors();
+            } else {
+                alert('Пожалуйста, заполните все поля!');
+            }
+        });
+    }
+}
+
+document.getElementById('add-user').addEventListener('click', AddUserForm);
 
 function populateMembershipOptions() {
     // Получаем элемент <select> по его ID
@@ -180,7 +276,7 @@ document.addEventListener('DOMContentLoaded', () => {
 });
 
 // Функция для отправки запросов на сервер с использованием Fetch API
-function sendRequest(method, url, data) {
+function sendRequest(method, data) {
     fetch('/src/helpers/requestreader.php', {
         method: method,
         headers: {
@@ -199,5 +295,32 @@ function sendRequest(method, url, data) {
         console.log(data);
     })
     .catch(error => console.error('Ошибка при выполнении запроса:', error));
+}
+
+function deleteVisitor(visitorId) {
+    // Получаем данные из localStorage
+    let visitors = JSON.parse(localStorage.getItem('visitors')) || [];
+    let visitor_memberships = JSON.parse(localStorage.getItem('visitors_memberships')) || [];
+
+    // Удаляем посетителя и его абонемент
+    visitors = visitors.filter(visitor => visitor.id !== visitorId);
+    visitor_memberships = visitor_memberships.filter(vm => vm.visitorId !== visitorId);
+
+    // Формируем JSON-объект для отправки запроса на удаление
+    let requestData = {
+        platform: "website",
+        action: "delete_visitor",
+        id: visitorId
+    };
+
+    // Отправляем запрос на сервер для удаления
+    sendRequest('POST', requestData);
+
+    // Сохраняем обновленные данные в localStorage
+    localStorage.setItem('visitors', JSON.stringify(visitors));
+    localStorage.setItem('visitors_memberships', JSON.stringify(visitor_memberships));
+
+    // Обновляем таблицу
+    loadVisitors();
 }
 

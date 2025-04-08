@@ -215,6 +215,39 @@ class DB
             }
         }
     }
+    
+    function UpdateVisitorUser($id, $username, $usersurname, $phone_number, $membership_id, $visitor_membership_id){
+        $pdo = $this->DBConnect();
+        if($pdo){
+            try {
+                $query_string = "CALL UpdateVisitor(:id, :username, :usersurname, :phone_number, :membership_id, :visitor_membership_id, @status)";
+                $sql_query = $pdo->prepare($query_string);
+                $sql_query->execute(['id' => $id, 'username' => $username, 'usersurname' => $usersurname, 'phone_number' => $phone_number, 'membership_id' => $membership_id, 'visitor_membership_id' => $visitor_membership_id]);
+
+                $query_string = "SELECT @status";
+                $status_query = $pdo->prepare($query_string);
+                $status_query->execute();
+                $status = $status_query->fetchColumn();
+                return ["success" => true,"status" => $status, "message" => "Visitor user updated successfully"];
+            } catch (PDOException $e) {
+                return ["error" => "Database connection failed", "details" => $e->getMessage()];
+            }
+        }
+    }
+
+    function DeleteVisitorUser($id){
+        $pdo = $this->DBConnect();
+        if($pdo){
+            try {
+                $query_string = "DELETE vu, vm FROM visitor_users vu JOIN visitor_memberships vm ON vu.id = vm.visitor_id WHERE vu.id = :id";
+                $sql_query = $pdo->prepare($query_string);
+                $sql_query->execute(['id' => $id]);
+                return ["success" => true, "message" => "Visitor user deleted successfully"];
+            } catch (PDOException $e) {
+                return ["error" => "Database connection failed", "details" => $e->getMessage()];
+            }
+        }
+    }
 
     function GetVisitorsMemberships(){
         $pdo = $this->DBConnect();

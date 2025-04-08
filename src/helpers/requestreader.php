@@ -81,7 +81,15 @@ switch ($_SERVER["REQUEST_METHOD"])
                         break;
                     case 'add_visitor':
                         $data_reader = new \DB();
-                        $response = $data_reader->CreateVisitorUser($data["id"], $data["name"], $data["surname"], $data["phone_number"], $data["membership_id"]);
+                        $response = $data_reader->CreateVisitorUser($data["id"], $data["name"], $data["surname"], $data["phone_number"], $data["membershipId"], $data["visitor_membership_id"]);
+                        break;
+                    case 'update_visitor':
+                        $data_reader = new \DB();
+                        $response = $data_reader->UpdateVisitorUser($data["id"], $data["name"], $data["surname"], $data["phone_number"], $data["membershipId"], $data["visitor_membership_id"]);
+                        break;
+                    case 'delete_visitor':
+                        $data_reader = new \DB();
+                        $response = $data_reader->DeleteVisitorUser($data["id"]);
                         break;
                     case 'add_membership':
                         $data_reader = new \DB();

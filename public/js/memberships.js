@@ -85,7 +85,7 @@ document.getElementById('membershipForm').addEventListener('submit', function (e
 });
 
 // Функция для отправки запросов на сервер с использованием Fetch API
-function sendRequest(method, url, data) {
+function sendRequest(method, data) {
     fetch('/src/helpers/requestreader.php', {
         method: method,
         headers: {
@@ -120,7 +120,7 @@ function deleteMembership(id) {
     };
 
     // Отправляем запрос на сервер для удаления
-    sendRequest('POST', `/delete_membership/${id}`, requestData);
+    sendRequest('POST', requestData);
 
     // Перезагружаем таблицу
     loadGymMemberships();
