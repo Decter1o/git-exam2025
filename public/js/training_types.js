@@ -181,6 +181,10 @@ function sendRequest(method, data) {
 
 // Удаление абонемента
 function DeleteTrainigType(id) {
+    if (!confirm('Вы уверены, что хотите удалить эту тренировку?')) {
+        return; // Если пользователь отменил, выходим из функции
+    }
+
     let training_types = JSON.parse(localStorage.getItem('training_types')) || [];
     training_type = training_types.filter(tt => tt.id !== id);
     localStorage.setItem('training_types', JSON.stringify(training_type));

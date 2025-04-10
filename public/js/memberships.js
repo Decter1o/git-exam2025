@@ -238,6 +238,11 @@ function sendRequest(method, data) {
 
 // Удаление абонемента
 function DeleteMembership(id) {
+    if (!confirm('Вы уверены, что хотите удалить этот абонемент?')) {
+        return; // Если пользователь отменил, выходим из функции
+    }
+
+
     let memberships = JSON.parse(localStorage.getItem('gym_memberships')) || [];
     memberships = memberships.filter(m => m.id !== id);
     localStorage.setItem('gym_memberships', JSON.stringify(memberships));
