@@ -26,13 +26,15 @@ function loadGymMemberships() {
         // Кнопки для редактирования и удаления
         let actionCell = document.createElement('td');
         let editButton = document.createElement('button');
-        editButton.textContent = 'Редактировать';
-        editButton.onclick = () => editMembership(membership.id);
+        editButton.innerHTML = '<i class="fa-solid fa-pen"></i>';
+        editButton.classList.add('edit-button', 'button');
+        editButton.onclick = () => UpdateMembershipForm(membership);
         actionCell.appendChild(editButton);
 
         let deleteButton = document.createElement('button');
-        deleteButton.textContent = 'Удалить';
-        deleteButton.onclick = () => deleteMembership(membership.id);
+        deleteButton.innerHTML = '<i class="fa-solid fa-trash"></i>';
+        deleteButton.classList.add('delete-button', 'button');
+        deleteButton.onclick = () => DeleteMembership(membership.id);
         actionCell.appendChild(deleteButton);
 
         row.appendChild(actionCell);
@@ -40,48 +42,176 @@ function loadGymMemberships() {
     });
 }
 
-// Добавляем или изменяем абонемент
-document.getElementById('membershipForm').addEventListener('submit', function (event) {
-    event.preventDefault();
-    let id = document.getElementById('membershipId')?.value || crypto.randomUUID();
-    let type = document.getElementById('type').value;
-    let duration = document.getElementById('duration').value;
-    let price = document.getElementById('price').value;
-    let specialGroup = document.getElementById('specialGroup').value;
+// Инициализация таблицы при загрузке страницы
+document.addEventListener('DOMContentLoaded', loadGymMemberships);
 
-    let membership = { id, type, duration, price, specialGroup };
+function AddMembershipForm() {
+    let form = document.querySelector('.membershipForm');
 
-    let memberships = JSON.parse(localStorage.getItem('gym_memberships')) || [];
-    let existingMembershipIndex = memberships.findIndex(m => m.id === id);
-
-    // Формируем JSON-объект для отправки запроса
-    let requestData = {
-        platform: "website",
-        action: existingMembershipIndex >= 0 ? "update_membership" : "add_membership",
-        membership_type: type,
-        duration: duration,
-        price: price,
-        id: id,
-        special_group: specialGroup
-    };
-
-    // Определяем, нужно ли обновить или добавить абонемент
-    if (existingMembershipIndex >= 0) {
-        // Обновляем существующий абонемент
-        memberships[existingMembershipIndex] = membership;
-        sendRequest('POST', `/update_membership/${id}`, requestData);
+    if (form) {
+        // Если форма уже существует, удаляем её
+        form.remove();
     } else {
-        // Добавляем новый абонемент
-        memberships.push(membership);
-        sendRequest('POST', '/add_membership', requestData);
+        // Если форма не существует, создаём и добавляем её
+        form = document.createElement('div');
+        form.classList.add('membershipForm');
+        form.innerHTML = `
+            <h2>Добавить абонемент</h2>
+            <div class="box">
+                <select id="type" required>
+                    <option value="">Тип абонемента</option>
+                    <option value="дневной">Дневной</option>
+                    <option value="стандарт">Стандарт</option>
+                    <option value="безлимит">Безлимит</option>
+                </select>
+                <select id="duration" required>
+                    <option value="">Длительность</option>
+                    <option value="разовый">Разовый</option>
+                    <option value="1 месяц">1 месяц</option>
+                    <option value="3 месяца">3 месяца</option>
+                    <option value="6 месяцев">6 месяцев</option>
+                    <option value="1 год">1 год</option>
+                </select>
+                <input type="number" id="price" placeholder="Цена" required>
+                <select id="specialGroup" required>
+                    <option value="">Группа</option>
+                    <option value="стандарт">Стандарт</option>
+                    <option value="золотой возраст">Золотой возраст</option>
+                </select>
+            </div>
+            <button class="add-submit-button submit-button">Сохранить</button>
+        `;
+
+        // Добавляем форму в тело страницы
+        document.body.appendChild(form);
+
+        // Добавляем обработчик для кнопки "Сохранить"
+        form.querySelector('.add-submit-button').addEventListener('click', () => {
+            let type = document.getElementById('type').value;
+            let duration = document.getElementById('duration').value;
+            let price = document.getElementById('price').value;
+            let specialGroup = document.getElementById('specialGroup').value;
+
+            if (type && duration && price && specialGroup) {
+                let memberships = JSON.parse(localStorage.getItem('gym_memberships')) || [];
+                let id = crypto.randomUUID();
+
+                let membership = { id, type, duration, price, specialGroup };
+
+                memberships.push(membership);
+                localStorage.setItem('gym_memberships', JSON.stringify(memberships));
+
+                let requestData = {
+                    platform: "website",
+                    action: "add_membership",
+                    membership_type: type,
+                    duration: duration,
+                    price: price,
+                    id: id,
+                    special_group: specialGroup
+                };
+
+                sendRequest('POST', requestData);
+
+                loadGymMemberships();
+                form.remove();
+                alert('Абонемент успешно добавлен!');
+                form.remove(); // Удаляем форму после успешного добавления
+                
+            } else {
+                alert('Пожалуйста, заполните все поля!');
+            }
+        });
     }
+}
 
-    // Сохраняем в localStorage
-    localStorage.setItem('gym_memberships', JSON.stringify(memberships));
+function UpdateMembershipForm(membership) {
+    let form = document.querySelector('.membershipForm');
 
-    // Очищаем форму и перезагружаем таблицу
-    document.getElementById('membershipForm').reset();
-    loadGymMemberships();
+    if (form) {
+        form.remove();
+    } else {
+        form = document.createElement('div');
+        form.classList.add('membershipForm');
+        form.innerHTML = `
+            <h2>Редактировать абонемент</h2>
+            <div class="box">
+                <select id="type" required>
+                    <option value="">Тип абонемента</option>
+                    <option value="дневной">Дневной</option>
+                    <option value="стандарт">Стандарт</option>
+                    <option value="безлимит">Безлимит</option>
+                </select>
+                <select id="duration" required>
+                    <option value="">Длительность</option>
+                    <option value="разовый">Разовый</option>
+                    <option value="1 месяц">1 месяц</option>
+                    <option value="3 месяца">3 месяца</option>
+                    <option value="6 месяцев">6 месяцев</option>
+                    <option value="1 год">1 год</option>
+                </select>
+                <input type="number" id="price" placeholder="Цена" required>
+                <select id="specialGroup" required>
+                    <option value="">Группа</option>
+                    <option value="стандарт">Стандарт</option>
+                    <option value="золотой возраст">Золотой возраст</option>
+                </select>
+            </div>
+            <button class="update-submit-button submit-button">Сохранить</button>
+        `;
+
+        // Добавляем форму в тело страницы
+        document.body.appendChild(form);
+
+        // Заполняем поля формы
+        document.getElementById('type').value = membership.type;
+        document.getElementById('duration').value = membership.duration;
+        document.getElementById('price').value = membership.price;
+        document.getElementById('specialGroup').value = membership.specialGroup;
+
+        // Добавляем обработчик для кнопки "Сохранить"
+        form.querySelector('.update-submit-button').addEventListener('click', () => {
+            let type = document.getElementById('type').value;
+            let duration = document.getElementById('duration').value;
+            let price = document.getElementById('price').value;
+            let specialGroup = document.getElementById('specialGroup').value;
+
+            if (type && duration && price && specialGroup) {
+                membership.type = type;
+                membership.duration = duration;
+                membership.price = price;
+                membership.specialGroup = specialGroup;
+
+                let memberships = JSON.parse(localStorage.getItem('gym_memberships')) || [];
+                let index = memberships.findIndex(m => m.id === membership.id);
+                memberships[index] = membership;
+
+                localStorage.setItem('gym_memberships', JSON.stringify(memberships));
+
+                let requestData = {
+                    platform: "website",
+                    action: "update_membership",
+                    membership_type: type,
+                    duration: duration,
+                    price: price,
+                    id: membership.id,
+                    special_group: specialGroup
+                };
+
+                sendRequest('POST', requestData);
+
+                loadGymMemberships();
+                form.remove();
+                alert('Абонемент успешно обновлён!');
+            } else {
+                alert('Пожалуйста, заполните все поля!');
+            }
+        });
+    }
+}
+
+document.addEventListener('DOMContentLoaded', () => {
+    document.getElementById('add-membership').addEventListener('click', AddMembershipForm);
 });
 
 // Функция для отправки запросов на сервер с использованием Fetch API
@@ -107,7 +237,7 @@ function sendRequest(method, data) {
 }
 
 // Удаление абонемента
-function deleteMembership(id) {
+function DeleteMembership(id) {
     let memberships = JSON.parse(localStorage.getItem('gym_memberships')) || [];
     memberships = memberships.filter(m => m.id !== id);
     localStorage.setItem('gym_memberships', JSON.stringify(memberships));
@@ -125,28 +255,3 @@ function deleteMembership(id) {
     // Перезагружаем таблицу
     loadGymMemberships();
 }
-
-// Редактирование абонемента
-function editMembership(id) {
-    let memberships = JSON.parse(localStorage.getItem('gym_memberships')) || [];
-    let membership = memberships.find(m => m.id === id);
-    if (membership) {
-        document.getElementById('type').value = membership.type;
-        document.getElementById('duration').value = membership.duration;
-        document.getElementById('price').value = membership.price;
-        document.getElementById('specialGroup').value = membership.specialGroup;
-
-        // Добавляем скрытое поле с id для определения редактируемого абонемента
-        let membershipIdField = document.getElementById('membershipId');
-        if (!membershipIdField) {
-            membershipIdField = document.createElement('input');
-            membershipIdField.type = 'hidden';
-            membershipIdField.id = 'membershipId';
-            document.getElementById('membershipForm').appendChild(membershipIdField);
-        }
-        membershipIdField.value = membership.id;
-    }
-}
-
-// Инициализация таблицы при загрузке страницы
-document.addEventListener('DOMContentLoaded', loadGymMemberships);

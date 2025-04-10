@@ -160,9 +160,9 @@ function AddUserForm() {
                 localStorage.setItem('visitors_memberships', JSON.stringify(visitor_memberships));
         
                 sendRequest('POST', requestData);
-                alert(`Посетитель сохранен`);
                 form.remove();
                 loadVisitors();
+                alert(`Посетитель сохранен`);
             } else {
                 alert('Пожалуйста, заполните все поля!');
             }
@@ -171,14 +171,21 @@ function AddUserForm() {
 }
 
 function UpdateUserForm(visitor) {
-    // Проверяем, существует ли форма на странице
+    let memberships = JSON.parse(localStorage.getItem('gym_memberships')) || [];
+    let visitors_memberships = JSON.parse(localStorage.getItem('visitors_memberships')) || [];
+    let visitor_membership = visitors_memberships.find(vm => vm.visitorId === visitor.id);
+    let visitors = JSON.parse(localStorage.getItem('visitors')) || [];
+    // Проверяем, существует ли visitor_membership
+    if (!visitor_membership) {
+        alert('Абонемент для данного посетителя не найден!');
+        return;
+    }
+
     let form = document.querySelector('.visitor-form');
 
     if (form) {
-        // Если форма уже существует, удаляем ее
         form.remove();
     } else {
-        // Создаем новую форму
         form = document.createElement('div');
         form.classList.add('visitor-form');
         form.innerHTML = `
@@ -215,16 +222,16 @@ function UpdateUserForm(visitor) {
 
         // Заполняем список абонементов
         populateMembershipOptions();
-        document.getElementById('membership').value = visitor.membershipId || '';
+        document.getElementById('membership').value = visitor_membership.membershipId || '';
 
         // Обработчик для кнопки "Сохранить"
         form.querySelector('.update-submit-button').addEventListener('click', () => {
-            let name = document.getElementById('name').value;
-            let phone_number = document.getElementById('phone').value;
+            let name = document.getElementById('name').value.trim();
+            let phone_number = document.getElementById('phone').value.trim();
             if (phone_number.startsWith('+')) {
                 phone_number = phone_number.slice(1);
             }
-            let surname = document.getElementById('surname').value;
+            let surname = document.getElementById('surname').value.trim();
             let membershipId = document.getElementById('membership').value;
 
             if (name && phone_number && surname && membershipId) {
@@ -232,14 +239,57 @@ function UpdateUserForm(visitor) {
                 visitor.name = name;
                 visitor.phone_number = phone_number;
                 visitor.surname = surname;
-                visitor.membershipId = membershipId;
+                visitor_membership.membershipId = membershipId;
 
-                // Сохраняем изменения в localStorage
-                localStorage.setItem('visitors', JSON.stringify(visitors));
+                let visitsLeft = 0;
+                let membership_duration = memberships.find(m => m.id === membershipId).duration;
+                switch (membership_duration) {
+                    case 'одноразовый':
+                        visitsLeft = 1;
+                        break;
+                    case '1 месяц':
+                        visitsLeft = 12;
+                        break;
+                    case '3 месяца':
+                        visitsLeft = 36;
+                        break;
+                    case '6 месяцев':
+                        visitsLeft = 72;
+                        break;
+                    case '1 год':
+                        visitsLeft = 144;
+                        break;
+                    default:
+                        break;
+                }
 
-                alert('Данные посетителя обновлены');
+                
+                visitor_membership.visitsLeft = visitsLeft;
+                
+
+                let requestData = {
+                    platform: "website",
+                    action: "update_visitor",
+                    id: visitor.id,
+                    name: visitor.name,
+                    surname: visitor.surname,
+                    phone_number: visitor.phone_number,
+                    membershipId: visitor_membership.membershipId,
+                    visitor_membership_id: visitor_membership.id
+                };
+                sendRequest('POST', requestData);
+
+
+
+                // Сохраняем изменения в массив visitors
+                let updatedVisitors = visitors.map(v => v.id === visitor.id ? visitor : v);
+                localStorage.setItem('visitors', JSON.stringify(updatedVisitors));
+                // Сохраняем изменения в массив visitors_memberships
+                localStorage.setItem('visitors_memberships', JSON.stringify(visitors_memberships));
+
                 form.remove();
                 loadVisitors();
+                alert('Данные посетителя обновлены');
             } else {
                 alert('Пожалуйста, заполните все поля!');
             }
@@ -298,6 +348,11 @@ function sendRequest(method, data) {
 }
 
 function deleteVisitor(visitorId) {
+    // Показываем подтверждение удаления
+    if (!confirm('Вы уверены, что хотите удалить этого посетителя?')) {
+        return; // Если пользователь отменил, выходим из функции
+    }
+
     // Получаем данные из localStorage
     let visitors = JSON.parse(localStorage.getItem('visitors')) || [];
     let visitor_memberships = JSON.parse(localStorage.getItem('visitors_memberships')) || [];
@@ -322,5 +377,71 @@ function deleteVisitor(visitorId) {
 
     // Обновляем таблицу
     loadVisitors();
+    alert('Посетитель удален');
 }
 
+function SearchVisitor() {
+    let searchInput = document.getElementById('search-input').value.toLowerCase();
+    let visitors = JSON.parse(localStorage.getItem('visitors')) || [];
+    let memberships = JSON.parse(localStorage.getItem('gym_memberships')) || [];
+    let visitor_memberships = JSON.parse(localStorage.getItem('visitors_memberships')) || [];
+    let tableBody = document.querySelector('#visitorsTable tbody');
+    tableBody.innerHTML = '';
+
+    visitors
+        .filter(visitor => {
+            if (searchInput.startsWith('+')) {
+                searchInput = searchInput.slice(1);
+            }
+            return (
+                visitor.name.toLowerCase().includes(searchInput) ||
+                visitor.surname.toLowerCase().includes(searchInput) ||
+                visitor.phone_number.includes(searchInput) // Убираем toLowerCase, так как phone_number числовой
+            );
+        })
+        .forEach(visitor => {
+            let row = document.createElement('tr');
+            
+            let nameCell = document.createElement('td');
+            nameCell.textContent = visitor.name;
+            row.appendChild(nameCell);
+
+            let surnameCell = document.createElement('td');
+            surnameCell.textContent = visitor.surname;
+            row.appendChild(surnameCell);
+
+            let phoneCell = document.createElement('td');
+            phoneCell.textContent = '+' + visitor.phone_number;
+            row.appendChild(phoneCell);
+
+            let visitor_Id = visitor.id;
+            let visitor_membership = visitor_memberships.find(vm => vm.visitorId === visitor_Id);
+            let membership = visitor_membership ? memberships.find(m => m.id === visitor_membership.membershipId) : null;
+
+            let visitor_membershipTypeCell = document.createElement('td');
+            visitor_membershipTypeCell.textContent = membership ? membership.type : 'Нет абонемента';
+            row.appendChild(visitor_membershipTypeCell);
+
+            let membershipVisitsLeft = document.createElement('td');
+            membershipVisitsLeft.textContent = visitor_membership ? visitor_membership.visitsLeft + ' занятий' : 'Нет абонемента';
+            row.appendChild(membershipVisitsLeft);
+
+            let actionsCell = document.createElement('td');
+            let editButton = document.createElement('button');
+            editButton.innerHTML = '<i class="fa-solid fa-pen"></i>';
+            editButton.classList.add('edit-button', 'button');
+            editButton.addEventListener('click', () => UpdateUserForm(visitor));
+            actionsCell.appendChild(editButton);
+
+            let deleteButton = document.createElement('button');
+            deleteButton.innerHTML = '<i class="fa-solid fa-trash"></i>';
+            deleteButton.classList.add('delete-button', 'button');
+            deleteButton.addEventListener('click', () => deleteVisitor(visitor.id));
+            actionsCell.appendChild(deleteButton);
+
+            row.appendChild(actionsCell);
+            tableBody.appendChild(row);
+        });
+}
+
+document.getElementById('search-button').addEventListener('click', SearchVisitor);

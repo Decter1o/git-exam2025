@@ -239,10 +239,15 @@ class DB
         $pdo = $this->DBConnect();
         if($pdo){
             try {
-                $query_string = "DELETE vu, vm FROM visitor_users vu JOIN visitor_memberships vm ON vu.id = vm.visitor_id WHERE vu.id = :id";
+                $query_string = "CALL DeleteVisitor(:id, @status)";
                 $sql_query = $pdo->prepare($query_string);
                 $sql_query->execute(['id' => $id]);
-                return ["success" => true, "message" => "Visitor user deleted successfully"];
+
+                $query_string = "SELECT @status";
+                $status_query = $pdo->prepare($query_string);
+                $status_query->execute();
+                $status = $status_query->fetchColumn();
+                return ["success" => true,"status" => $status, "message" => "Visitor user deleted successfully"];
             } catch (PDOException $e) {
                 return ["error" => "Database connection failed", "details" => $e->getMessage()];
             }

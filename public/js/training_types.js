@@ -18,13 +18,15 @@ function loadTrainingTypes() {
         // Кнопки для редактирования и удаления
         let actionCell = document.createElement('td');
         let editButton = document.createElement('button');
-        editButton.textContent = 'Редактировать';
-        editButton.onclick = () => editTrainigType(training_type.id);
+        editButton.innerHTML = '<i class="fa-solid fa-pen"></i>';
+        editButton.classList.add('edit-button', 'button');
+        editButton.onclick = () => UpdateTrainingType(training_type);
         actionCell.appendChild(editButton);
 
         let deleteButton = document.createElement('button');
-        deleteButton.textContent = 'Удалить';
-        deleteButton.onclick = () => deleteTrainigType(training_type.id);
+        deleteButton.innerHTML = '<i class="fa-solid fa-trash"></i>';
+        deleteButton.classList.add('delete-button', 'button');
+        deleteButton.onclick = () => DeleteTrainigType(training_type.id);
         actionCell.appendChild(deleteButton);
 
         row.appendChild(actionCell);
@@ -32,48 +34,131 @@ function loadTrainingTypes() {
     });
 }
 
-// Добавляем или изменяем абонемент
-document.getElementById('trainingTypesForm').addEventListener('submit', function (event) {
-    event.preventDefault();
-    let id = document.getElementById('trainingTypeId')?.value || crypto.randomUUID();
-    let name = document.getElementById('name').value;
-    let description = document.getElementById('description').value;
+document.addEventListener('DOMContentLoaded', loadTrainingTypes); 
 
-    let training_type = { id, name, description };
+function AddTrainingType() {
+    let form = document.querySelector('.trainingTypeForm');
 
-    let training_types = JSON.parse(localStorage.getItem('training_types')) || [];
-    let existingTrainingTypeIndex = training_types.findIndex(m => m.id === id);
-
-    // Формируем JSON-объект для отправки запроса
-    let requestData = {
-        platform: "website",
-        action: existingTrainingTypeIndex >= 0 ? "update_training_type" : "add_training_type",
-        id: id,
-        name: name,
-        description: description,
-    };
-
-    // Определяем, нужно ли обновить или добавить абонемент
-    if (existingTrainingTypeIndex >= 0) {
-        // Обновляем существующий абонемент
-        training_types[existingTrainingTypeIndex] = training_type;
-        sendRequest('POST', `/update_training_type/${id}`, requestData);
+    if (form) {
+        // Если форма уже существует, удаляем её
+        form.remove();
     } else {
-        // Добавляем новый абонемент
-        training_types.push(training_type);
-        sendRequest('POST', '/add_training_type', requestData);
+        // Если форма не существует, создаём и добавляем её
+        form = document.createElement('div');
+        form.classList.add('trainingTypeForm');
+        form.innerHTML = `
+            <h2>Добавить тренировку</h2>
+            <div class="box">
+                <input type="text" id="name" placeholder="Название тренировки" required>
+                <textarea type="text" id="description" placeholder="Описание тренировки" required></textarea>
+            </div>
+            <button class="add-submit-button submit-button">Сохранить</button>
+        `;
+
+        // Добавляем форму в тело страницы
+        document.body.appendChild(form);
+
+        // Добавляем обработчик для кнопки "Сохранить"
+        form.querySelector('.add-submit-button').addEventListener('click', () => {
+            let name = document.getElementById('name').value;
+            let description = document.getElementById('description').value;
+
+            if (name && description) {
+                let training_types = JSON.parse(localStorage.getItem('training_types')) || [];
+                let id = crypto.randomUUID();
+
+                let training_type = { id, name, description };
+
+                training_types.push(training_type);
+                localStorage.setItem('training_types', JSON.stringify(training_types));
+
+                let requestData = {
+                    platform: "website",
+                    action: "add_training_type",
+                    id: id,
+                    name: name,
+                    description: description,
+                };
+
+                sendRequest('POST', requestData);
+
+                loadTrainingTypes();
+                form.remove();
+                alert('Тренировка успешно добавлена!');
+                form.remove(); // Удаляем форму после успешного добавления
+                
+            } else {
+                alert('Пожалуйста, заполните все поля!');
+            }
+        });
     }
+}
 
-    // Сохраняем в localStorage
-    localStorage.setItem('training_types', JSON.stringify(training_types));
+function UpdateTrainingType(trainingType) {
+    let form = document.querySelector('.trainingTypeForm');
 
-    // Очищаем форму и перезагружаем таблицу
-    document.getElementById('trainingTypesForm').reset();
-    loadTrainingTypes();
+    if (form) {
+        form.remove();
+    } else {
+        form = document.createElement('div');
+        form.classList.add('trainingTypeForm');
+        form.innerHTML = `
+            <h2>Изменить тренировку</h2>
+            <div class="box">
+                <input type="text" id="name" placeholder="Название тренировки" required>
+                <textarea type="text" id="description" placeholder="Описание тренировки" required></textarea>
+            </div>
+            <button class="update-submit-button submit-button">Сохранить</button>
+        `;
+
+        // Добавляем форму в тело страницы
+        document.body.appendChild(form);
+
+        // Заполняем поля формы
+        document.getElementById('name').value = trainingType.name;
+        document.getElementById('description').value = trainingType.description;
+    
+        // Добавляем обработчик для кнопки "Сохранить"
+        form.querySelector('.update-submit-button').addEventListener('click', () => {
+            let name = document.getElementById('name').value;
+            let description = document.getElementById('description').value;
+
+            if (name && description) {
+                trainingType.name = name;
+                trainingType.description = description;
+
+                let training_types = JSON.parse(localStorage.getItem('training_types')) || [];
+                let index = training_types.findIndex(m => m.id === trainingType.id);
+                training_types[index] = trainingType;
+
+                localStorage.setItem('training_types', JSON.stringify(training_types));
+
+                let requestData = {
+                    platform: "website",
+                    action: "update_training_type",
+                    id: trainingType.id,
+                    name: trainingType.name,
+                    description: trainingType.description,
+                };
+
+                sendRequest('POST', requestData);
+
+                loadTrainingTypes();
+                form.remove();
+                alert('Тренировка успешно изменена!');
+            } else {
+                alert('Пожалуйста, заполните все поля!');
+            }
+        });
+    }
+}
+
+document.addEventListener('DOMContentLoaded', () => {
+    document.getElementById('add-training-type').addEventListener('click', AddTrainingType);
 });
 
 // Функция для отправки запросов на сервер с использованием Fetch API
-function sendRequest(method, url, data) {
+function sendRequest(method, data) {
     fetch('/src/helpers/requestreader.php', {
         method: method,
         headers: {
@@ -95,7 +180,7 @@ function sendRequest(method, url, data) {
 }
 
 // Удаление абонемента
-function deleteTrainigType(id) {
+function DeleteTrainigType(id) {
     let training_types = JSON.parse(localStorage.getItem('training_types')) || [];
     training_type = training_types.filter(tt => tt.id !== id);
     localStorage.setItem('training_types', JSON.stringify(training_type));
@@ -108,31 +193,9 @@ function deleteTrainigType(id) {
     };
 
     // Отправляем запрос на сервер для удаления
-    sendRequest('POST', `/delete_training_type/${id}`, requestData);
+    sendRequest('POST', requestData);
 
     // Перезагружаем таблицу
     loadTrainingTypes();
 }
 
-// Редактирование абонемента
-function editTrainigType(id) {
-    let training_types = JSON.parse(localStorage.getItem('training_types')) || [];
-    let training_type = training_types.find(tt => tt.id === id);
-    if (training_type) {
-    document.getElementById('name').value = training_type.name;
-    document.getElementById('description').value = training_type.description;
-
-    // Добавляем скрытое поле с id для определения редактируемой тренировки
-    let trainingTypeIdField = document.getElementById('trainingTypeId');
-    if (!trainingTypeIdField) {
-        trainingTypeIdField = document.createElement('input');
-        trainingTypeIdField.type = 'hidden';
-        trainingTypeIdField.id = 'trainingTypeId';
-        document.getElementById('trainingTypesForm').appendChild(trainingTypeIdField);
-    }
-    trainingTypeIdField.value = training_type.id;
-    }
-}
-
-// Инициализация таблицы при загрузке страницы
-document.addEventListener('DOMContentLoaded', loadTrainingTypes);

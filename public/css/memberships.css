@@ -31,59 +31,69 @@ tr:hover td {
     background-color: #f1f1f1; /* Цвет при наведении на строку */
 }
 
+.tools{
+    margin-bottom: 5px;
+    display: flex;
+    justify-content: flex-end;
+    align-items: center;
+}
+
 /* Форма */
-form {
-    margin-top: 20px;
+.membershipForm {
+    position: fixed; /* Меняем position на fixed */
+    top: 50%; /* Центрирование по вертикали */
+    left: 50%; /* Центрирование по горизонтали */
+    transform: translate(-50%, -50%); /* Сдвиг для точного центрирования */
+    z-index: 1000; /* Поверх других элементов */
+    width: 70%; /* Ширина формы */
+    padding: 20px;
+    background-color: #f9f9f9; /* Фон формы */
+    border: 2px solid #007b3e; /* Рамка формы */
+    border-radius: 10px; /* Закругленные углы */
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1); /* Тень */
     display: flex;
     flex-direction: column;
-    align-items: center;
-    gap: 15px; /* Разделение элементов формы */
-    padding: 20px;
-    border: 1px solid #ddd;
-    border-radius: 10px;
-    background-color: #fff;
-    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    justify-content: center;
 }
+
+.membershipForm h2 {
+    text-align: center; /* Центрирование заголовка */
+    color: #007b3e; /* Цвет заголовка */
+    margin-bottom: 20px;
+}
+
 .box{
     width: 100%;
     display: flex;
     flex-direction: row;
     gap: 15px;
     justify-content: center;
+    margin-bottom: 20px;
 }
-input{
-    padding: 12px;
-    width: 100%;
-    max-width: 300px; /* Устанавливаем максимальную ширину */
+.membershipForm input, .membershipForm select {
+    flex: 1; /* Поле ввода занимает оставшееся пространство */
+    padding: 10px;
+    margin-top: 0; /* Убираем верхний отступ */
     border: 1px solid #ddd;
-    border-radius: 8px;
-    transition: border-color 0.3s ease;
+    border-radius: 5px; /* Закругленные углы полей */
+    font-size: 14px;
 }
 
-input:focus {
-    border-color: #007b3e; /* Зеленый цвет при фокусе */
+.membershipForm input:focus, .membershipForm select:focus {
+    border-color: #007b3e; /* Цвет рамки при фокусе */
     outline: none;
+    box-shadow: 0 0 5px rgba(0, 123, 62, 0.5); /* Эффект свечения */
 }
 
-select {
-    text-transform: none;
-    padding: 12px;
-    width: 100%;
-    max-width: 300px; /* Устанавливаем максимальную ширину */
-    border: 1px solid #ddd;
-    border-radius: 8px;
-    transition: border-color 0.3s ease;
+.membershipForm select {
+    background-color: #fff;
+    cursor: pointer;
 }
 
-select:focus {
-    border-color: #007b3e; /* Цвет бордера при фокусе */
-    outline: none;
-}
-
-button {
-    margin-left: 20px;
-    padding: 15px 20px;
-    background-color: #007b3e; /* Зеленый цвет для кнопок */
+.submit-button{
+    margin-left: 2px;
+    padding: 8px 10px;
+    background-color: #007b3e;
     color: white;
     border: none;
     border-radius: 8px;
@@ -92,11 +102,11 @@ button {
     box-shadow: 0 3px 6px rgba(0, 0, 0, 0.1);
 }
 
-button:hover {
-    background-color: #005f2b; /* Темнее при наведении */
+.submit-button:hover {
+    background-color: #005f2b;
 }
 
-button:focus {
+.submit-button:focus {
     outline: none;
 }
 
@@ -111,4 +121,28 @@ body {
     background-color: #f4f4f4; /* Светлый фон для контраста */
     color: #333;
     padding: 20px;
+}
+
+.button{ 
+    margin-left: 10px;
+    padding: 8px 10px;
+    background-color: #007b3e;
+    color: white;
+    border: none;
+    border-radius: 8px;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+    box-shadow: 0 3px 6px rgba(0, 0, 0, 0.1);
+}
+
+.button:hover {
+    background-color: #005f2b;
+}
+
+.button:focus {
+    outline: none;
+}
+
+.fa-solid{
+    font-size: 20px;
 }

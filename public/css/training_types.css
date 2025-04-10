@@ -30,29 +30,49 @@ tr:hover td {
     background-color: #f1f1f1; /* Цвет при наведении на строку */
 }
 
+.tools{
+    margin-bottom: 5px;
+    display: flex;
+    justify-content: flex-end;
+    align-items: center;
+}
+
 /* Форма */
-form {
-    margin-top: 20px;
+.trainingTypeForm {
+    position: fixed; /* Меняем position на fixed */
+    top: 50%; /* Центрирование по вертикали */
+    left: 50%; /* Центрирование по горизонтали */
+    transform: translate(-50%, -50%); /* Сдвиг для точного центрирования */
+    z-index: 1000; /* Поверх других элементов */
+    width: 40%; /* Ширина формы */
+    padding: 20px;
+    background-color: #f9f9f9; /* Фон формы */
+    border: 2px solid #007b3e; /* Рамка формы */
+    border-radius: 10px; /* Закругленные углы */
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1); /* Тень */
     display: flex;
     flex-direction: column;
-    align-items: center;
-    gap: 15px; /* Разделение элементов формы */
-    padding: 20px;
-    border: 1px solid #ddd;
-    border-radius: 10px;
-    background-color: #fff;
-    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    justify-content: center;
 }
+.trainingTypeForm h2 {
+    text-align: center; /* Центрирование заголовка */
+    color: #007b3e; /* Зеленый цвет заголовка */
+    margin-bottom: 20px; /* Отступ снизу */
+}
+
+
 .box{
     width: 100%;
     display: flex;
     flex-direction: row;
     gap: 15px;
     justify-content: center;
+    margin-bottom: 20px;
 }
 textarea{
     padding: 12px;
     width: 100%;
+    min-width: 296.3px; /* Минимальная ширина для соответствия с другими полями */
     max-width: 300px; /* Устанавливаем максимальную ширину */
     border: 1px solid #ddd;
     border-radius: 8px;
@@ -84,10 +104,10 @@ textarea::placeholder {
     color: #aaa; /* Цвет текста в плейсхолдере */
 }
 
-button {
-    margin-left: 20px;
-    padding: 15px 20px;
-    background-color: #007b3e; /* Зеленый цвет для кнопок */
+.submit-button{
+    margin-left: 2px;
+    padding: 8px 10px;
+    background-color: #007b3e;
     color: white;
     border: none;
     border-radius: 8px;
@@ -96,11 +116,11 @@ button {
     box-shadow: 0 3px 6px rgba(0, 0, 0, 0.1);
 }
 
-button:hover {
-    background-color: #005f2b; /* Темнее при наведении */
+.submit-button:hover {
+    background-color: #005f2b;
 }
 
-button:focus {
+.submit-button:focus {
     outline: none;
 }
 
@@ -115,4 +135,28 @@ body {
     background-color: #f4f4f4; /* Светлый фон для контраста */
     color: #333;
     padding: 20px;
+}
+
+.button{ 
+    margin-left: 10px;
+    padding: 8px 10px;
+    background-color: #007b3e;
+    color: white;
+    border: none;
+    border-radius: 8px;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+    box-shadow: 0 3px 6px rgba(0, 0, 0, 0.1);
+}
+
+.button:hover {
+    background-color: #005f2b;
+}
+
+.button:focus {
+    outline: none;
+}
+
+.fa-solid{
+    font-size: 20px;
 }

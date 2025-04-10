@@ -86,7 +86,7 @@ tr:hover td {
 }
 
 .button{ 
-    margin-left: 2px;
+    margin-left: 10px;
     padding: 8px 10px;
     background-color: #007b3e;
     color: white;
@@ -110,10 +110,11 @@ tr:hover td {
 }
 
 .visitor-form {
-    position: absolute;
+    position: fixed; /* Меняем position на fixed */
     top: 50%; /* Центрирование по вертикали */
     left: 50%; /* Центрирование по горизонтали */
     transform: translate(-50%, -50%); /* Сдвиг для точного центрирования */
+    z-index: 1000; /* Поверх других элементов */
     width: 70%; /* Ширина формы */
     padding: 20px;
     background-color: #f9f9f9; /* Фон формы */

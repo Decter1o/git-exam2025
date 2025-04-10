@@ -5,12 +5,17 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Управление абонементами</title>
     <link rel="stylesheet" href="/public/css/memberships.css">
+    <link rel="stylesheet" href="/public/css/fontawesome-free-6.7.2-web/css/all.css">
     <script src="/public/js/memberships.js" defer></script>
 </head>
 <body>
     <h1>Абонементы</h1>
+    <div class="tools">
+        <div class="button-box">
+            <button id="add-membership" class="button"><i class="fa-solid fa-plus"></i></button>
+        </div>
+    </div>
 
-    <!-- Таблица для отображения абонементов -->
     <table id="gymMembershipsTable">
         <thead>
         <tr>
@@ -24,32 +29,5 @@
         <tbody></tbody>
     </table>
 
-    <!-- Форма для добавления или редактирования абонементов -->
-    <form id="membershipForm">
-        <h2>Добавить/Изменить абонемент</h2>
-        <div class = "box">
-            <select id="type" required>
-                <option value="">Тип абонемента</option>
-                <option value="дневной">Дневной</option>
-                <option value="стандарт">Стандарт</option>
-                <option value="безлимит">Безлимит</option>
-            </select>
-            <select id="duration" required>
-                <option value="">Длительность</option>
-                <option value="разовый">Разовый</option>
-                <option value="1 месяц">1 месяц</option>
-                <option value="3 месяца">3 месяца</option>
-                <option value="6 месяцев">6 месяцев</option>
-                <option value="1 год">1 год</option>
-            </select>
-            <input type="number" id="price" placeholder="Цена" required>
-            <select id="specialGroup" required>
-                <option value="">Группа</option>
-                <option value="стандарт">Стандарт</option>
-                <option value="золотой возраст">Золотой возраст</option>
-            </select>
-        </div>
-        <button type="submit">Сохранить</button>
-    </form>
 </body>
 </html>

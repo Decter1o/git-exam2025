@@ -5,12 +5,16 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Document</title>
     <link rel="stylesheet" href="/public/css/training_types.css">
+    <link rel="stylesheet" href="/public/css/fontawesome-free-6.7.2-web/css/all.css">
     <script src="/public/js/training_types.js" defer></script>
 </head>
 <body>
     <h1>Тренировки</h1>
-    
-    <!-- Таблица для отображения абонементов -->
+    <div class="tools">
+        <div class="button-box">
+            <button id="add-training-type" class="button"><i class="fa-solid fa-plus"></i></button>
+        </div>
+    </div>
     <table id="trainingTypesTable">
         <thead>
         <tr>
@@ -22,13 +26,13 @@
         <tbody></tbody>
     </table>
 
-    <form id="trainingTypesForm">
+    <!-- <form id="trainingTypesForm">
         <h2>Добавить/изменить тренировку</h2>
         <div class="box">
             <input type="text" id="name" placeholder="Название тренировки" required>
             <textarea type="text" id="description" placeholder="Описание тренировки" required></textarea>
         </div>
         <button type="submit">Сохранить</button>
-    </form>
+    </form> -->
 </body>
 </html>
