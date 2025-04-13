@@ -1,37 +1,57 @@
 // Загружаем абонементы из localStorage
 function loadTrainingTypes() {
-    let training_types = JSON.parse(localStorage.getItem('training_types')) || [];
-    let tableBody = document.querySelector('#trainingTypesTable tbody');
-    tableBody.innerHTML = ''; // Очищаем таблицу перед обновлением
+    let dbRequest = indexedDB.open('FitnessFamyli', 1);
+    
+    dbRequest.onsuccess = function(event) {
+        let db = event.target.result;
+        let transaction = db.transaction('training_types', 'readonly');
+        let store = transaction.objectStore('training_types');
+        let getAllRequest = store.getAll();
 
-    training_types.forEach(training_type => {
-        let row = document.createElement('tr');
+        getAllRequest.onsuccess = function() {
+            let training_types = getAllRequest.result; 
 
-        let nameCell = document.createElement('td');
-        nameCell.textContent = training_type.name;
-        row.appendChild(nameCell);
+            let tableBody = document.querySelector('#trainingTypesTable tbody');
+            tableBody.innerHTML = ''; // Очищаем таблицу перед обновлением
 
-        let descriptionCell = document.createElement('td');
-        descriptionCell.textContent = training_type.description;
-        row.appendChild(descriptionCell);
+            training_types.forEach(training_type => {
+                let row = document.createElement('tr');
 
-        // Кнопки для редактирования и удаления
-        let actionCell = document.createElement('td');
-        let editButton = document.createElement('button');
-        editButton.innerHTML = '<i class="fa-solid fa-pen"></i>';
-        editButton.classList.add('edit-button', 'button');
-        editButton.onclick = () => UpdateTrainingType(training_type);
-        actionCell.appendChild(editButton);
+                let nameCell = document.createElement('td');
+                nameCell.textContent = training_type.name;
+                row.appendChild(nameCell);
 
-        let deleteButton = document.createElement('button');
-        deleteButton.innerHTML = '<i class="fa-solid fa-trash"></i>';
-        deleteButton.classList.add('delete-button', 'button');
-        deleteButton.onclick = () => DeleteTrainigType(training_type.id);
-        actionCell.appendChild(deleteButton);
+                let descriptionCell = document.createElement('td');
+                descriptionCell.textContent = training_type.description;
+                row.appendChild(descriptionCell);
 
-        row.appendChild(actionCell);
-        tableBody.appendChild(row);
-    });
+                // Кнопки для редактирования и удаления
+                let actionCell = document.createElement('td');
+                let editButton = document.createElement('button');
+                editButton.innerHTML = '<i class="fa-solid fa-pen"></i>';
+                editButton.classList.add('edit-button', 'button');
+                editButton.onclick = () => UpdateTrainingType(training_type);
+                actionCell.appendChild(editButton);
+
+                let deleteButton = document.createElement('button');
+                deleteButton.innerHTML = '<i class="fa-solid fa-trash"></i>';
+                deleteButton.classList.add('delete-button', 'button');
+                deleteButton.onclick = () => DeleteTrainigType(training_type.id);
+                actionCell.appendChild(deleteButton);
+
+                row.appendChild(actionCell);
+                tableBody.appendChild(row);
+            });
+        };
+
+        getAllRequest.onerror = function(event) {
+            console.error('Ошибка получения данных из IndexedDB:', event.target.error);
+        };
+    };
+
+    dbRequest.onerror = function(event) {
+        console.error('Ошибка при открытии базы данных:', event.target.error);
+    };
 }
 
 document.addEventListener('DOMContentLoaded', loadTrainingTypes); 
@@ -64,13 +84,26 @@ function AddTrainingType() {
             let description = document.getElementById('description').value;
 
             if (name && description) {
-                let training_types = JSON.parse(localStorage.getItem('training_types')) || [];
                 let id = crypto.randomUUID();
 
                 let training_type = { id, name, description };
 
-                training_types.push(training_type);
-                localStorage.setItem('training_types', JSON.stringify(training_types));
+                let dbRequest = indexedDB.open('FitnessFamyli', 1);
+    
+                dbRequest.onsuccess = function(event) {
+                    let db = event.target.result;
+                    let transaction = db.transaction('training_types', 'readwrite');
+                    let store = transaction.objectStore('training_types');
+
+                    store.put(training_type);
+                    transaction.oncomplete = function() {
+                        console.log('succes');
+                    };
+                    transaction.onerror = function(event) {
+                        console.error('error', event.target.error);
+                    };
+                
+                }
 
                 let requestData = {
                     platform: "website",
@@ -94,7 +127,7 @@ function AddTrainingType() {
     }
 }
 
-function UpdateTrainingType(trainingType) {
+function UpdateTrainingType(training_type) {
     let form = document.querySelector('.trainingTypeForm');
 
     if (form) {
@@ -115,8 +148,8 @@ function UpdateTrainingType(trainingType) {
         document.body.appendChild(form);
 
         // Заполняем поля формы
-        document.getElementById('name').value = trainingType.name;
-        document.getElementById('description').value = trainingType.description;
+        document.getElementById('name').value = training_type.name;
+        document.getElementById('description').value = training_type.description;
     
         // Добавляем обработчик для кнопки "Сохранить"
         form.querySelector('.update-submit-button').addEventListener('click', () => {
@@ -124,21 +157,32 @@ function UpdateTrainingType(trainingType) {
             let description = document.getElementById('description').value;
 
             if (name && description) {
-                trainingType.name = name;
-                trainingType.description = description;
+                training_type.name = name;
+                training_type.description = description;
 
-                let training_types = JSON.parse(localStorage.getItem('training_types')) || [];
-                let index = training_types.findIndex(m => m.id === trainingType.id);
-                training_types[index] = trainingType;
+                let dbRequest = indexedDB.open('FitnessFamyli', 1);
+    
+                dbRequest.onsuccess = function(event) {
+                    let db = event.target.result;
+                    let transaction = db.transaction('training_types', 'readwrite');
+                    let store = transaction.objectStore('training_types');
 
-                localStorage.setItem('training_types', JSON.stringify(training_types));
+                    store.put(training_type);
+                    transaction.oncomplete = function() {
+                        console.log('succes');
+                    };
+                    transaction.onerror = function(event) {
+                        console.error('error', event.target.error);
+                    };
+                
+                }
 
                 let requestData = {
                     platform: "website",
                     action: "update_training_type",
-                    id: trainingType.id,
-                    name: trainingType.name,
-                    description: trainingType.description,
+                    id: training_type.id,
+                    name: training_type.name,
+                    description: training_type.description,
                 };
 
                 sendRequest('POST', requestData);
@@ -185,21 +229,34 @@ function DeleteTrainigType(id) {
         return; // Если пользователь отменил, выходим из функции
     }
 
-    let training_types = JSON.parse(localStorage.getItem('training_types')) || [];
-    training_type = training_types.filter(tt => tt.id !== id);
-    localStorage.setItem('training_types', JSON.stringify(training_type));
+    let dbRequest = indexedDB.open('FitnessFamyli', 1);
 
-    // Формируем JSON-объект для отправки запроса на удаление
-    let requestData = {
-        platform: "website",
-        action: "delete_training_type",
-        id: id
+    dbRequest.onsuccess = function(event) {
+        let db = event.target.result;
+        let transaction = db.transaction('training_types', 'readwrite');
+        let store = transaction.objectStore('training_types');
+
+        store.delete(id);
+        transaction.oncomplete = function() {
+            // Формируем JSON-объект для отправки запроса на удаление
+            let requestData = {
+                platform: "website",
+                action: "delete_training_type",
+                id: id
+            };
+
+            // Отправляем запрос на сервер для удаления
+            sendRequest('POST', requestData);
+
+            // Перезагружаем таблицу
+            loadTrainingTypes();
+            alert('Абонемент успешно удалён!');
+        };
+        transaction.onerror = function(event) {
+            console.error('Ошибка при удалении абонемента:', event.target.error);
+        };
     };
 
-    // Отправляем запрос на сервер для удаления
-    sendRequest('POST', requestData);
-
-    // Перезагружаем таблицу
-    loadTrainingTypes();
+    
 }
 

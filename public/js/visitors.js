@@ -300,22 +300,39 @@ function UpdateUserForm(visitor) {
 document.getElementById('add-user').addEventListener('click', AddUserForm);
 
 function populateMembershipOptions() {
-    // Получаем элемент <select> по его ID
-    let membershipSelect = document.getElementById('membership');
+    let dbRequest = indexedDB.open('FitnessFamyli', 1);
+    
+    dbRequest.onsuccess = function(event) {
+        let db = event.target.result;
+        let transaction = db.transaction('gym_memberships', 'readonly');
+        let store = transaction.objectStore('gym_memberships');
+        let getAllRequest = store.getAll();
 
-    // Получаем данные из localStorage
-    let memberships = JSON.parse(localStorage.getItem('gym_memberships')) || [];
+        getAllRequest.onsuccess = function() {
+            let memberships = getAllRequest.result; 
+            
+            // Получаем элемент <select> по его ID
+            let membershipSelect = document.getElementById('membership');
+            // Очищаем существующие опции
+            membershipSelect.innerHTML = '<option value="">Выберите абонемент</option>';
+        
+            // Добавляем новые опции из localStorage
+            memberships.forEach(membership => {
+                let option = document.createElement('option');
+                option.value = membership.id; // Устанавливаем значение (например, ID абонемента)
+                option.textContent = membership.type + ', ' + membership.duration + ', ' + membership.price + ', ' + membership.specialGroup; // Устанавливаем текст (например, название абонемента)
+                membershipSelect.appendChild(option); // Добавляем опцию в <select>
+            });
+        };
 
-    // Очищаем существующие опции
-    membershipSelect.innerHTML = '<option value="">Выберите абонемент</option>';
+        getAllRequest.onerror = function(event) {
+            console.error('Ошибка получения данных из IndexedDB:', event.target.error);
+        };
+    };
 
-    // Добавляем новые опции из localStorage
-    memberships.forEach(membership => {
-        let option = document.createElement('option');
-        option.value = membership.id; // Устанавливаем значение (например, ID абонемента)
-        option.textContent = membership.type + ', ' + membership.duration + ', ' + membership.price + ', ' + membership.specialGroup; // Устанавливаем текст (например, название абонемента)
-        membershipSelect.appendChild(option); // Добавляем опцию в <select>
-    });
+    dbRequest.onerror = function(event) {
+        console.error('Ошибка при открытии базы данных:', event.target.error);
+    };
 }
 
 // Вызываем функцию после загрузки формы
@@ -348,37 +365,54 @@ function sendRequest(method, data) {
 }
 
 function deleteVisitor(visitorId) {
-    // Показываем подтверждение удаления
     if (!confirm('Вы уверены, что хотите удалить этого посетителя?')) {
-        return; // Если пользователь отменил, выходим из функции
+        return;
     }
 
-    // Получаем данные из localStorage
-    let visitors = JSON.parse(localStorage.getItem('visitors')) || [];
-    let visitor_memberships = JSON.parse(localStorage.getItem('visitors_memberships')) || [];
+    let dbRequest = indexedDB.open('FitnessFamyli', 1);
 
-    // Удаляем посетителя и его абонемент
-    visitors = visitors.filter(visitor => visitor.id !== visitorId);
-    visitor_memberships = visitor_memberships.filter(vm => vm.visitorId !== visitorId);
+    dbRequest.onsuccess = function(event) {
+        let db = event.target.result;
+        let transaction = db.transaction(['visitors', 'visitors_memberships'], 'readwrite');
+        let visitorsStore = transaction.objectStore('visitors');
+        let membershipsStore = transaction.objectStore('visitors_memberships');
 
-    // Формируем JSON-объект для отправки запроса на удаление
-    let requestData = {
-        platform: "website",
-        action: "delete_visitor",
-        id: visitorId
+        // Удаление из stores
+        visitorsStore.delete(visitorId);
+
+        // Для удаления записи из visitors_memberships по visitorId, нужно пройтись по записям
+        let index = membershipsStore.index('visitorId'); // Убедись, что индекс visitorId существует
+        let request = index.getAllKeys(visitorId);
+
+        request.onsuccess = function() {
+            let keys = request.result;
+            keys.forEach(key => {
+                membershipsStore.delete(key);
+            });
+        };
+
+        transaction.oncomplete = function() {
+            let requestData = {
+                platform: "website",
+                action: "delete_visitor",
+                id: visitorId
+            };
+            sendRequest('POST', requestData);
+            alert('Посетитель удален');
+            loadVisitors(); // Перезагружаем таблицу
+        };
+
+        transaction.onerror = function(event) {
+            console.error('Ошибка при удалении:', event.target.error);
+            alert('Ошибка при удалении посетителя');
+        };
     };
 
-    // Отправляем запрос на сервер для удаления
-    sendRequest('POST', requestData);
-
-    // Сохраняем обновленные данные в localStorage
-    localStorage.setItem('visitors', JSON.stringify(visitors));
-    localStorage.setItem('visitors_memberships', JSON.stringify(visitor_memberships));
-
-    // Обновляем таблицу
-    loadVisitors();
-    alert('Посетитель удален');
+    dbRequest.onerror = function(event) {
+        console.error('Ошибка при открытии базы данных:', event.target.error);
+    };
 }
+
 
 function SearchVisitor() {
     let searchInput = document.getElementById('search-input').value.toLowerCase();

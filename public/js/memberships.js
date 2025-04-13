@@ -1,46 +1,66 @@
 // Загружаем абонементы из localStorage
 function loadGymMemberships() {
-    let memberships = JSON.parse(localStorage.getItem('gym_memberships')) || [];
-    let tableBody = document.querySelector('#gymMembershipsTable tbody');
-    tableBody.innerHTML = ''; // Очищаем таблицу перед обновлением
+    let dbRequest = indexedDB.open('FitnessFamyli', 1);
+    
+    dbRequest.onsuccess = function(event) {
+        let db = event.target.result;
+        let transaction = db.transaction('gym_memberships', 'readonly');
+        let store = transaction.objectStore('gym_memberships');
+        let getAllRequest = store.getAll();
 
-    memberships.forEach(membership => {
-        let row = document.createElement('tr');
+        getAllRequest.onsuccess = function() {
+            let memberships = getAllRequest.result; 
 
-        let typeCell = document.createElement('td');
-        typeCell.textContent = membership.type;
-        row.appendChild(typeCell);
+            let tableBody = document.querySelector('#gymMembershipsTable tbody');
+            tableBody.innerHTML = ''; // Очищаем таблицу перед обновлением
 
-        let durationCell = document.createElement('td');
-        durationCell.textContent = membership.duration;
-        row.appendChild(durationCell);
+            memberships.forEach(membership => {
+                let row = document.createElement('tr');
 
-        let priceCell = document.createElement('td');
-        priceCell.textContent = membership.price;
-        row.appendChild(priceCell);
+                let typeCell = document.createElement('td');
+                typeCell.textContent = membership.type;
+                row.appendChild(typeCell);
 
-        let groupCell = document.createElement('td');
-        groupCell.textContent = membership.specialGroup;
-        row.appendChild(groupCell);
+                let durationCell = document.createElement('td');
+                durationCell.textContent = membership.duration;
+                row.appendChild(durationCell);
 
-        // Кнопки для редактирования и удаления
-        let actionCell = document.createElement('td');
-        let editButton = document.createElement('button');
-        editButton.innerHTML = '<i class="fa-solid fa-pen"></i>';
-        editButton.classList.add('edit-button', 'button');
-        editButton.onclick = () => UpdateMembershipForm(membership);
-        actionCell.appendChild(editButton);
+                let priceCell = document.createElement('td');
+                priceCell.textContent = membership.price;
+                row.appendChild(priceCell);
 
-        let deleteButton = document.createElement('button');
-        deleteButton.innerHTML = '<i class="fa-solid fa-trash"></i>';
-        deleteButton.classList.add('delete-button', 'button');
-        deleteButton.onclick = () => DeleteMembership(membership.id);
-        actionCell.appendChild(deleteButton);
+                let groupCell = document.createElement('td');
+                groupCell.textContent = membership.specialGroup;
+                row.appendChild(groupCell);
 
-        row.appendChild(actionCell);
-        tableBody.appendChild(row);
-    });
+                let actionCell = document.createElement('td');
+                let editButton = document.createElement('button');
+                editButton.innerHTML = '<i class="fa-solid fa-pen"></i>';
+                editButton.classList.add('edit-button', 'button');
+                editButton.onclick = () => UpdateMembershipForm(membership);
+                actionCell.appendChild(editButton);
+
+                let deleteButton = document.createElement('button');
+                deleteButton.innerHTML = '<i class="fa-solid fa-trash"></i>';
+                deleteButton.classList.add('delete-button', 'button');
+                deleteButton.onclick = () => DeleteMembership(membership.id);
+                actionCell.appendChild(deleteButton);
+
+                row.appendChild(actionCell);
+                tableBody.appendChild(row);
+            });
+        };
+
+        getAllRequest.onerror = function(event) {
+            console.error('Ошибка получения данных из IndexedDB:', event.target.error);
+        };
+    };
+
+    dbRequest.onerror = function(event) {
+        console.error('Ошибка при открытии базы данных:', event.target.error);
+    };
 }
+
 
 // Инициализация таблицы при загрузке страницы
 document.addEventListener('DOMContentLoaded', loadGymMemberships);
@@ -93,14 +113,26 @@ function AddMembershipForm() {
             let specialGroup = document.getElementById('specialGroup').value;
 
             if (type && duration && price && specialGroup) {
-                let memberships = JSON.parse(localStorage.getItem('gym_memberships')) || [];
                 let id = crypto.randomUUID();
-
                 let membership = { id, type, duration, price, specialGroup };
 
-                memberships.push(membership);
-                localStorage.setItem('gym_memberships', JSON.stringify(memberships));
+                let dbRequest = indexedDB.open('FitnessFamyli', 1);
+    
+                dbRequest.onsuccess = function(event) {
+                    let db = event.target.result;
+                    let transaction = db.transaction('gym_memberships', 'readwrite');
+                    let store = transaction.objectStore('gym_memberships');
 
+                    store.put(membership);
+                    transaction.oncomplete = function() {
+                        console.log('succes');
+                    };
+                    transaction.onerror = function(event) {
+                        console.error('error', event.target.error);
+                    };
+                
+                }
+        
                 let requestData = {
                     platform: "website",
                     action: "add_membership",
@@ -182,11 +214,23 @@ function UpdateMembershipForm(membership) {
                 membership.price = price;
                 membership.specialGroup = specialGroup;
 
-                let memberships = JSON.parse(localStorage.getItem('gym_memberships')) || [];
-                let index = memberships.findIndex(m => m.id === membership.id);
-                memberships[index] = membership;
+                
+                let dbRequest = indexedDB.open('FitnessFamyli', 1);
+    
+                dbRequest.onsuccess = function(event) {
+                    let db = event.target.result;
+                    let transaction = db.transaction('gym_memberships', 'readwrite');
+                    let store = transaction.objectStore('gym_memberships');
 
-                localStorage.setItem('gym_memberships', JSON.stringify(memberships));
+                    store.put(membership);
+                    transaction.oncomplete = function() {
+                        console.log('succes');
+                    };
+                    transaction.onerror = function(event) {
+                        console.error('error', event.target.error);
+                    };
+                
+                }
 
                 let requestData = {
                     platform: "website",
@@ -242,21 +286,32 @@ function DeleteMembership(id) {
         return; // Если пользователь отменил, выходим из функции
     }
 
+    let dbRequest = indexedDB.open('FitnessFamyli', 1);
 
-    let memberships = JSON.parse(localStorage.getItem('gym_memberships')) || [];
-    memberships = memberships.filter(m => m.id !== id);
-    localStorage.setItem('gym_memberships', JSON.stringify(memberships));
+    dbRequest.onsuccess = function(event) {
+        let db = event.target.result;
+        let transaction = db.transaction('gym_memberships', 'readwrite');
+        let store = transaction.objectStore('gym_memberships');
 
-    // Формируем JSON-объект для отправки запроса на удаление
-    let requestData = {
-        platform: "website",
-        action: "delete_membership",
-        id: id
+        store.delete(id);
+        transaction.oncomplete = function() {
+            // Формируем JSON-объект для отправки запроса на удаление
+            let requestData = {
+                platform: "website",
+                action: "delete_membership",
+                id: id
+            };
+        
+            // Отправляем запрос на сервер для удаления
+            sendRequest('POST', requestData);
+        
+            // Перезагружаем таблицу
+            loadGymMemberships();
+            alert('Абонемент успешно удалён!');
+        };
+        transaction.onerror = function(event) {
+            console.error('Ошибка при удалении абонемента:', event.target.error);
+        };
     };
 
-    // Отправляем запрос на сервер для удаления
-    sendRequest('POST', requestData);
-
-    // Перезагружаем таблицу
-    loadGymMemberships();
 }

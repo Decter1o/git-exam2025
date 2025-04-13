@@ -33,12 +33,45 @@
     .then(data => {
         if (data.success) {
             delete data.success;
-            localStorage.setItem('visitors', JSON.stringify(data.visitors));
-            localStorage.setItem('gym_memberships', JSON.stringify(data.gym_memberships));
-            localStorage.setItem('visitors_memberships', JSON.stringify(data.visitors_memberships));
-            localStorage.setItem('training_types', JSON.stringify(data.training_types));
-            localStorage.setItem('schedule', JSON.stringify(data.schedule));
-            window.location.href = '/public/pages/main.html'; // Замените '/dashboard' на нужный URL
+            // IndexedDB example
+            let dbRequest = indexedDB.open('FitnessFamyli', 1); // Увеличь версию, если уже создавал
+
+            dbRequest.onupgradeneeded = function(event) {
+                let db = event.target.result;
+                Object.keys(data).forEach(key => {
+                    if (!db.objectStoreNames.contains(key)) {
+                        db.createObjectStore(key, { keyPath: 'id', autoIncrement: true });
+                    }
+                });
+            };
+
+            dbRequest.onsuccess = function(event) {
+                let db = event.target.result;
+                Object.keys(data).forEach(key => {
+                    let transaction = db.transaction(key, 'readwrite');
+                    let store = transaction.objectStore(key);
+
+                    store.clear(); // очищаем перед добавлением
+
+                    data[key].forEach(item => {
+                        store.put(item);
+                    });
+
+                    transaction.oncomplete = function() {
+                        console.log(`Data for "${key}" stored successfully.`);
+                    };
+
+                    transaction.onerror = function(event) {
+                        console.error(`Error storing "${key}" in IndexedDB:`, event.target.error);
+                    };
+                });
+            };
+
+            dbRequest.onerror = function(event) {
+                console.error('Error opening IndexedDB:', event.target.error);
+            };
+
+            window.location.href = '/public/pages/main.html';
         } else {
         // Если данные неверны, показываем сообщение об ошибке
             document.getElementById('errorMessage').textContent = 'Invalid credentials';
