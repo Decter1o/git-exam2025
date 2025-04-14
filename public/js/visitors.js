@@ -133,6 +133,8 @@ function AddUserForm() {
 
         form.querySelector('.close-button').addEventListener('click', () => form.remove());
 
+        populateMembershipOptions();
+
         form.querySelector('.add-submit-button').addEventListener('click', () => {
             let dbRequest = indexedDB.open('FitnessFamyli', 1);
 
@@ -155,6 +157,7 @@ function AddUserForm() {
 
                 if (name && phone_number && surname && membershipId) {
                     membershipsStore.get(membershipId).onsuccess = function(event) {
+                        let status = 1;
                         let membership = event.target.result;
                         let visitsLeft = 0;
 
@@ -178,7 +181,7 @@ function AddUserForm() {
                                 break;
                         }
 
-                        let visitor = { id, name, surname, phone_number };
+                        let visitor = { id, name, surname, phone_number, status};
                         visitorsStore.add(visitor);
 
                         let visitor_membership = { id: visitor_membership_id, visitorId: id, membershipId, visitsLeft };
@@ -382,7 +385,7 @@ function populateMembershipOptions() {
                 memberships.forEach(membership => {
                     let option = document.createElement('option');
                     option.value = membership.id;
-                    option.textContent = `${membership.type}, ${membership.duration}, ${membership.price}, ${membership.specialGroup}`;
+                    option.textContent = `${membership.type}, ${membership.duration}, ${membership.price.replace(".00", " тг")}, ${membership.specialGroup}`;
                     membershipSelect.appendChild(option);
                 });
 

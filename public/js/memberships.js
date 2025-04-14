@@ -62,39 +62,41 @@ function loadGymMemberships() {
             tableBody.innerHTML = ''; // Очищаем таблицу перед обновлением
 
             memberships.forEach(membership => {
-                let row = document.createElement('tr');
+                if(membership.type != "нет абонемента"){
+                    let row = document.createElement('tr');
 
-                let typeCell = document.createElement('td');
-                typeCell.textContent = membership.type;
-                row.appendChild(typeCell);
+                    let typeCell = document.createElement('td');
+                    typeCell.textContent = membership.type;
+                    row.appendChild(typeCell);
 
-                let durationCell = document.createElement('td');
-                durationCell.textContent = membership.duration;
-                row.appendChild(durationCell);
+                    let durationCell = document.createElement('td');
+                    durationCell.textContent = membership.duration;
+                    row.appendChild(durationCell);
 
-                let priceCell = document.createElement('td');
-                priceCell.textContent = membership.price.replace(".00", " тг");;
-                row.appendChild(priceCell);
+                    let priceCell = document.createElement('td');
+                    priceCell.textContent = membership.price.replace(".00", " тг");
+                    row.appendChild(priceCell);
 
-                let groupCell = document.createElement('td');
-                groupCell.textContent = membership.specialGroup;
-                row.appendChild(groupCell);
+                    let groupCell = document.createElement('td');
+                    groupCell.textContent = membership.specialGroup;
+                    row.appendChild(groupCell);
 
-                let actionCell = document.createElement('td');
-                let editButton = document.createElement('button');
-                editButton.innerHTML = '<i class="fa-solid fa-pen"></i>';
-                editButton.classList.add('edit-button', 'button');
-                editButton.onclick = () => UpdateMembershipForm(membership);
-                actionCell.appendChild(editButton);
+                    let actionCell = document.createElement('td');
+                    let editButton = document.createElement('button');
+                    editButton.innerHTML = '<i class="fa-solid fa-pen"></i>';
+                    editButton.classList.add('edit-button', 'button');
+                    editButton.onclick = () => UpdateMembershipForm(membership);
+                    actionCell.appendChild(editButton);
 
-                let deleteButton = document.createElement('button');
-                deleteButton.innerHTML = '<i class="fa-solid fa-trash"></i>';
-                deleteButton.classList.add('delete-button', 'button');
-                deleteButton.onclick = () => DeleteMembership(membership.id);
-                actionCell.appendChild(deleteButton);
+                    let deleteButton = document.createElement('button');
+                    deleteButton.innerHTML = '<i class="fa-solid fa-trash"></i>';
+                    deleteButton.classList.add('delete-button', 'button');
+                    deleteButton.onclick = () => DeleteMembership(membership.id);
+                    actionCell.appendChild(deleteButton);
 
-                row.appendChild(actionCell);
-                tableBody.appendChild(row);
+                    row.appendChild(actionCell);
+                    tableBody.appendChild(row);
+                }
             });
         };
 
@@ -131,39 +133,41 @@ document.addEventListener('DOMContentLoaded', () => {
                     tableBody.innerHTML = '';
                     
                     sortedMemberships.forEach(membership => {
-                        let row = document.createElement('tr');
-                        
-                        let typeCell = document.createElement('td');
-                        typeCell.textContent = membership.type;
-                        row.appendChild(typeCell);
-
-                        let durationCell = document.createElement('td');
-                        durationCell.textContent = membership.duration;
-                        row.appendChild(durationCell);
-
-                        let priceCell = document.createElement('td');
-                        priceCell.textContent = membership.price.replace(".00", " тг");
-                        row.appendChild(priceCell);
-
-                        let groupCell = document.createElement('td');
-                        groupCell.textContent = membership.specialGroup;
-                        row.appendChild(groupCell);
-
-                        let actionCell = document.createElement('td');
-                        let editButton = document.createElement('button');
-                        editButton.innerHTML = '<i class="fa-solid fa-pen"></i>';
-                        editButton.classList.add('edit-button', 'button');
-                        editButton.onclick = () => UpdateMembershipForm(membership);
-                        actionCell.appendChild(editButton);
-
-                        let deleteButton = document.createElement('button');
-                        deleteButton.innerHTML = '<i class="fa-solid fa-trash"></i>';
-                        deleteButton.classList.add('delete-button', 'button');
-                        deleteButton.onclick = () => DeleteMembership(membership.id);
-                        actionCell.appendChild(deleteButton);
-
-                        row.appendChild(actionCell);
-                        tableBody.appendChild(row);
+                        if(membership.type != "нет абонемента"){
+                            let row = document.createElement('tr');
+        
+                            let typeCell = document.createElement('td');
+                            typeCell.textContent = membership.type;
+                            row.appendChild(typeCell);
+        
+                            let durationCell = document.createElement('td');
+                            durationCell.textContent = membership.duration;
+                            row.appendChild(durationCell);
+        
+                            let priceCell = document.createElement('td');
+                            priceCell.textContent = membership.price.replace(".00", " тг");
+                            row.appendChild(priceCell);
+        
+                            let groupCell = document.createElement('td');
+                            groupCell.textContent = membership.specialGroup;
+                            row.appendChild(groupCell);
+        
+                            let actionCell = document.createElement('td');
+                            let editButton = document.createElement('button');
+                            editButton.innerHTML = '<i class="fa-solid fa-pen"></i>';
+                            editButton.classList.add('edit-button', 'button');
+                            editButton.onclick = () => UpdateMembershipForm(membership);
+                            actionCell.appendChild(editButton);
+        
+                            let deleteButton = document.createElement('button');
+                            deleteButton.innerHTML = '<i class="fa-solid fa-trash"></i>';
+                            deleteButton.classList.add('delete-button', 'button');
+                            deleteButton.onclick = () => DeleteMembership(membership.id);
+                            actionCell.appendChild(deleteButton);
+        
+                            row.appendChild(actionCell);
+                            tableBody.appendChild(row);
+                        }
                     });
                 };
             };
@@ -548,40 +552,42 @@ function AddFilterForm() {
                     tableBody.innerHTML = '';
                     
                     filteredMemberships.forEach(membership => {
-                        let row = document.createElement('tr');
-                        
-                        let typeCell = document.createElement('td');
-                        typeCell.textContent = membership.type;
-                        row.appendChild(typeCell);
-
-                        let durationCell = document.createElement('td');
-                        durationCell.textContent = membership.duration;
-                        row.appendChild(durationCell);
-
-                        let priceCell = document.createElement('td');
-                        priceCell.textContent = membership.price.replace(".00", " тг");
-                        row.appendChild(priceCell);
-
-                        let groupCell = document.createElement('td');
-                        groupCell.textContent = membership.specialGroup;
-                        row.appendChild(groupCell);
-
-                        let actionCell = document.createElement('td');
-                        let editButton = document.createElement('button');
-                        editButton.innerHTML = '<i class="fa-solid fa-pen"></i>';
-                        editButton.classList.add('edit-button', 'button');
-                        editButton.onclick = () => UpdateMembershipForm(membership);
-                        actionCell.appendChild(editButton);
-
-                        let deleteButton = document.createElement('button');
-                        deleteButton.innerHTML = '<i class="fa-solid fa-trash"></i>';
-                        deleteButton.classList.add('delete-button', 'button');
-                        deleteButton.onclick = () => DeleteMembership(membership.id);
-                        actionCell.appendChild(deleteButton);
-
-                        row.appendChild(actionCell);
-                        tableBody.appendChild(row);
-                        form.remove();
+                        if(membership.type != "нет абонемента"){
+                            let row = document.createElement('tr');
+        
+                            let typeCell = document.createElement('td');
+                            typeCell.textContent = membership.type;
+                            row.appendChild(typeCell);
+        
+                            let durationCell = document.createElement('td');
+                            durationCell.textContent = membership.duration;
+                            row.appendChild(durationCell);
+        
+                            let priceCell = document.createElement('td');
+                            priceCell.textContent = membership.price.replace(".00", " тг");
+                            row.appendChild(priceCell);
+        
+                            let groupCell = document.createElement('td');
+                            groupCell.textContent = membership.specialGroup;
+                            row.appendChild(groupCell);
+        
+                            let actionCell = document.createElement('td');
+                            let editButton = document.createElement('button');
+                            editButton.innerHTML = '<i class="fa-solid fa-pen"></i>';
+                            editButton.classList.add('edit-button', 'button');
+                            editButton.onclick = () => UpdateMembershipForm(membership);
+                            actionCell.appendChild(editButton);
+        
+                            let deleteButton = document.createElement('button');
+                            deleteButton.innerHTML = '<i class="fa-solid fa-trash"></i>';
+                            deleteButton.classList.add('delete-button', 'button');
+                            deleteButton.onclick = () => DeleteMembership(membership.id);
+                            actionCell.appendChild(deleteButton);
+        
+                            row.appendChild(actionCell);
+                            tableBody.appendChild(row);
+                            form.remove();
+                        }
                     });
                 };
             };
