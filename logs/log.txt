@@ -1225,3 +1225,345 @@ Response: {"success":true,"status":0,"message":"Visitor user blocked successfull
 [2025-04-14 13:31:25] Request: {"platform":"website","action":"unblock_visitor","id":"3046d579-45b1-433f-af64-05a18c099bd4"}
 Response: {"success":true,"status":1,"message":"Visitor user unblocked successfully"}
 ----------------------------------------
+[2025-04-14 14:58:10] Request: {"platform":"website","action":"block_visitor","id":"3046d579-45b1-433f-af64-05a18c099bd4"}
+Response: {"success":true,"status":0,"message":"Visitor user blocked successfully"}
+----------------------------------------
+[2025-04-14 14:58:25] Request: {"platform":"website","action":"block_visitor","id":"8b0a1c85-d3be-43b5-9419-f395499ce2a5"}
+Response: {"success":true,"status":0,"message":"Visitor user blocked successfully"}
+----------------------------------------
+[2025-04-14 14:59:41] Request: {"platform":"website","action":"unblock_visitor","id":"3046d579-45b1-433f-af64-05a18c099bd4"}
+Response: {"success":true,"status":1,"message":"Visitor user unblocked successfully"}
+----------------------------------------
+[2025-04-14 14:59:42] Request: {"platform":"website","action":"block_visitor","id":"3046d579-45b1-433f-af64-05a18c099bd4"}
+Response: {"success":true,"status":0,"message":"Visitor user blocked successfully"}
+----------------------------------------
+[2025-04-14 14:59:42] Request: {"platform":"website","action":"unblock_visitor","id":"3046d579-45b1-433f-af64-05a18c099bd4"}
+Response: {"success":true,"status":1,"message":"Visitor user unblocked successfully"}
+----------------------------------------
+[2025-04-14 14:59:43] Request: {"platform":"website","action":"unblock_visitor","id":"8b0a1c85-d3be-43b5-9419-f395499ce2a5"}
+Response: {"success":true,"status":1,"message":"Visitor user unblocked successfully"}
+----------------------------------------
+[2025-04-14 14:59:44] Request: {"platform":"website","action":"block_visitor","id":"8b0a1c85-d3be-43b5-9419-f395499ce2a5"}
+Response: {"success":true,"status":0,"message":"Visitor user blocked successfully"}
+----------------------------------------
+[2025-04-14 14:59:44] Request: {"platform":"website","action":"unblock_visitor","id":"8b0a1c85-d3be-43b5-9419-f395499ce2a5"}
+Response: {"success":true,"status":1,"message":"Visitor user unblocked successfully"}
+----------------------------------------
+[2025-04-14 15:02:59] Request: {"platform":"website","action":"update_visitor","id":"3046d579-45b1-433f-af64-05a18c099bd4","name":"Кирилл","surname":"Трищ","phone_number":"78649523698","membershipId":"1730e531-c02b-4f78-9131-1eac5f19a1ef","visitor_membership_id":"7f2e0b55-1e01-421e-814b-bd81b3b9330d"}
+Response: {"success":true,"status":1,"message":"Visitor user updated successfully"}
+----------------------------------------
+[2025-04-14 15:03:11] Request: {"platform":"website","action":"update_visitor","id":"3046d579-45b1-433f-af64-05a18c099bd4","name":"Кирилл","surname":"Трищ","phone_number":"78649523698","membershipId":"13b3e12f-d329-4945-ae8b-06cddde96366","visitor_membership_id":"7f2e0b55-1e01-421e-814b-bd81b3b9330d"}
+Response: {"success":true,"status":1,"message":"Visitor user updated successfully"}
+----------------------------------------
+[2025-04-14 15:03:13] Request: {"platform":"website","action":"block_visitor","id":"3046d579-45b1-433f-af64-05a18c099bd4"}
+Response: {"success":true,"status":0,"message":"Visitor user blocked successfully"}
+----------------------------------------
+[2025-04-14 15:03:13] Request: {"platform":"website","action":"unblock_visitor","id":"3046d579-45b1-433f-af64-05a18c099bd4"}
+Response: {"success":true,"status":1,"message":"Visitor user unblocked successfully"}
+----------------------------------------
+[2025-04-14 15:11:38] Request: {"platform":"website","action":"block_visitor","id":"3046d579-45b1-433f-af64-05a18c099bd4"}
+Response: {"success":true,"status":0,"message":"Visitor user blocked successfully"}
+----------------------------------------
+[2025-04-14 15:11:39] Request: {"platform":"website","action":"unblock_visitor","id":"3046d579-45b1-433f-af64-05a18c099bd4"}
+Response: {"success":true,"status":1,"message":"Visitor user unblocked successfully"}
+----------------------------------------
+[2025-04-14 15:18:00] Request: {"platform":"website","action":"block_visitor","id":"3046d579-45b1-433f-af64-05a18c099bd4"}
+Response: {"success":true,"status":0,"message":"Visitor user blocked successfully"}
+----------------------------------------
+[2025-04-14 15:18:00] Request: {"platform":"website","action":"unblock_visitor","id":"3046d579-45b1-433f-af64-05a18c099bd4"}
+Response: {"success":true,"status":1,"message":"Visitor user unblocked successfully"}
+----------------------------------------
+[2025-04-14 15:18:05] Request: {"platform":"website","action":"block_visitor","id":"3046d579-45b1-433f-af64-05a18c099bd4"}
+Response: {"success":true,"status":0,"message":"Visitor user blocked successfully"}
+----------------------------------------
+[2025-04-14 15:18:14] Request: {"platform":"website","action":"unblock_visitor","id":"3046d579-45b1-433f-af64-05a18c099bd4"}
+Response: {"success":true,"status":1,"message":"Visitor user unblocked successfully"}
+----------------------------------------
+[2025-04-14 15:18:41] Request: {"platform":"website","action":"update_visitor","id":"3046d579-45b1-433f-af64-05a18c099bd4","name":"Кирилл","surname":"Трищ","phone_number":"78649523698","membershipId":"77be041a-191a-11f0-adc7-04922657b53c","visitor_membership_id":"7f2e0b55-1e01-421e-814b-bd81b3b9330d"}
+Response: {"success":true,"status":1,"message":"Visitor user updated successfully"}
+----------------------------------------
+[2025-04-14 15:18:55] Request: {"platform":"website","action":"update_visitor","id":"3046d579-45b1-433f-af64-05a18c099bd4","name":"Кирилл","surname":"Трищ","phone_number":"78649523698","membershipId":"13b3e12f-d329-4945-ae8b-06cddde96366","visitor_membership_id":"7f2e0b55-1e01-421e-814b-bd81b3b9330d"}
+Response: {"success":true,"status":1,"message":"Visitor user updated successfully"}
+----------------------------------------
+[2025-04-14 15:23:02] Request: {"platform":"website","action":"block_visitor","id":"3046d579-45b1-433f-af64-05a18c099bd4"}
+Response: {"success":true,"status":0,"message":"Visitor user blocked successfully"}
+----------------------------------------
+[2025-04-14 15:24:15] Request: {"platform":"website","action":"update_visitor","id":"3046d579-45b1-433f-af64-05a18c099bd4","name":"Кирилл","surname":"Трищ","phone_number":"78649523698","membershipId":"1730e531-c02b-4f78-9131-1eac5f19a1ef","visitor_membership_id":"7f2e0b55-1e01-421e-814b-bd81b3b9330d"}
+Response: {"success":true,"status":1,"message":"Visitor user updated successfully"}
+----------------------------------------
+[2025-04-14 15:24:25] Request: {"platform":"website","action":"unblock_visitor","id":"3046d579-45b1-433f-af64-05a18c099bd4"}
+Response: {"success":true,"status":1,"message":"Visitor user unblocked successfully"}
+----------------------------------------
+[2025-04-14 15:25:33] Request: {"platform":"website","action":"block_visitor","id":"3046d579-45b1-433f-af64-05a18c099bd4"}
+Response: {"success":true,"status":0,"message":"Visitor user blocked successfully"}
+----------------------------------------
+[2025-04-14 15:25:34] Request: {"platform":"website","action":"unblock_visitor","id":"3046d579-45b1-433f-af64-05a18c099bd4"}
+Response: {"success":true,"status":1,"message":"Visitor user unblocked successfully"}
+----------------------------------------
+[2025-04-14 15:25:57] Request: {"platform":"website","action":"block_visitor","id":"3046d579-45b1-433f-af64-05a18c099bd4"}
+Response: {"success":true,"status":0,"message":"Visitor user blocked successfully"}
+----------------------------------------
+[2025-04-14 15:25:58] Request: {"platform":"website","action":"unblock_visitor","id":"3046d579-45b1-433f-af64-05a18c099bd4"}
+Response: {"success":true,"status":1,"message":"Visitor user unblocked successfully"}
+----------------------------------------
+[2025-04-14 15:25:59] Request: {"platform":"website","action":"block_visitor","id":"3046d579-45b1-433f-af64-05a18c099bd4"}
+Response: {"success":true,"status":0,"message":"Visitor user blocked successfully"}
+----------------------------------------
+[2025-04-14 15:26:00] Request: {"platform":"website","action":"block_visitor","id":"8b0a1c85-d3be-43b5-9419-f395499ce2a5"}
+Response: {"success":true,"status":0,"message":"Visitor user blocked successfully"}
+----------------------------------------
+[2025-04-14 15:26:02] Request: {"platform":"website","action":"unblock_visitor","id":"8b0a1c85-d3be-43b5-9419-f395499ce2a5"}
+Response: {"success":true,"status":1,"message":"Visitor user unblocked successfully"}
+----------------------------------------
+[2025-04-14 15:26:02] Request: {"platform":"website","action":"unblock_visitor","id":"3046d579-45b1-433f-af64-05a18c099bd4"}
+Response: {"success":true,"status":1,"message":"Visitor user unblocked successfully"}
+----------------------------------------
+[2025-04-14 15:26:10] Request: {"platform":"website","action":"block_visitor","id":"3046d579-45b1-433f-af64-05a18c099bd4"}
+Response: {"success":true,"status":0,"message":"Visitor user blocked successfully"}
+----------------------------------------
+[2025-04-14 15:26:28] Request: {"platform":"website","action":"unblock_visitor","id":"3046d579-45b1-433f-af64-05a18c099bd4"}
+Response: {"success":true,"status":1,"message":"Visitor user unblocked successfully"}
+----------------------------------------
+[2025-04-14 15:26:49] Request: {"platform":"website","action":"block_visitor","id":"3046d579-45b1-433f-af64-05a18c099bd4"}
+Response: {"success":true,"status":0,"message":"Visitor user blocked successfully"}
+----------------------------------------
+[2025-04-14 15:26:52] Request: {"platform":"website","action":"unblock_visitor","id":"3046d579-45b1-433f-af64-05a18c099bd4"}
+Response: {"success":true,"status":1,"message":"Visitor user unblocked successfully"}
+----------------------------------------
+[2025-04-14 15:27:17] Request: {"platform":"website","action":"block_visitor","id":"3046d579-45b1-433f-af64-05a18c099bd4"}
+Response: {"success":true,"status":0,"message":"Visitor user blocked successfully"}
+----------------------------------------
+[2025-04-14 15:27:18] Request: {"platform":"website","action":"unblock_visitor","id":"3046d579-45b1-433f-af64-05a18c099bd4"}
+Response: {"success":true,"status":1,"message":"Visitor user unblocked successfully"}
+----------------------------------------
+[2025-04-14 15:27:19] Request: {"platform":"website","action":"block_visitor","id":"8b0a1c85-d3be-43b5-9419-f395499ce2a5"}
+Response: {"success":true,"status":0,"message":"Visitor user blocked successfully"}
+----------------------------------------
+[2025-04-14 15:27:20] Request: {"platform":"website","action":"block_visitor","id":"933bdb50-b3da-4a96-a3d5-18e2d2546b64"}
+Response: {"success":true,"status":0,"message":"Visitor user blocked successfully"}
+----------------------------------------
+[2025-04-14 15:27:20] Request: {"platform":"website","action":"unblock_visitor","id":"933bdb50-b3da-4a96-a3d5-18e2d2546b64"}
+Response: {"success":true,"status":1,"message":"Visitor user unblocked successfully"}
+----------------------------------------
+[2025-04-14 15:27:21] Request: {"platform":"website","action":"unblock_visitor","id":"8b0a1c85-d3be-43b5-9419-f395499ce2a5"}
+Response: {"success":true,"status":1,"message":"Visitor user unblocked successfully"}
+----------------------------------------
+[2025-04-14 15:33:06] Request: {"platform":"website","action":"block_visitor","id":"3046d579-45b1-433f-af64-05a18c099bd4"}
+Response: {"success":true,"status":0,"message":"Visitor user blocked successfully"}
+----------------------------------------
+[2025-04-14 15:33:07] Request: {"platform":"website","action":"unblock_visitor","id":"3046d579-45b1-433f-af64-05a18c099bd4"}
+Response: {"success":true,"status":1,"message":"Visitor user unblocked successfully"}
+----------------------------------------
+[2025-04-14 15:39:21] Request: {"platform":"website","action":"block_visitor","id":"3046d579-45b1-433f-af64-05a18c099bd4"}
+Response: {"success":true,"status":0,"message":"Visitor user blocked successfully"}
+----------------------------------------
+[2025-04-14 15:39:24] Request: {"platform":"website","action":"unblock_visitor","id":"3046d579-45b1-433f-af64-05a18c099bd4"}
+Response: {"success":true,"status":1,"message":"Visitor user unblocked successfully"}
+----------------------------------------
+[2025-04-14 15:40:02] Request: {"platform":"website","action":"block_visitor","id":"3046d579-45b1-433f-af64-05a18c099bd4"}
+Response: {"success":true,"status":0,"message":"Visitor user blocked successfully"}
+----------------------------------------
+[2025-04-14 15:42:11] Request: {"platform":"website","action":"unblock_visitor","id":"3046d579-45b1-433f-af64-05a18c099bd4"}
+Response: {"success":true,"status":1,"message":"Visitor user unblocked successfully"}
+----------------------------------------
+[2025-04-14 15:44:53] Request: {"platform":"website","action":"block_visitor","id":"3046d579-45b1-433f-af64-05a18c099bd4"}
+Response: {"success":true,"status":0,"message":"Visitor user blocked successfully"}
+----------------------------------------
+[2025-04-14 15:45:00] Request: {"platform":"website","action":"unblock_visitor","id":"3046d579-45b1-433f-af64-05a18c099bd4"}
+Response: {"success":true,"status":1,"message":"Visitor user unblocked successfully"}
+----------------------------------------
+[2025-04-14 16:03:07] Request: {"platform":"website","action":"block_visitor","id":"3046d579-45b1-433f-af64-05a18c099bd4"}
+Response: {"success":true,"status":0,"message":"Visitor user blocked successfully"}
+----------------------------------------
+[2025-04-14 16:03:08] Request: {"platform":"website","action":"unblock_visitor","id":"3046d579-45b1-433f-af64-05a18c099bd4"}
+Response: {"success":true,"status":1,"message":"Visitor user unblocked successfully"}
+----------------------------------------
+[2025-04-14 16:03:09] Request: {"platform":"website","action":"block_visitor","id":"3046d579-45b1-433f-af64-05a18c099bd4"}
+Response: {"success":true,"status":0,"message":"Visitor user blocked successfully"}
+----------------------------------------
+[2025-04-14 16:03:10] Request: {"platform":"website","action":"unblock_visitor","id":"3046d579-45b1-433f-af64-05a18c099bd4"}
+Response: {"success":true,"status":1,"message":"Visitor user unblocked successfully"}
+----------------------------------------
+[2025-04-14 16:03:26] Request: {"platform":"website","action":"block_visitor","id":"3046d579-45b1-433f-af64-05a18c099bd4"}
+Response: {"success":true,"status":0,"message":"Visitor user blocked successfully"}
+----------------------------------------
+[2025-04-14 16:03:47] Request: {"platform":"website","action":"unblock_visitor","id":"3046d579-45b1-433f-af64-05a18c099bd4"}
+Response: {"success":true,"status":1,"message":"Visitor user unblocked successfully"}
+----------------------------------------
+[2025-04-14 16:11:01] Request: {"platform":"website","action":"block_visitor","id":"3046d579-45b1-433f-af64-05a18c099bd4"}
+Response: {"success":true,"status":0,"message":"Visitor user blocked successfully"}
+----------------------------------------
+[2025-04-14 16:11:05] Request: {"platform":"website","action":"unblock_visitor","id":"3046d579-45b1-433f-af64-05a18c099bd4"}
+Response: {"success":true,"status":1,"message":"Visitor user unblocked successfully"}
+----------------------------------------
+[2025-04-14 16:11:09] Request: {"platform":"website","action":"block_visitor","id":"3046d579-45b1-433f-af64-05a18c099bd4"}
+Response: {"success":true,"status":0,"message":"Visitor user blocked successfully"}
+----------------------------------------
+[2025-04-14 16:12:58] Request: {"platform":"website","action":"unblock_visitor","id":"3046d579-45b1-433f-af64-05a18c099bd4"}
+Response: {"success":true,"status":1,"message":"Visitor user unblocked successfully"}
+----------------------------------------
+[2025-04-14 16:14:06] Request: {"platform":"website","action":"block_visitor","id":"3046d579-45b1-433f-af64-05a18c099bd4"}
+Response: {"success":true,"status":0,"message":"Visitor user blocked successfully"}
+----------------------------------------
+[2025-04-14 16:14:10] Request: {"platform":"website","action":"unblock_visitor","id":"3046d579-45b1-433f-af64-05a18c099bd4"}
+Response: {"success":true,"status":1,"message":"Visitor user unblocked successfully"}
+----------------------------------------
+[2025-04-14 16:14:18] Request: {"platform":"website","action":"update_visitor","id":"3046d579-45b1-433f-af64-05a18c099bd4","name":"Кирилл","surname":"Трищ","phone_number":"78649523698","membershipId":"13b3e12f-d329-4945-ae8b-06cddde96366","visitor_membership_id":"7f2e0b55-1e01-421e-814b-bd81b3b9330d"}
+Response: {"success":true,"status":1,"message":"Visitor user updated successfully"}
+----------------------------------------
+[2025-04-14 16:14:26] Request: {"platform":"website","action":"update_visitor","id":"3046d579-45b1-433f-af64-05a18c099bd4","name":"Кирилл","surname":"Трищ","phone_number":"78649523698","membershipId":"32cc8cec-c4f9-4917-bb01-0204395e1804","visitor_membership_id":"7f2e0b55-1e01-421e-814b-bd81b3b9330d"}
+Response: {"success":true,"status":1,"message":"Visitor user updated successfully"}
+----------------------------------------
+[2025-04-14 16:14:36] Request: {"platform":"website","action":"add_visitor","id":"3a6f7655-ecbc-4dc9-affd-4644355c9f31","name":"Иван","surname":"Иванов","phone_number":"22222222222","membershipId":"342dec7f-540e-4ea4-970a-388965f61149","visitor_membership_id":"a9a02eb0-3892-4fbb-9efc-7734b8535ffe"}
+Response: {"success":true,"status":1,"message":"Visitor user created successfully"}
+----------------------------------------
+[2025-04-14 16:20:38] Request: {"platform":"website","action":"block_visitor","id":"3046d579-45b1-433f-af64-05a18c099bd4"}
+Response: {"success":true,"status":0,"message":"Visitor user blocked successfully"}
+----------------------------------------
+[2025-04-14 16:21:02] Request: {"platform":"website","action":"unblock_visitor","id":"3046d579-45b1-433f-af64-05a18c099bd4"}
+Response: {"success":true,"status":1,"message":"Visitor user unblocked successfully"}
+----------------------------------------
+[2025-04-14 16:21:12] Request: {"platform":"website","action":"block_visitor","id":"3046d579-45b1-433f-af64-05a18c099bd4"}
+Response: {"success":true,"status":0,"message":"Visitor user blocked successfully"}
+----------------------------------------
+[2025-04-14 16:21:18] Request: {"platform":"website","action":"unblock_visitor","id":"3046d579-45b1-433f-af64-05a18c099bd4"}
+Response: {"success":true,"status":1,"message":"Visitor user unblocked successfully"}
+----------------------------------------
+[2025-04-14 16:21:39] Request: {"platform":"website","action":"block_visitor","id":"3046d579-45b1-433f-af64-05a18c099bd4"}
+Response: {"success":true,"status":0,"message":"Visitor user blocked successfully"}
+----------------------------------------
+[2025-04-14 16:21:45] Request: {"platform":"website","action":"unblock_visitor","id":"3046d579-45b1-433f-af64-05a18c099bd4"}
+Response: {"success":true,"status":1,"message":"Visitor user unblocked successfully"}
+----------------------------------------
+[2025-04-14 16:22:24] Request: {"platform":"website","action":"delete_visitor","id":"3a6f7655-ecbc-4dc9-affd-4644355c9f31"}
+Response: {"success":true,"status":1,"message":"Visitor user deleted successfully"}
+----------------------------------------
+[2025-04-14 16:22:54] Request: {"platform":"website","action":"block_visitor","id":"3046d579-45b1-433f-af64-05a18c099bd4"}
+Response: {"success":true,"status":0,"message":"Visitor user blocked successfully"}
+----------------------------------------
+[2025-04-14 16:22:54] Request: {"platform":"website","action":"unblock_visitor","id":"3046d579-45b1-433f-af64-05a18c099bd4"}
+Response: {"success":true,"status":1,"message":"Visitor user unblocked successfully"}
+----------------------------------------
+[2025-04-14 16:22:55] Request: {"platform":"website","action":"block_visitor","id":"3046d579-45b1-433f-af64-05a18c099bd4"}
+Response: {"success":true,"status":0,"message":"Visitor user blocked successfully"}
+----------------------------------------
+[2025-04-14 16:22:56] Request: {"platform":"website","action":"unblock_visitor","id":"3046d579-45b1-433f-af64-05a18c099bd4"}
+Response: {"success":true,"status":1,"message":"Visitor user unblocked successfully"}
+----------------------------------------
+[2025-04-14 16:38:46] Request: {"platform":"website","action":"block_visitor","id":"3046d579-45b1-433f-af64-05a18c099bd4"}
+Response: {"success":true,"status":0,"message":"Visitor user blocked successfully"}
+----------------------------------------
+[2025-04-14 16:38:48] Request: {"platform":"website","action":"unblock_visitor","id":"3046d579-45b1-433f-af64-05a18c099bd4"}
+Response: {"success":true,"status":1,"message":"Visitor user unblocked successfully"}
+----------------------------------------
+[2025-04-14 16:40:19] Request: {"platform":"website","action":"block_visitor","id":"3046d579-45b1-433f-af64-05a18c099bd4"}
+Response: {"success":true,"status":0,"message":"Visitor user blocked successfully"}
+----------------------------------------
+[2025-04-14 16:40:19] Request: {"platform":"website","action":"unblock_visitor","id":"3046d579-45b1-433f-af64-05a18c099bd4"}
+Response: {"success":true,"status":1,"message":"Visitor user unblocked successfully"}
+----------------------------------------
+[2025-04-14 16:40:20] Request: {"platform":"website","action":"block_visitor","id":"3046d579-45b1-433f-af64-05a18c099bd4"}
+Response: {"success":true,"status":0,"message":"Visitor user blocked successfully"}
+----------------------------------------
+[2025-04-14 16:40:20] Request: {"platform":"website","action":"unblock_visitor","id":"3046d579-45b1-433f-af64-05a18c099bd4"}
+Response: {"success":true,"status":1,"message":"Visitor user unblocked successfully"}
+----------------------------------------
+[2025-04-14 16:45:54] Request: {"platform":"website","action":"add_visitor","id":"816d1b32-4dba-4c27-9e46-c8ae0e9b6888","name":"Иван","surname":"Иванов","phone_number":"22222222222","membershipId":"13b3e12f-d329-4945-ae8b-06cddde96366","visitor_membership_id":"123bd7b4-edaa-4dc0-bb2e-1af94c6611d6"}
+Response: {"success":true,"status":1,"message":"Visitor user created successfully"}
+----------------------------------------
+[2025-04-14 16:46:16] Request: {"platform":"website","action":"delete_visitor","id":"816d1b32-4dba-4c27-9e46-c8ae0e9b6888"}
+Response: {"success":true,"status":1,"message":"Visitor user deleted successfully"}
+----------------------------------------
+[2025-04-14 16:46:45] Request: {"platform":"website","action":"add_visitor","id":"cf16e5d3-22a7-479e-83a7-b502c875c94b","name":"Иван","surname":"Иванов","phone_number":"22222222222","membershipId":"13b3e12f-d329-4945-ae8b-06cddde96366","visitor_membership_id":"a99a5c96-8932-4a0e-a020-47a6afb5d380"}
+Response: {"success":true,"status":1,"message":"Visitor user created successfully"}
+----------------------------------------
+[2025-04-14 17:01:50] Request: {"platform":"website","action":"delete_visitor","id":"cf16e5d3-22a7-479e-83a7-b502c875c94b"}
+Response: {"success":true,"status":1,"message":"Visitor user deleted successfully"}
+----------------------------------------
+[2025-04-14 17:02:05] Request: {"platform":"website","action":"add_visitor","id":"468cb2d0-c55b-4caa-8dd4-21a7a6183801","name":"Иван","surname":"Иванов","phone_number":"22222222222","membershipId":"13b3e12f-d329-4945-ae8b-06cddde96366","visitor_membership_id":"e38f0ba1-9ad9-4b05-b638-a0e6206a154f"}
+Response: {"success":true,"status":1,"message":"Visitor user created successfully"}
+----------------------------------------
+[2025-04-14 17:02:09] Request: {"platform":"website","action":"delete_visitor","id":"468cb2d0-c55b-4caa-8dd4-21a7a6183801"}
+Response: {"success":true,"status":1,"message":"Visitor user deleted successfully"}
+----------------------------------------
+[2025-04-14 17:02:28] Request: {"platform":"website","action":"add_training_type","id":"dfe4be7b-71dd-4e94-86df-104586d949ec","name":"MMA","description":"ММА"}
+Response: {"success":true,"message":"Training type created successfully"}
+----------------------------------------
+[2025-04-14 17:03:38] Request: {"platform":"website","action":"delete_training_type","id":"dfe4be7b-71dd-4e94-86df-104586d949ec"}
+Response: {"success":true,"message":"Training type deleted successfully"}
+----------------------------------------
+[2025-04-14 17:03:45] Request: {"platform":"website","action":"add_training_type","id":"df631220-ae1a-4302-82cb-c5cdb6806c17","name":"MMA","description":"ММА"}
+Response: {"success":true,"message":"Training type created successfully"}
+----------------------------------------
+[2025-04-14 17:03:50] Request: {"platform":"website","action":"update_training_type","id":"df631220-ae1a-4302-82cb-c5cdb6806c17","name":"MMA","description":"ММАМ"}
+Response: {"success":true,"message":"Training type updated successfully"}
+----------------------------------------
+[2025-04-14 17:03:53] Request: {"platform":"website","action":"delete_training_type","id":"df631220-ae1a-4302-82cb-c5cdb6806c17"}
+Response: {"success":true,"message":"Training type deleted successfully"}
+----------------------------------------
+[2025-04-14 17:11:39] Request: {"platform":"website","action":"block_visitor","id":"3046d579-45b1-433f-af64-05a18c099bd4"}
+Response: {"success":true,"status":0,"message":"Visitor user blocked successfully"}
+----------------------------------------
+[2025-04-14 17:11:40] Request: {"platform":"website","action":"unblock_visitor","id":"3046d579-45b1-433f-af64-05a18c099bd4"}
+Response: {"success":true,"status":1,"message":"Visitor user unblocked successfully"}
+----------------------------------------
+[2025-04-14 17:11:40] Request: {"platform":"website","action":"block_visitor","id":"8b0a1c85-d3be-43b5-9419-f395499ce2a5"}
+Response: {"success":true,"status":0,"message":"Visitor user blocked successfully"}
+----------------------------------------
+[2025-04-14 17:11:41] Request: {"platform":"website","action":"unblock_visitor","id":"8b0a1c85-d3be-43b5-9419-f395499ce2a5"}
+Response: {"success":true,"status":1,"message":"Visitor user unblocked successfully"}
+----------------------------------------
+[2025-04-14 17:11:43] Request: {"platform":"website","action":"block_visitor","id":"933bdb50-b3da-4a96-a3d5-18e2d2546b64"}
+Response: {"success":true,"status":0,"message":"Visitor user blocked successfully"}
+----------------------------------------
+[2025-04-14 17:11:44] Request: {"platform":"website","action":"unblock_visitor","id":"933bdb50-b3da-4a96-a3d5-18e2d2546b64"}
+Response: {"success":true,"status":1,"message":"Visitor user unblocked successfully"}
+----------------------------------------
+[2025-04-14 17:11:54] Request: {"platform":"website","action":"block_visitor","id":"3046d579-45b1-433f-af64-05a18c099bd4"}
+Response: {"success":true,"status":0,"message":"Visitor user blocked successfully"}
+----------------------------------------
+[2025-04-14 17:11:55] Request: {"platform":"website","action":"unblock_visitor","id":"3046d579-45b1-433f-af64-05a18c099bd4"}
+Response: {"success":true,"status":1,"message":"Visitor user unblocked successfully"}
+----------------------------------------
+[2025-04-14 17:11:56] Request: {"platform":"website","action":"block_visitor","id":"8b0a1c85-d3be-43b5-9419-f395499ce2a5"}
+Response: {"success":true,"status":0,"message":"Visitor user blocked successfully"}
+----------------------------------------
+[2025-04-14 17:11:57] Request: {"platform":"website","action":"unblock_visitor","id":"8b0a1c85-d3be-43b5-9419-f395499ce2a5"}
+Response: {"success":true,"status":1,"message":"Visitor user unblocked successfully"}
+----------------------------------------
+[2025-04-14 17:11:57] Request: {"platform":"website","action":"block_visitor","id":"933bdb50-b3da-4a96-a3d5-18e2d2546b64"}
+Response: {"success":true,"status":0,"message":"Visitor user blocked successfully"}
+----------------------------------------
+[2025-04-14 17:11:58] Request: {"platform":"website","action":"unblock_visitor","id":"933bdb50-b3da-4a96-a3d5-18e2d2546b64"}
+Response: {"success":true,"status":1,"message":"Visitor user unblocked successfully"}
+----------------------------------------
+[2025-04-14 17:11:58] Request: {"platform":"website","action":"block_visitor","id":"8b0a1c85-d3be-43b5-9419-f395499ce2a5"}
+Response: {"success":true,"status":0,"message":"Visitor user blocked successfully"}
+----------------------------------------
+[2025-04-14 17:13:03] Request: {"platform":"website","action":"unblock_visitor","id":"8b0a1c85-d3be-43b5-9419-f395499ce2a5"}
+Response: {"success":true,"status":1,"message":"Visitor user unblocked successfully"}
+----------------------------------------
+[2025-04-14 17:13:07] Request: {"platform":"website","action":"update_visitor","id":"8b0a1c85-d3be-43b5-9419-f395499ce2a5","name":"Константин","surname":"Петренко","phone_number":"77478267536","membershipId":"31128d78-1fc0-4ad8-93e6-392e43a7aa6a","visitor_membership_id":"be7b32db-56d6-47dc-b1a8-af888fc50620"}
+Response: {"success":true,"status":1,"message":"Visitor user updated successfully"}
+----------------------------------------
+[2025-04-14 17:13:13] Request: {"platform":"website","action":"update_visitor","id":"8b0a1c85-d3be-43b5-9419-f395499ce2a5","name":"Константин","surname":"Петренко","phone_number":"77478267536","membershipId":"1730e531-c02b-4f78-9131-1eac5f19a1ef","visitor_membership_id":"be7b32db-56d6-47dc-b1a8-af888fc50620"}
+Response: {"success":true,"status":1,"message":"Visitor user updated successfully"}
+----------------------------------------
+[2025-04-14 17:13:21] Request: {"platform":"website","action":"add_visitor","id":"50d854dd-d115-4eee-891d-509eb8d1af32","name":"Иван","surname":"Иванов","phone_number":"22222222222","membershipId":"d039e0f4-b7ac-4cbc-8ae4-486f20723a70","visitor_membership_id":"966e6da7-93ff-4d14-b041-484c82134063"}
+Response: {"success":true,"status":1,"message":"Visitor user created successfully"}
+----------------------------------------
+[2025-04-14 17:17:26] Request: {"platform":"website","action":"add_membership","membership_type":"дневной","duration":"разовый","price":"25","id":"08f6bc31-ea39-4a78-9312-28d5ae70603d","special_group":"стандарт"}
+Response: {"success":true,"message":"Membership created successfully"}
+----------------------------------------
+[2025-04-14 17:17:32] Request: {"platform":"website","action":"update_membership","membership_type":"дневной","duration":"разовый","price":"255","id":"08f6bc31-ea39-4a78-9312-28d5ae70603d","special_group":"стандарт"}
+Response: {"success":true,"message":"Membership updated successfully"}
+----------------------------------------
+[2025-04-14 17:17:40] Request: {"platform":"website","action":"delete_membership","id":"08f6bc31-ea39-4a78-9312-28d5ae70603d"}
+Response: {"success":true,"message":"Membership deleted successfully"}
+----------------------------------------
+[2025-04-14 17:19:53] Request: {"platform":"website","action":"add_membership","membership_type":"дневной","duration":"разовый","price":"255","id":"d0f7868c-0631-4490-b7ef-6f7eb91b0cf1","special_group":"стандарт"}
+Response: {"success":true,"message":"Membership created successfully"}
+----------------------------------------
+[2025-04-14 17:19:58] Request: {"platform":"website","action":"delete_membership","id":"d0f7868c-0631-4490-b7ef-6f7eb91b0cf1"}
+Response: {"success":true,"message":"Membership deleted successfully"}
+----------------------------------------

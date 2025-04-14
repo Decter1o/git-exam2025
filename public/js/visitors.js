@@ -201,10 +201,30 @@ function AddUserForm() {
                         sendRequest('POST', requestData);
                         form.remove();
                         loadVisitors();
-                        alert('Посетитель сохранен');
+                        new jBox('Notice', {
+                            content: 'Посетитель добавлен',
+                            color: '#ddd',
+                            autoClose: 3000,
+                            animation: 'fade',
+                            offset: { x: -15, y: 20 },
+                            position: {
+                                x: 'right', 
+                                y: 'top'
+                            }
+                        });
                     };
                 } else {
-                    alert('Пожалуйста, заполните все поля!');
+                    new jBox('Notice', {
+                        content: 'Пожалуйста, заполните все поля!',
+                        color: '#ddd',
+                        autoClose: 3000,
+                        animation: 'fade',
+                        offset: { x: -15, y: 20 },
+                        position: {
+                            x: 'right',
+                            y: 'top'    
+                        }
+                    });
                 }
             };
 
@@ -234,7 +254,17 @@ function UpdateUserForm(visitor) {
         }))).then(([visitor_memberships, memberships]) => {
             let visitor_membership = visitor_memberships.find(vm => vm.visitorId === visitor.id);
             if (!visitor_membership) {
-                alert('Абонемент для данного посетителя не найден!');
+                new jBox('Notice', {
+                    content: 'Абонемент для данного посетителя не найден!',
+                    color: '#ddd',
+                    autoClose: 3000,
+                    animation: 'fade',
+                    offset: { x: -15, y: 20 },
+                    position: {
+                        x: 'right',
+                        y: 'top'
+                    }
+                });
                 return;
             }
 
@@ -348,10 +378,30 @@ function UpdateUserForm(visitor) {
 
                             form.remove();
                             loadVisitors();
-                            alert('Данные посетителя обновлены');
+                            new jBox('Notice', {
+                                content: 'Посетитель обновлен',
+                                color: '#ddd',
+                                autoClose: 3000,
+                                animation: 'fade',
+                                offset: { x: -15, y: 20 },
+                                position: {
+                                    x: 'right', 
+                                    y: 'top'
+                                }
+                            });
                         };
                     } else {
-                        alert('Пожалуйста, заполните все поля!');
+                        new jBox('Notice', {
+                            content: 'Пожалуйста, заполните все поля!',
+                            color: '#ddd',
+                            autoClose: 3000,
+                            animation: 'fade',
+                            offset: { x: -15, y: 20 },
+                            position: {
+                                x: 'right',
+                                y: 'top'    
+                            }
+                        });
                     }
                 });
             }
@@ -427,46 +477,77 @@ function sendRequest(method, data) {
 }
 
 function DeleteVisitor(visitorId) {
-    if (!confirm('Вы уверены, что хотите удалить этого посетителя?')) {
-        return;
-    }
+    new jBox('Confirm', {
+        title: 'Подтверждение',
+        content: 'Вы уверены, что хотите удалить этого посетителя?',
+        confirmButton: 'Удалить',
+        cancelButton: 'Отмена',
+        overlay: false,
+        closeButton: false,
+        confirm: function () {
+            let dbRequest = indexedDB.open('FitnessFamyli', 1);
 
-    let dbRequest = indexedDB.open('FitnessFamyli', 1);
+            dbRequest.onsuccess = function (event) {
+                let db = event.target.result;
+                let transaction = db.transaction(['visitors', 'visitors_memberships'], 'readwrite');
+                let visitorsStore = transaction.objectStore('visitors');
+                let membershipsStore = transaction.objectStore('visitors_memberships');
 
-    dbRequest.onsuccess = function(event) {
-        let db = event.target.result;
-        let transaction = db.transaction(['visitors', 'visitors_memberships'], 'readwrite');
-        let visitorsStore = transaction.objectStore('visitors');
-        let membershipsStore = transaction.objectStore('visitors_memberships');
+                visitorsStore.delete(visitorId);
 
-        visitorsStore.delete(visitorId);
+                membershipsStore.getAll().onsuccess = function (event) {
+                    let items = event.target.result.filter(item => item.visitorId === visitorId);
+                    items.forEach(item => membershipsStore.delete(item.id));
+                };
 
-        membershipsStore.getAll().onsuccess = function(event) {
-            let items = event.target.result.filter(item => item.visitorId === visitorId);
-            items.forEach(item => membershipsStore.delete(item.id));
-        };
+                transaction.oncomplete = function () {
+                    let requestData = {
+                        platform: "website",
+                        action: "delete_visitor",
+                        id: visitorId
+                    };
+                    sendRequest('POST', requestData);
 
-        transaction.oncomplete = function() {
-            let requestData = {
-                platform: "website",
-                action: "delete_visitor",
-                id: visitorId
+                    new jBox('Notice', {
+                        content: 'Посетитель удален',
+                        color: '#ddd',
+                        autoClose: 3000,
+                        delayOnHover: false,
+                        animation: 'fade',
+                        offset: { x: -15, y: 20 },
+                        position: {
+                            x: 'right',
+                            y: 'top'
+                        }
+                    });
+
+                    loadVisitors();
+                };
+
+                transaction.onerror = function (event) {
+                    console.error('Ошибка при удалении:', event.target.error);
+                    new jBox('Notice', {
+                        content: 'Ошибка при удалении посетителя',
+                        color: '#ddd',
+                        autoClose: 3000,
+                        delayOnHover: false,
+                        animation: 'fade',
+                        offset: { x: -15, y: 20 },
+                        position: {
+                            x: 'right',
+                            y: 'top'
+                        }
+                    });
+                };
             };
-            sendRequest('POST', requestData);
-            alert('Посетитель удален');
-            loadVisitors();
-        };
 
-        transaction.onerror = function(event) {
-            console.error('Ошибка при удалении:', event.target.error);
-            alert('Ошибка при удалении посетителя');
-        };
-    };
-
-    dbRequest.onerror = function(event) {
-        console.error('Ошибка при открытии базы данных:', event.target.error);
-    };
+            dbRequest.onerror = function (event) {
+                console.error('Ошибка при открытии базы данных:', event.target.error);
+            };
+        }
+    }).open();
 }
+
 
 function SearchVisitor() {
     let searchInput = document.getElementById('search-input').value.toLowerCase();
@@ -588,6 +669,18 @@ function VisitorsAction(visitorId) {
                 visitor.status = 0;
                 visitorsStore.put(visitor);
 
+                new jBox('Notice', {
+                    content: 'Посетитель заблокирован',
+                    color: '#ddd',
+                    autoClose: 3000,
+                    animation: 'fade',
+                    offset: { x: -15, y: 20 },
+                    position: {
+                        x: 'right',
+                        y: 'top'    
+                    }
+                });
+
                 let requestData = {
                     platform: "website",
                     action: "block_visitor",
@@ -597,6 +690,19 @@ function VisitorsAction(visitorId) {
             }else {
                 visitor.status = 1;
                 visitorsStore.put(visitor);
+
+                new jBox('Notice', {
+                    content: 'Посетитель разблокирован',
+                    color: '#ddd',
+                    autoClose: 3000,
+                    animation: 'fade',
+                    offset: { x: -15, y: 20 },
+                    position: {
+                        x: 'right',
+                        y: 'top'    
+                    }
+                });
+
                 let requestData = {
                     platform: "website",
                     action: "unblock_visitor",

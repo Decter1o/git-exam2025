@@ -7,6 +7,9 @@ body {
     font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
     color: #333;
     background-color: #f9f9f9;
+    height: 100%;
+    width: 100%;
+    overflow: hidden; /* Скрываем прокрутку */
 }
 .container {
     display: flex;
@@ -21,6 +24,7 @@ body {
     padding: 30px 20px;
     color: #fff;
     box-shadow: 2px 0 5px rgba(0, 0, 0, 0.1); /* Тень для эффекта глубины */
+    position: relative;
 }
 .sidebar h2 {
     font-size: 24px;
@@ -83,4 +87,25 @@ a {
 }
 a:hover {
     text-decoration: underline;
+}
+
+.fa-solid {
+    color: #fff;
+    font-size: 25px;
+}
+
+.exit-button {
+    background-color: transparent;
+    color: #fff;
+    border: none;
+    padding: 10px 20px;
+    cursor: pointer;
+    position: absolute;
+    bottom: 20px;
+    left: 20px;
+}
+
+.exit-button:hover {
+    background-color: transparent;
+    transform: scale(1.05);
 }

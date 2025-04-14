@@ -121,11 +121,31 @@ function AddTrainingType() {
 
                 loadTrainingTypes();
                 form.remove();
-                alert('Тренировка успешно добавлена!');
+                let addNotification = new jBox('Notice', {
+                    content: 'Тренировка добавлена!',
+                    color: '#ddd',
+                    autoClose: 3000,
+                    animation: 'fade',
+                    offset: { x: -15, y: 20 },
+                    position: {
+                        x: 'right', 
+                        y: 'top'
+                    }
+                });
                 form.remove(); // Удаляем форму после успешного добавления
                 
             } else {
-                alert('Пожалуйста, заполните все поля!');
+                let emptyFieldError = new jBox('Notice', {
+                    content: 'Пожалуйста, заполните все поля!',
+                    color: '#ddd',
+                    autoClose: 3000,
+                    animation: 'fade',
+                    offset: { x: -15, y: 20 },
+                    position: {
+                        x: 'right',
+                        y: 'top'    
+                    }
+                });
             }
         });
     }
@@ -197,9 +217,29 @@ function UpdateTrainingType(training_type) {
 
                 loadTrainingTypes();
                 form.remove();
-                alert('Тренировка успешно изменена!');
+                let addNotification = new jBox('Notice', {
+                    content: 'Тренировка обновлена!',
+                    color: '#ddd',
+                    autoClose: 3000,
+                    animation: 'fade',
+                    offset: { x: -15, y: 20 },
+                    position: {
+                        x: 'right', 
+                        y: 'top'
+                    }
+                });
             } else {
-                alert('Пожалуйста, заполните все поля!');
+                let emptyFieldError = new jBox('Notice', {
+                    content: 'Пожалуйста, заполните все поля!',
+                    color: '#ddd',
+                    autoClose: 3000,
+                    animation: 'fade',
+                    offset: { x: -15, y: 20 },
+                    position: {
+                        x: 'right',
+                        y: 'top'    
+                    }
+                });
             }
         });
     }
@@ -233,38 +273,65 @@ function sendRequest(method, data) {
 
 // Удаление абонемента
 function DeleteTrainigType(id) {
-    if (!confirm('Вы уверены, что хотите удалить эту тренировку?')) {
-        return; // Если пользователь отменил, выходим из функции
-    }
+    new jBox('Confirm', {
+        title: 'Подтверждение',
+        content: 'Вы уверены, что хотите удалить этого посетителя?',
+        confirmButton: 'Удалить',
+        cancelButton: 'Отмена',
+        overlay: false,
+        closeButton: false,
+        confirm: function () {
+            let dbRequest = indexedDB.open('FitnessFamyli', 1);
 
-    let dbRequest = indexedDB.open('FitnessFamyli', 1);
+            dbRequest.onsuccess = function(event) {
+                let db = event.target.result;
+                let transaction = db.transaction('training_types', 'readwrite');
+                let store = transaction.objectStore('training_types');
 
-    dbRequest.onsuccess = function(event) {
-        let db = event.target.result;
-        let transaction = db.transaction('training_types', 'readwrite');
-        let store = transaction.objectStore('training_types');
+                store.delete(id);
+                transaction.oncomplete = function() {
+                    // Формируем JSON-объект для отправки запроса на удаление
+                    let requestData = {
+                        platform: "website",
+                        action: "delete_training_type",
+                        id: id
+                    };
 
-        store.delete(id);
-        transaction.oncomplete = function() {
-            // Формируем JSON-объект для отправки запроса на удаление
-            let requestData = {
-                platform: "website",
-                action: "delete_training_type",
-                id: id
+                    // Отправляем запрос на сервер для удаления
+                    sendRequest('POST', requestData);
+
+                    // Перезагружаем таблицу
+                    loadTrainingTypes();
+                    new jBox('Notice', {
+                        content: 'Тренировка удалена!',
+                        color: '#ddd',
+                        autoClose: 3000,
+                        delayOnHover: false,
+                        animation: 'fade',
+                        offset: { x: -15, y: 20 },
+                        position: {
+                            x: 'right',
+                            y: 'top'
+                        }
+                    });
+                };
+                transaction.onerror = function(event) {
+                    console.error('Ошибка при удалении абонемента:', event.target.error);
+                    new jBox('Notice', {
+                        content: 'Ошибка удаления',
+                        color: '#ddd',
+                        autoClose: 3000,
+                        delayOnHover: false,
+                        animation: 'fade',
+                        offset: { x: -15, y: 20 },
+                        position: {
+                            x: 'right',
+                            y: 'top'
+                        }
+                    });
+                };
             };
-
-            // Отправляем запрос на сервер для удаления
-            sendRequest('POST', requestData);
-
-            // Перезагружаем таблицу
-            loadTrainingTypes();
-            alert('Абонемент успешно удалён!');
-        };
-        transaction.onerror = function(event) {
-            console.error('Ошибка при удалении абонемента:', event.target.error);
-        };
-    };
-
-    
+        }
+    }).open();
 }
 

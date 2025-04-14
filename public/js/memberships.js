@@ -261,11 +261,31 @@ function AddMembershipForm() {
 
                 loadGymMemberships();
                 form.remove();
-                alert('Абонемент успешно добавлен!');
+                new jBox('Notice', {
+                    content: 'Абонемент добавлен',
+                    color: '#ddd',
+                    autoClose: 3000,
+                    animation: 'fade',
+                    offset: { x: -15, y: 20 },
+                    position: {
+                        x: 'right', 
+                        y: 'top'
+                    }
+                });
                 form.remove(); // Удаляем форму после успешного добавления
                 
             } else {
-                alert('Пожалуйста, заполните все поля!');
+                new jBox('Notice', {
+                    content: 'Пожалуйста, заполните все поля!',
+                    color: '#ddd',
+                    autoClose: 3000,
+                    animation: 'fade',
+                    offset: { x: -15, y: 20 },
+                    position: {
+                        x: 'right',
+                        y: 'top'    
+                    }
+                });
             }
         });
     }
@@ -364,9 +384,29 @@ function UpdateMembershipForm(membership) {
 
                 loadGymMemberships();
                 form.remove();
-                alert('Абонемент успешно обновлён!');
+                new jBox('Notice', {
+                    content: 'Абонемент обновлен',
+                    color: '#ddd',
+                    autoClose: 3000,
+                    animation: 'fade',
+                    offset: { x: -15, y: 20 },
+                    position: {
+                        x: 'right', 
+                        y: 'top'
+                    }
+                });
             } else {
-                alert('Пожалуйста, заполните все поля!');
+                new jBox('Notice', {
+                    content: 'Пожалуйста, заполните все поля!',
+                    color: '#ddd',
+                    autoClose: 3000,
+                    animation: 'fade',
+                    offset: { x: -15, y: 20 },
+                    position: {
+                        x: 'right',
+                        y: 'top'    
+                    }
+                });
             }
         });
     }
@@ -400,38 +440,66 @@ function sendRequest(method, data) {
 
 // Удаление абонемента
 function DeleteMembership(id) {
-    if (!confirm('Вы уверены, что хотите удалить этот абонемент?')) {
-        return; // Если пользователь отменил, выходим из функции
-    }
+    new jBox('Confirm', {
+        title: 'Подтверждение',
+        content: 'Вы уверены, что хотите удалить этого посетителя?',
+        confirmButton: 'Удалить',
+        cancelButton: 'Отмена',
+        overlay: false,
+        closeButton: false,
+        confirm: function () {
+            let dbRequest = indexedDB.open('FitnessFamyli', 1);
 
-    let dbRequest = indexedDB.open('FitnessFamyli', 1);
+            dbRequest.onsuccess = function(event) {
+                let db = event.target.result;
+                let transaction = db.transaction('gym_memberships', 'readwrite');
+                let store = transaction.objectStore('gym_memberships');
 
-    dbRequest.onsuccess = function(event) {
-        let db = event.target.result;
-        let transaction = db.transaction('gym_memberships', 'readwrite');
-        let store = transaction.objectStore('gym_memberships');
-
-        store.delete(id);
-        transaction.oncomplete = function() {
-            // Формируем JSON-объект для отправки запроса на удаление
-            let requestData = {
-                platform: "website",
-                action: "delete_membership",
-                id: id
+                store.delete(id);
+                transaction.oncomplete = function() {
+                    // Формируем JSON-объект для отправки запроса на удаление
+                    let requestData = {
+                        platform: "website",
+                        action: "delete_membership",
+                        id: id
+                    };
+                
+                    // Отправляем запрос на сервер для удаления
+                    sendRequest('POST', requestData);
+                
+                    // Перезагружаем таблицу
+                    loadGymMemberships();
+                    new jBox('Notice', {
+                        content: 'Абонемент удален',
+                        color: '#ddd',
+                        autoClose: 3000,
+                        delayOnHover: false,
+                        animation: 'fade',
+                        offset: { x: -15, y: 20 },
+                        position: {
+                            x: 'right',
+                            y: 'top'
+                        }
+                    });
+                };
+                transaction.onerror = function(event) {
+                    console.error('Ошибка при удалении абонемента:', event.target.error);
+                    new jBox('Notice', {
+                        content: 'Ошибка при удалении абонемента',
+                        color: '#ddd',
+                        autoClose: 3000,
+                        delayOnHover: false,
+                        animation: 'fade',
+                        offset: { x: -15, y: 20 },
+                        position: {
+                            x: 'right',
+                            y: 'top'
+                        }
+                    });
+                };
             };
-        
-            // Отправляем запрос на сервер для удаления
-            sendRequest('POST', requestData);
-        
-            // Перезагружаем таблицу
-            loadGymMemberships();
-            alert('Абонемент успешно удалён!');
-        };
-        transaction.onerror = function(event) {
-            console.error('Ошибка при удалении абонемента:', event.target.error);
-        };
-    };
-
+        }
+    }).open();
 }
 
 function AddFilterForm() {
