@@ -184,11 +184,11 @@ class DB
         $pdo = $this->DBConnect();
         if($pdo){
             try {
-                $query_string = "SELECT id, username, usersurname, phone_number FROM visitor_users";
+                $query_string = "SELECT id, username, usersurname, phone_number, status FROM visitor_users";
                 $result = $pdo->query($query_string);
                 $visitor_users = [];
                 while($row = $result->fetch()){
-                    $visitor_users[] = new VisitorUser($row['id'], $row['username'], $row['usersurname'], $row['phone_number']);
+                    $visitor_users[] = new VisitorUser($row['id'], $row['username'], $row['usersurname'], $row['phone_number'], $row['status']);
                 }
                 return $visitor_users;
             } catch (PDOException $e) {
@@ -253,6 +253,36 @@ class DB
             }
         }
     }
+
+    function BlockVisitorUser($id){
+        $pdo = $this->DBConnect();
+        if($pdo){
+            try {
+                $query_string = "UPDATE visitor_users SET status = '0' WHERE id = :id";
+                $sql_query = $pdo->prepare($query_string);
+                $sql_query->execute(['id' => $id]);
+                
+                return ["success" => true, "status" => 0, "message" => "Visitor user blocked successfully"];
+            } catch (PDOException $e) {
+                return ["error" => "Database connection failed", "details" => $e->getMessage()];
+            }
+        }
+    }
+    
+    function UnblockVisitorUser($id){
+        $pdo = $this->DBConnect();
+        if($pdo){
+            try {
+                $query_string = "UPDATE visitor_users SET status = '1' WHERE id = :id";
+                $sql_query = $pdo->prepare($query_string);
+                $sql_query->execute(['id' => $id]);
+                
+                return ["success" => true, "status" => 1, "message" => "Visitor user unblocked successfully"];
+            } catch (PDOException $e) {
+                return ["error" => "Database connection failed", "details" => $e->getMessage()];
+            }
+        }
+    }    
 
     function GetVisitorsMemberships(){
         $pdo = $this->DBConnect();

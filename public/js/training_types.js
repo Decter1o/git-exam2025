@@ -67,6 +67,7 @@ function AddTrainingType() {
         form = document.createElement('div');
         form.classList.add('trainingTypeForm');
         form.innerHTML = `
+            <button class="close-button"><i class="fa-solid fa-xmark"></i></button>
             <h2>Добавить тренировку</h2>
             <div class="box">
                 <input type="text" id="name" placeholder="Название тренировки" required>
@@ -77,6 +78,9 @@ function AddTrainingType() {
 
         // Добавляем форму в тело страницы
         document.body.appendChild(form);
+
+        // Добавляем обработчик для кнопки "Закрыть"
+        form.querySelector('.close-button').addEventListener('click', () => form.remove());
 
         // Добавляем обработчик для кнопки "Сохранить"
         form.querySelector('.add-submit-button').addEventListener('click', () => {
@@ -136,6 +140,7 @@ function UpdateTrainingType(training_type) {
         form = document.createElement('div');
         form.classList.add('trainingTypeForm');
         form.innerHTML = `
+            <button class="close-button"><i class="fa-solid fa-xmark"></i></button>
             <h2>Изменить тренировку</h2>
             <div class="box">
                 <input type="text" id="name" placeholder="Название тренировки" required>
@@ -146,6 +151,9 @@ function UpdateTrainingType(training_type) {
 
         // Добавляем форму в тело страницы
         document.body.appendChild(form);
+
+        // Добавляем обработчик для кнопки "Закрыть"
+        form.querySelector('.close-button').addEventListener('click', () => form.remove());
 
         // Заполняем поля формы
         document.getElementById('name').value = training_type.name;

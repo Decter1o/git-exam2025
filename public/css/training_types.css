@@ -60,6 +60,21 @@ tr:hover td {
     margin-bottom: 20px; /* Отступ снизу */
 }
 
+.close-button {
+    position: absolute;
+    top: 10px;
+    right: 10px;
+    cursor: pointer;
+    color: #007b3e;
+    background: none;
+    border: none;
+    font-size: 20px;
+    z-index: 1001;
+}
+
+.close-button:hover {
+    color: #005f2b;
+}
 
 .box{
     width: 100%;
@@ -138,7 +153,7 @@ body {
 }
 
 .button{ 
-    margin-left: 10px;
+    margin-left: 5px;
     padding: 8px 10px;
     background-color: #007b3e;
     color: white;

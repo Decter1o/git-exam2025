@@ -91,6 +91,18 @@ switch ($_SERVER["REQUEST_METHOD"])
                         $data_reader = new \DB();
                         $response = $data_reader->DeleteVisitorUser($data["id"]);
                         break;
+                    case 'block_visitor':
+                        $data_reader = new \DB();
+                        $response = $data_reader->BlockVisitorUser($data["id"]);
+                        break;
+                    case 'unblock_visitor':
+                        $data_reader = new \DB();
+                        $response = $data_reader->UnblockVisitorUser($data["id"]);
+                        break;
+                    case 'get_blocked_visitors':
+                        $data_reader = new \DB();
+                        $response = $data_reader->GetBlockedVisitors();
+                        break;
                     case 'add_membership':
                         $data_reader = new \DB();
                         $response = $data_reader->CreateGymMembership($data["id"], $data["membership_type"], $data["duration"], $data["price"], $data["special_group"]);

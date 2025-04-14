@@ -22,6 +22,20 @@ th {
     letter-spacing: 0.05em;
 }
 
+th.sortable {
+    cursor: pointer;
+    user-select: none;
+}
+
+th.sortable i {
+    margin-left: 5px;
+    font-size: 14px;
+}
+
+th.sortable:hover {
+    background-color: #006432;
+}
+
 td {
     background-color: #fff;
     color: #333;
@@ -31,11 +45,27 @@ tr:hover td {
     background-color: #f1f1f1; /* Цвет при наведении на строку */
 }
 
-.tools{
+.tools {
     margin-bottom: 5px;
     display: flex;
-    justify-content: flex-end;
+    justify-content: space-between;
     align-items: center;
+    position: relative; /* Добавляем для правильного позиционирования фильтра */
+}
+
+.filter-container {
+    position: fixed;
+    top: 50%; /* Центрирование по вертикали */
+    left: 50%; /* Центрирование по горизонтали */
+    transform: translate(-50%, -50%); /* Сдвиг для точного центрирования */
+    z-index: 1000; /* Поверх других элементов */
+    background-color: #f9f9f9;
+    border: 2px solid #007b3e; /* Рамка формы */
+    padding: 20px;
+    border-radius: 8px;
+    width: 300px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    margin: 5px 0 0 0; /* Отступ только сверху */
 }
 
 /* Форма */
@@ -62,7 +92,7 @@ tr:hover td {
     margin-bottom: 20px;
 }
 
-.box{
+.box {
     width: 100%;
     display: flex;
     flex-direction: row;
@@ -90,7 +120,7 @@ tr:hover td {
     cursor: pointer;
 }
 
-.submit-button{
+.submit-button {
     margin-left: 2px;
     padding: 8px 10px;
     background-color: #007b3e;
@@ -123,8 +153,8 @@ body {
     padding: 20px;
 }
 
-.button{ 
-    margin-left: 10px;
+.button { 
+    margin-left: 5px;
     padding: 8px 10px;
     background-color: #007b3e;
     color: white;
@@ -143,6 +173,77 @@ body {
     outline: none;
 }
 
-.fa-solid{
+.fa-solid {
     font-size: 20px;
+}
+
+#filter-button {
+    margin-left: 0px;
+}
+
+.filter-title {
+    text-align: center;
+    font-size: 18px;
+    margin-bottom: 20px;
+}
+
+.filter-form {
+    display: flex;
+    flex-direction: column;
+}
+
+.filter-group {
+    margin-bottom: 15px;
+}
+
+.filter-group label {
+    display: block;
+    font-weight: bold;
+    margin-bottom: 5px;
+}
+
+.filter-select, .filter-input {
+    width: 100%;
+    max-width: 100%; /* Ограничиваем максимальную ширину */
+    padding: 8px;
+    margin-top: 5px;
+    margin-bottom: 10px;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    box-sizing: border-box; /* Учитывает паддинг в расчете ширины */
+}
+
+.filter-select:focus, .filter-input:focus {
+    border-color: #007b3e; /* Цвет рамки при фокусе */
+    outline: none;
+    box-shadow: 0 0 5px rgba(0, 123, 62, 0.5); /* Эффект свечения */
+}
+
+.filter-button {
+    width: 100%;
+    padding: 10px;
+    background-color: #007b3e;
+    color: white;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+}
+
+.filter-button:hover {
+    background-color: #005f2b;
+}
+
+.close-button {
+    position: absolute;
+    top: 10px;
+    right: 10px;
+    cursor: pointer;
+    color: #007b3e;
+    background: none;
+    border: none;
+    font-size: 20px;
+}
+
+.close-button:hover {
+    color: #005f2b;
 }

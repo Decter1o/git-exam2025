@@ -3,6 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="Cache-Control" content="no-cache">
     <title>Управление абонементами</title>
     <link rel="stylesheet" href="/public/css/memberships.css">
     <link rel="stylesheet" href="/public/css/fontawesome-free-6.7.2-web/css/all.css">
@@ -11,23 +12,21 @@
 <body>
     <h1>Абонементы</h1>
     <div class="tools">
-        <div class="button-box">
-            <button id="add-membership" class="button"><i class="fa-solid fa-plus"></i></button>
-        </div>
+        <button id="filter-button" class="button"><i class="fa-solid fa-filter"></i></button>
+        <button id="add-membership" class="button"><i class="fa-solid fa-plus"></i></button>
     </div>
 
     <table id="gymMembershipsTable">
         <thead>
         <tr>
-            <th>Тип</th>
-            <th>Длительность</th>
-            <th>Цена</th>
-            <th>Группа</th>
+            <th class="sortable">Тип <i class="fa-solid fa-sort"></i></th>
+            <th class="sortable">Длительность <i class="fa-solid fa-sort"></i></th>
+            <th class="sortable">Цена <i class="fa-solid fa-sort"></i></th>
+            <th class="sortable">Группа <i class="fa-solid fa-sort"></i></th>
             <th>Действия</th>
         </tr>
         </thead>
         <tbody></tbody>
     </table>
-
 </body>
 </html>
