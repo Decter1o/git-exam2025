@@ -151,6 +151,20 @@ function AddUserForm() {
                 let phone_number = document.getElementById('phone').value;
                 if (phone_number.startsWith('+')) {
                     phone_number = phone_number.slice(1);
+                    if(phone_number.length > 11){
+                        new jBox('Notice', {
+                            content: 'Неверный номер телефона!',
+                            color: 'red',
+                            autoClose: 3000,
+                            animation: 'fade',
+                            offset: { x: -15, y: 20 },
+                            position: {
+                                x: 'right',
+                                y: 'top'    
+                            }
+                        });
+                        return;
+                    }
                 }
                 let surname = document.getElementById('surname').value;
                 let membershipId = document.getElementById('membership').value;
@@ -319,6 +333,20 @@ function UpdateUserForm(visitor) {
                     let phone_number = document.getElementById('phone').value.trim();
                     if (phone_number.startsWith('+')) {
                         phone_number = phone_number.slice(1);
+                        if(phone_number.length > 11){
+                            new jBox('Notice', {
+                                content: 'Неверный номер телефона!',
+                                color: 'red',
+                                autoClose: 3000,
+                                animation: 'fade',
+                                offset: { x: -15, y: 20 },
+                                position: {
+                                    x: 'right',
+                                    y: 'top'    
+                                }
+                            });
+                            return;
+                        }
                     }
                     let surname = document.getElementById('surname').value.trim();
                     let membershipId = document.getElementById('membership').value;

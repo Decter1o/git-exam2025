@@ -5,3 +5,10 @@ canvas {
     height: auto; /* Адаптивная высота */
     margin-bottom: 100px; /* Отступ снизу */ 
 }
+
+body {
+    font-family: 'Arial', sans-serif;
+    background-color: #f4f4f4; /* Светлый фон для контраста */
+    color: #333;
+    padding: 20px;
+}
