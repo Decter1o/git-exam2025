@@ -1,0 +1,261 @@
+* {
+    transition: all 0.3s ease;
+}
+
+body {
+    font-family: 'Arial', sans-serif;
+    background-color: #f4f4f4;
+    color: #333;
+    padding: 20px;
+}
+
+.main-box {
+    padding: 20px;
+}
+
+h1 {
+    color: #333;
+    margin-bottom: 20px;
+}
+
+.tools {
+    margin-bottom: 20px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.search-form {
+    width: 25%;
+    display: flex;
+    align-items: center;
+    border: 2px solid #007b3e;
+    border-radius: 8px;
+    overflow: hidden;
+}
+
+.search-form input {
+    flex: 1;
+    border: none;
+    padding: 7px 10px;
+    border-radius: 0;
+}
+
+.search-form input:focus {
+    outline: none;
+}
+
+.search-form button {
+    padding: 7px 15px;
+    background-color: #007b3e;
+    color: white;
+    border: none;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+}
+
+.search-form button:hover {
+    background-color: #005f2b;
+}
+
+.button {
+    margin-left: 5px;
+    padding: 8px 10px;
+    background-color: #007b3e;
+    color: white;
+    border: none;
+    border-radius: 8px;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+    box-shadow: 0 3px 6px rgba(0, 0, 0, 0.1);
+}
+
+.button:hover {
+    background-color: #005f2b;
+}
+
+.button:focus {
+    outline: none;
+}
+
+.fa-solid {
+    font-size: 20px;
+}
+
+/* Стили для формы тренера */
+.trainer-form {
+    position: fixed;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    z-index: 1000;
+    width: 80%;
+    padding: 20px;
+    background-color: #f9f9f9;
+    border: 2px solid #007b3e;
+    border-radius: 10px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+}
+
+.trainer-form h2 {
+    text-align: center;
+    color: #007b3e;
+    margin-bottom: 20px;
+}
+
+.container-box {
+    display: flex;
+    justify-content: space-between;
+    gap: 20px;
+    margin-bottom: 20px;
+}
+
+.container {
+    flex: 1;
+}
+
+.box {
+    margin-bottom: 15px;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+.box p {
+    margin: 0;
+    font-weight: bold;
+    color: #333;
+    flex-shrink: 0;
+    min-width: 120px;
+}
+
+.trainer-form input,
+.trainer-form select,
+.trainer-form textarea {
+    flex: 1;
+    padding: 10px;
+    border: 1px solid #ddd;
+    border-radius: 5px;
+    font-size: 14px;
+}
+
+.trainer-form input:focus,
+.trainer-form select:focus,
+.trainer-form textarea:focus {
+    border-color: #007b3e;
+    outline: none;
+    box-shadow: 0 0 5px rgba(0, 123, 62, 0.5);
+}
+
+.trainer-form textarea {
+    resize: vertical;
+    min-height: 100px;
+}
+
+.photo-container {
+    display: flex;
+    gap: 20px;
+    margin-bottom: 20px;
+}
+
+.photo-container .box {
+    flex: 1;
+}
+
+.photo-container input[type="file"] {
+    padding: 8px;
+}
+
+.close-button {
+    position: absolute;
+    top: 10px;
+    right: 10px;
+    background: none;
+    border: none;
+    font-size: 20px;
+    cursor: pointer;
+    color: #666;
+}
+
+.close-button:hover {
+    color: #333;
+}
+
+.submit-button {
+    margin: 0 auto;
+    padding: 10px 20px;
+    background-color: #007b3e;
+    color: white;
+    border: none;
+    border-radius: 8px;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+    box-shadow: 0 3px 6px rgba(0, 0, 0, 0.1);
+    font-size: 16px;
+}
+
+.submit-button:hover {
+    background-color: #005f2b;
+}
+
+/* Стили для таблицы */
+table {
+    width: 100%;
+    border-collapse: collapse;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    border-radius: 10px;
+    overflow: hidden;
+    background-color: #f9f9f9;
+}
+
+th, td {
+    padding: 12px 15px;
+    text-align: left;
+    border-bottom: 1px solid #ddd;
+}
+
+th {
+    color: white;
+    background-color: #007b3e;
+    font-weight: bold;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+}
+
+td {
+    background-color: #fff;
+    color: #333;
+}
+
+tr:hover td {
+    background-color: #f1f1f1;
+}
+
+.edit-button, .delete-button {
+    padding: 5px 10px;
+    margin: 0 5px;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+    transition: background-color 0.3s;
+}
+
+.edit-button {
+    background-color: #ffd700;
+}
+
+.edit-button:hover {
+    background-color: #ffcd00;
+}
+
+.delete-button {
+    background-color: #ff4444;
+    color: white;
+}
+
+.delete-button:hover {
+    background-color: #cc0000;
+}

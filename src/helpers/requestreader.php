@@ -1,7 +1,13 @@
 <?php
 
 include(__DIR__ . '/../services/SMS.php');
-include(__DIR__ . '/../models/DB.php');
+include(__DIR__ . '/../models/AdminUser.php');
+include(__DIR__ . '/../models/VisitorUser.php');
+include(__DIR__ . '/../models/VisitorMembership.php');
+include(__DIR__ . '/../models/GymMembership.php');
+include(__DIR__ . '/../models/TrainingType.php');
+include(__DIR__ . '/../models/Schedule.php');
+include(__DIR__ . '/../models/Trainer.php');
 
 header("Content-Type: application/json");
 
@@ -35,7 +41,7 @@ switch ($_SERVER["REQUEST_METHOD"])
                 switch ($data["action"]) {
                     case 'auth':
                         $phone = $data["phone"] ?? '';
-                        $data_reader = new \DB();
+                        $data_reader = new \VisitorUser();
                         $count = $data_reader->CheckPhoneNumber($phone);
 
                         if ($count == 1) {
@@ -55,7 +61,7 @@ switch ($_SERVER["REQUEST_METHOD"])
                     case 'verify':
                         $phone = $data["phone"] ?? '';
                         $otp = $data["OTP"] ?? '';
-                        $data_reader = new \DB();
+                        $data_reader = new \VisitorUser();
                         $data_reader->VerifyOTP($phone, $otp);
                         break;
 
@@ -70,62 +76,68 @@ switch ($_SERVER["REQUEST_METHOD"])
                     case 'auth':
                         $username = $data["username"] ?? '';
                         $password = $data["password"] ?? '';
-                        $data_reader = new \DB();
-                        $count = $data_reader->AdminAuth($username, $password);
+                        $u_data_reader = new \AdminUser();
+                        $v_data_reader = new \VisitorUser();
+                        $gm_data_reader = new \GymMembership();
+                        $vm_data_reader = new \VisitorMembership();
+                        $tt_data_reader = new \TrainingType();
+                        $t_data_reader = new \Trainer();
+                        $s_data_reader = new \Schedule();
+                        $count = $u_data_reader->Auth($username, $password);
 
                         if ($count == 1) {
-                            $response = ["success" => true, "visitors" => $data_reader-> GetVisitorUsers(), "gym_memberships" => $data_reader->GetGymMemberships(), "visitors_memberships" => $data_reader->GetVisitorsMemberships(), "training_types" => $data_reader->GetTrainingTypes(), "schedule" => $data_reader->GetSchedule()];
+                            $response = ["success" => true, "visitors" => $v_data_reader-> GetAll(), "gym_memberships" => $gm_data_reader->GetAll(), "visitors_memberships" => $vm_data_reader->GetAll(), "training_types" => $tt_data_reader->GetAll(), "trainers" => $t_data_reader->GetAll(),"schedule" => $s_data_reader->GetAll()];
                         } else {
                             $response = ["success" => false];
                         }
                         break;
                     case 'add_visitor':
-                        $data_reader = new \DB();
-                        $response = $data_reader->CreateVisitorUser($data["id"], $data["name"], $data["surname"], $data["phone_number"], $data["membershipId"], $data["visitor_membership_id"]);
+                        $data_reader = new \VisitorUser();
+                        $response = $data_reader->Create($data["id"], $data["name"], $data["surname"], $data["phone_number"], $data["membershipId"], $data["visitor_membership_id"]);
                         break;
                     case 'update_visitor':
-                        $data_reader = new \DB();
-                        $response = $data_reader->UpdateVisitorUser($data["id"], $data["name"], $data["surname"], $data["phone_number"], $data["membershipId"], $data["visitor_membership_id"]);
+                        $data_reader = new \VisitorUser();
+                        $response = $data_reader->Update($data["id"], $data["name"], $data["surname"], $data["phone_number"], $data["membershipId"], $data["visitor_membership_id"]);
                         break;
                     case 'delete_visitor':
-                        $data_reader = new \DB();
-                        $response = $data_reader->DeleteVisitorUser($data["id"]);
+                        $data_reader = new \VisitorUser();
+                        $response = $data_reader->Delete($data["id"]);
                         break;
                     case 'block_visitor':
-                        $data_reader = new \DB();
-                        $response = $data_reader->BlockVisitorUser($data["id"]);
+                        $data_reader = new \VisitorUser();
+                        $response = $data_reader->Block($data["id"]);
                         break;
                     case 'unblock_visitor':
-                        $data_reader = new \DB();
-                        $response = $data_reader->UnblockVisitorUser($data["id"]);
-                        break;
-                    case 'get_blocked_visitors':
-                        $data_reader = new \DB();
-                        $response = $data_reader->GetBlockedVisitors();
+                        $data_reader = new \VisitorUser();
+                        $response = $data_reader->Unblock($data["id"]);
                         break;
                     case 'add_membership':
-                        $data_reader = new \DB();
-                        $response = $data_reader->CreateGymMembership($data["id"], $data["membership_type"], $data["duration"], $data["price"], $data["special_group"]);
+                        $data_reader = new \GymMembership();
+                        $response = $data_reader->Create($data["id"], $data["membership_type"], $data["duration"], $data["price"], $data["special_group"]);
                         break;
                     case 'update_membership':
-                        $data_reader = new \DB();
-                        $response = $data_reader->UpdateGymMembership($data["id"], $data["membership_type"], $data["duration"], $data["price"], $data["special_group"]);
+                        $data_reader = new \GymMembership();
+                        $response = $data_reader->Update($data["id"], $data["membership_type"], $data["duration"], $data["price"], $data["special_group"]);
                         break;
                     case 'delete_membership':
-                        $data_reader = new \DB();
-                        $response = $data_reader->DeleteGymMembership($data["id"]);
+                        $data_reader = new \GymMembership();
+                        $response = $data_reader->Delete($data["id"]);
                         break;
                     case 'add_training_type':
-                        $data_reader = new \DB();
-                        $response = $data_reader->CreateTrainingType($data["id"], $data["name"], $data["description"]);
+                        $data_reader = new \TrainingType();
+                        $response = $data_reader->Create($data["id"], $data["name"], $data["description"]);
                         break;
                     case 'update_training_type':
-                        $data_reader = new \DB();
-                        $response = $data_reader->UpdateTrainingType($data["id"], $data["name"], $data["description"]);
+                        $data_reader = new \TrainingType();
+                        $response = $data_reader->Update($data["id"], $data["name"], $data["description"]);
                         break;
                     case 'delete_training_type':
-                        $data_reader = new \DB();
-                        $response = $data_reader->DeleteTrainingType($data["id"]);
+                        $data_reader = new \TrainingType();
+                        $response = $data_reader->Delete($data["id"]);
+                        break;
+                    case 'add_trainer':
+                        $data_reader = new \Trainer();
+                        $response = $data_reader->Create($data["id"], $data["name"], $data["surname"], $data["phone"], $data["trainingType"], $data["instagram"], $data["telegram"], $data["whatsapp"], $data["description"], $data["images"]);
                         break;
                     default:
                         $response = ["status" => "error", "message" => "Action is not recognized"];

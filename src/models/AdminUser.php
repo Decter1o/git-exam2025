@@ -1,31 +1,38 @@
 <?php
-    class AdminUser{
+include_once(__DIR__ . '/../models/DB.php');
+class AdminUser extends DB {
+    
+    public $id;
+    public $login;
+    public $password;
+
+    public function init($id, $login, $password) {
+        $this->id = $id;
+        $this->login = $login;
+        $this->password = $password;
+        return $this;
+    }
+
+    private function connect() {
+        return parent::DBConnect();
+    }
+
+    function Auth($login, $password) {
+        // Вызов метода родителя для получения соединения с базой данных
+        $pdo = $this->connect();
         
-        public $id;
-        public $name;
-        public $password;
-        public $email;
-
-        public function __construct($id, $username, $password, $email){
-            $this->id = $id;
-            $this->login = $login;
-            $this->password = $password;
-            $this->email = $email;
-        }
-
-        public function getId(){
-            return $this->id;
-        }
-
-        public function getUsername(){
-            return $this->user_error;
-        }
-
-        public function getPassword(){
-            return $this->password;
-        }
-
-        public function getEmail(){
-            return $this->email;
+        if ($pdo) {
+            try {
+                // Исправление: в запросе было написано 'loigin', а должно быть 'login'
+                $query_string = "SELECT COUNT(*) FROM admin_users WHERE login = :login AND password = :password";
+                $sql_query = $pdo->prepare($query_string);
+                $sql_query->execute(['login' => $login, 'password' => $password]);
+                
+                return $sql_query->fetchColumn(); // Возвращаем количество найденных записей
+            } catch (PDOException $e) {
+                echo json_encode(["error" => "Database connection failed", "details" => $e->getMessage()]);
+            }
         }
     }
+}
+

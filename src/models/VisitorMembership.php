@@ -1,32 +1,41 @@
 <?php
-    class VisitorMembership{
+include_once(__DIR__ . '/../models/DB.php');
+class VisitorMembership extends DB {
 
-        public $id;
-        public $visitorId;
-        public $membershipId;
-        public $visitsLeft;
-        
+    public $id;
+    public $visitorId;
+    public $membershipId;
+    public $visitsLeft;
+    
 
-        public function __construct($id, $visitorId, $membershipId, $visitsLeft){
-            $this->id = $id;
-            $this->visitorId = $visitorId;
-            $this->membershipId = $membershipId;
-            $this->visitsLeft = $visitsLeft;
-        }
-
-        public function getId(){
-            return $this->id;
-        }
-
-        public function getVisitorId(){
-            return $this->visitorId;
-        }
-
-        public function getMembershipId(){
-            return $this->membershipId;
-        }
-
-        public function getVisitsLeft(){
-            return $this->$visitsLeft;
-        }
+    public function init($id, $visitorId, $membershipId, $visitsLeft){
+        $this->id = $id;
+        $this->visitorId = $visitorId;
+        $this->membershipId = $membershipId;
+        $this->visitsLeft = $visitsLeft;
+        return $this;
     }
+
+    private function connect() {
+        return parent::DBConnect();
+    }
+    
+    // Получение всех абонементов для посетителей
+    function GetAll() {
+        $pdo = $this->connect();
+        if ($pdo) {
+            try {
+                $query_string = "SELECT id, visitor_id, membership_id, visits_left FROM visitor_memberships;";
+                $result = $pdo->query($query_string);
+                $visitor_memberships = [];
+                while ($row = $result->fetch()) {
+                    $visitor_memberships[] = (new VisitorMembership()) -> init($row['id'], $row['visitor_id'], $row['membership_id'], $row['visits_left']);
+                }
+                return $visitor_memberships;
+            } catch (PDOException $e) {
+                return json_encode(["error" => "Database connection failed", "details" => $e->getMessage()]);
+            }
+        }
+        return json_encode(["error" => "Database connection error"]);
+    }
+}

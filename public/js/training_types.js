@@ -120,7 +120,6 @@ function AddTrainingType() {
                 sendRequest('POST', requestData);
 
                 loadTrainingTypes();
-                form.remove();
                 let addNotification = new jBox('Notice', {
                     content: 'Тренировка добавлена!',
                     color: '#ddd',
