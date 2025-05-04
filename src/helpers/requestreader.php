@@ -92,10 +92,11 @@ switch ($_SERVER["REQUEST_METHOD"])
                         $tt_data_reader = new \TrainingType();
                         $t_data_reader = new \Trainer();
                         $s_data_reader = new \Schedule();
+                        $tp_data_reader = new \TrainerPhoto();
                         $count = $u_data_reader->Auth($username, $password);
 
                         if ($count == 1) {
-                            $response = ["success" => true, "visitors" => $v_data_reader-> GetAll(), "gym_memberships" => $gm_data_reader->GetAll(), "visitors_memberships" => $vm_data_reader->GetAll(), "training_types" => $tt_data_reader->GetAll(), "trainers" => $t_data_reader->GetAll(),"schedule" => $s_data_reader->GetAll()];
+                            $response = ["success" => true, "visitors" => $v_data_reader-> GetAll(), "gym_memberships" => $gm_data_reader->GetAll(), "visitors_memberships" => $vm_data_reader->GetAll(), "training_types" => $tt_data_reader->GetAll(), "trainers" => $t_data_reader->GetAll(),"schedule" => $s_data_reader->GetAll(), "trainer_photos" => $tp_data_reader->GetAll()];
                         } else {
                             $response = ["success" => false];
                         }

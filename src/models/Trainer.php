@@ -67,12 +67,15 @@ class Trainer extends DB {
                     $trainer_img = preg_replace('#data:image/\w+;base64,#i', '', $img[$i]);
                     $trainer_img = base64_decode($trainer_img);
                     $root = realpath(__DIR__ . '/../../');
-                    $file_path = $root . '/img/' . $id . '_' . $i . '.png';
+                    $web_path = '/img/' . $id . '_' . $i . '.png';
+                    $file_path = $root . $web_path;
+
                     file_put_contents($file_path, $trainer_img);
+
                     $query_string = "INSERT INTO trainer_photos (photo_url, trainer_id) VALUES (:photo_url, :trainer_id)";
                     $sql_query = $pdo->prepare($query_string);
                     $sql_query->execute([
-                        'photo_url' => $file_path,
+                        'photo_url' => $web_path,  // сохраняем путь, доступный в браузере
                         'trainer_id' => $id
                     ]);
 

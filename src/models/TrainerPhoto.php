@@ -24,7 +24,7 @@ class TrainerPhoto extends DB {
                 $result = $pdo->query($query_string);
                 $photos =[];
                 while($row = $result->fetch()){
-                    $photos[] = (new TrainerPhoto())->init($row['id'], $row['trainer_id'], $row['photo_url']);
+                    $photos[] = (new TrainerPhoto())->init($row['id'], $row['trainer_id'], 'https://affectionate-mcclintock.89-35-125-20.plesk.page'.$row['photo_url']);
                 }
                 return $photos;
             } catch (PDOException $e) {
