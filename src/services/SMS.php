@@ -34,18 +34,14 @@ class SMS
         $response = curl_exec($CH);
 
         if (curl_errno($CH)) {
-            echo 'Ошибка: ' . curl_error($CH);
-        } else {
-            // Прямо выводим ответ сервера
-            echo 'Ответ сервера: ' . $response;
+            echo json_encode(curl_error($CH));
         }
-
         curl_close($CH);
     }
     
     public function SendOTP($phone){
         $otp = $this->GenerateOTP();
-        $this-> MobisonKZAPI($phone, $otp);
+        // $this-> MobisonKZAPI($phone, $otp);
         return $otp;
     }
 

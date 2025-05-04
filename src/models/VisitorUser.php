@@ -29,7 +29,7 @@ class VisitorUser extends DB {
                 $query_string = "SELECT COUNT(*) FROM visitor_users WHERE phone_number = :phone";
                 $sql_query = $pdo->prepare($query_string);
                 $sql_query->execute(['phone' => $phone]);
-                return json_encode(["exists" => $sql_query->fetchColumn() > 0]); // Возвращаем результат в JSON
+                return $sql_query->fetchColumn();
             } catch (PDOException $e) {
                 return json_encode(["error" => "Ошибка запроса: " . $e->getMessage()]);
             }
@@ -60,38 +60,57 @@ class VisitorUser extends DB {
         }
     }
 
-    // Проверка OTP
-    function VerifyOTP($phone, $otp) {
+    function VerifyOTP($phone, $otp){
         $pdo = $this->connect();
         if ($pdo) {
             try {
+                // Получаем OTP, если не истек срок
                 $query_string = "SELECT otp FROM visitor_otp WHERE phone_number = :phone AND expires_at > NOW()";
                 $sql_query = $pdo->prepare($query_string);
                 $sql_query->execute(['phone' => $phone]);
 
                 $otp_data = $sql_query->fetch(PDO::FETCH_ASSOC);
 
+                // Если OTP не найден или просрочен
                 if (!$otp_data) {
-                    return json_encode(["success" => false, "message" => "OTP is invalid or expired"]);
-                } else {
+                    echo json_encode(["success" => false, "message" => "OTP is invalid or expired"]);
+                }
+                else {
+                    // Проверяем правильность OTP
                     if ($otp_data["otp"] == $otp) {
-                        $verify_query_string = "SELECT username, usersurname FROM visitor_users WHERE phone_number = :phone";
+                       
+                        // Получаем имя пользователя
+                        $verify_query_string = "SELECT id, username, usersurname, phone_number, status FROM visitor_users WHERE phone_number = :phone";
                         $verify_query = $pdo->prepare($verify_query_string);
                         $verify_query->execute(['phone' => $phone]);
+                        $visitor_row = $verify_query->fetch(PDO::FETCH_ASSOC);
 
-                        $verify_data = $verify_query->fetch(PDO::FETCH_ASSOC);
-                        return json_encode(["success" => true, "user" => $verify_data]);
+                        if ($visitor_row) {
+                            $visitor_data = $this->init(
+                                $visitor_row['id'],
+                                $visitor_row['username'],
+                                $visitor_row['usersurname'],
+                                $visitor_row['phone_number'],
+                                $visitor_row['status']
+                            );
+                            return $visitor_data;
+                        } else {
+                            echo json_encode(["success" => false, "message" => "Visitor not found"]);
+                        }
+
                     } else {
-                        return json_encode(["success" => false, "message" => "OTP is invalid"]);
+                        echo json_encode(["success" => false, "message" => "OTP is invalid"]);
                     }
                 }
+
             } catch (PDOException $e) {
-                return json_encode(["error" => "Database connection failed", "details" => $e->getMessage()]);
+                echo json_encode(["error" => "Database connection failed", "details" => $e->getMessage()]);
             }
         }
-        return json_encode(["error" => "Database connection error"]);
+        else {
+            echo json_encode(["error" => "Database connection error"]);
+        }
     }
-
     // Получение всех пользователей
     function GetAll() {
         $pdo = $this->connect();

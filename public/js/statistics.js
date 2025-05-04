@@ -50,7 +50,7 @@ function renderCharts(memberships, visitors_memberships) {
         data: {
             labels: labels,
             datasets: [{
-                label: 'Статистика по абонементам посетителей',
+                label: 'Человек',
                 data: data,
                 backgroundColor: doughnutChartBackgroundColors,
                 hoverOffset: 4
@@ -84,7 +84,7 @@ function renderCharts(memberships, visitors_memberships) {
         data: {
             labels: type,
             datasets: [{
-                label: 'Статистика по типам абонементов посетителей',
+                label: 'Человек',
                 data: data,
                 backgroundColor: pieChartBackgroundColors,
                 hoverOffset: 4

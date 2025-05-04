@@ -8,6 +8,7 @@ include(__DIR__ . '/../models/GymMembership.php');
 include(__DIR__ . '/../models/TrainingType.php');
 include(__DIR__ . '/../models/Schedule.php');
 include(__DIR__ . '/../models/Trainer.php');
+include(__DIR__ . '/../models/TrainerPhoto.php');
 
 header("Content-Type: application/json");
 
@@ -30,7 +31,7 @@ switch ($_SERVER["REQUEST_METHOD"])
         $data = json_decode($jsonData, true);
 
         if (!isset($data["platform"])) {
-            $response = ["status" => "error", "message" => "Platform is required"];
+            $response = ["status" => false, "message" => "Platform is required"];
             logRequest($data, $response); // Логирование запроса и ответа
             echo json_encode($response, JSON_UNESCAPED_UNICODE);
             exit;
@@ -49,24 +50,32 @@ switch ($_SERVER["REQUEST_METHOD"])
                             $otp_code = $otp->SendOTP($phone);
                             if ($otp_code) {
                                 $data_reader->InsertOTP($otp_code, $phone);
-                                $response = ["status" => "success", "message" => "OTP sent successfully"];
+                                $response = ["status" => true, "message" => "OTP sent successfully"];
                             } else {
-                                $response = ["status" => "error", "message" => "Failed to send OTP"];
+                                $response = ["status" => false, "message" => "Failed to send OTP"];
                             }
                         } else {
-                            $response = ["status" => "error", "message" => "Phone number not found or exist"];
+                            $response = ["status" => false, "message" => "Phone number not found or exist"];
                         }
                         break;
 
                     case 'verify':
                         $phone = $data["phone"] ?? '';
                         $otp = $data["OTP"] ?? '';
-                        $data_reader = new \VisitorUser();
-                        $data_reader->VerifyOTP($phone, $otp);
+                        $visitor_data = new \VisitorUser();
+                        $visitor_user = $visitor_data ->VerifyOTP($phone, $otp);
+                        $gym_membership = (new GymMembership()) -> GetAll();
+                        $visitor_membership = (new VisitorMembership()) -> GetByVisitorID($visitor_user->id);
+                        $training_types = (new TrainingType()) -> GetAll();
+                        $trainers = (new Trainer()) -> GetAll();
+                        $schedule = (new Schedule()) -> GetAll();
+                        $trainer_photos = (new TrainerPhoto()) -> GetAll();
+                        
+                        echo json_encode(["success" => true, "user" => $visitor_user,"visitors_memberships" => $visitor_membership,  "gym_memberships" => $gym_membership, "training_types" => $training_types, "trainers" => $trainers, "schedule" => $schedule, "trainer_photos" => $trainer_photos]);
                         break;
 
                     default:
-                        $response = ["status" => "error", "message" => "Action is not recognized"];
+                        $response = ["status" => false, "message" => "Action is not recognized"];
                         break;
                 }
                 break;
@@ -137,16 +146,24 @@ switch ($_SERVER["REQUEST_METHOD"])
                         break;
                     case 'add_trainer':
                         $data_reader = new \Trainer();
-                        $response = $data_reader->Create($data["id"], $data["name"], $data["surname"], $data["phone"], $data["trainingType"], $data["instagram"], $data["telegram"], $data["whatsapp"], $data["description"], $data["images"]);
+                        $response = $data_reader->Create($data["id"], $data["name"], $data["surname"], $data["phone_number"], $data["training_type_id"], $data["instagram"], $data["telegram"], $data["whatsapp"], $data["description"], $data["images"]);
+                        break;
+                    case 'update_trainer':
+                        $data_reader = new \Trainer();
+                        $response = $data_reader->Update($data["id"], $data["name"], $data["surname"], $data["phone_number"], $data["training_type_id"], $data["instagram"], $data["telegram"], $data["whatsapp"], $data["description"], $data["images"]);
+                        break;
+                    case 'delete_trainer':
+                        $data_reader = new \Trainer();
+                        $response = $data_reader->Delete($data["id"]);
                         break;
                     default:
-                        $response = ["status" => "error", "message" => "Action is not recognized"];
+                        $response = ["status" => false, "message" => "Action is not recognized"];
                         break;
                 }
                 break;
 
             default:
-                $response = ["status" => "error", "message" => "Platform is not recognized"];
+                $response = ["status" => false, "message" => "Platform is not recognized"];
                 break;
         }
         logRequest($data, $response); // Логирование запроса и ответа
@@ -157,7 +174,7 @@ switch ($_SERVER["REQUEST_METHOD"])
         $data = json_decode($jsonData, true);
 
         if (!isset($data["platform"])) {
-            $response = ["status" => "error", "message" => "Platform is required"];
+            $response = ["status" => false, "message" => "Platform is required"];
             break;
         }
 

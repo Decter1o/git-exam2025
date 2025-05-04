@@ -1,6 +1,6 @@
 -- MySQL dump 10.13  Distrib 8.0.41, for Win64 (x86_64)
 --
--- Host: localhost    Database: test
+-- Host: localhost    Database: p-348411_Decter1o
 -- ------------------------------------------------------
 -- Server version	9.2.0
 
@@ -28,7 +28,7 @@ CREATE TABLE `admin_users` (
   `password` varchar(256) NOT NULL,
   PRIMARY KEY (`ID`),
   UNIQUE KEY `password` (`password`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -55,7 +55,7 @@ CREATE TABLE `gym_memberships` (
   `price` decimal(10,2) NOT NULL,
   `special_group` enum('нет абонемента','стандарт','золотой возраст') DEFAULT NULL,
   PRIMARY KEY (`id`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -87,7 +87,7 @@ CREATE TABLE `schedule` (
   PRIMARY KEY (`id`),
   KEY `training_type_id` (`training_type_id`),
   CONSTRAINT `schedule_ibfk_1` FOREIGN KEY (`training_type_id`) REFERENCES `training_types` (`id`) ON DELETE CASCADE
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -167,7 +167,7 @@ CREATE TABLE `training_types` (
   `training_name` varchar(100) NOT NULL,
   `description` text,
   PRIMARY KEY (`id`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -197,7 +197,7 @@ CREATE TABLE `visitor_memberships` (
   KEY `membership_id` (`membership_id`),
   CONSTRAINT `visitor_memberships_ibfk_1` FOREIGN KEY (`visitor_id`) REFERENCES `visitor_users` (`ID`) ON DELETE CASCADE,
   CONSTRAINT `visitor_memberships_ibfk_2` FOREIGN KEY (`membership_id`) REFERENCES `gym_memberships` (`id`) ON DELETE CASCADE
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -224,7 +224,7 @@ CREATE TABLE `visitor_otp` (
   `expires_at` timestamp NOT NULL,
   PRIMARY KEY (`ID`),
   UNIQUE KEY `phone_number` (`phone_number`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -252,7 +252,7 @@ CREATE TABLE `visitor_users` (
   `status` enum('0','1') NOT NULL DEFAULT '1',
   PRIMARY KEY (`ID`),
   UNIQUE KEY `phone_number` (`phone_number`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -266,24 +266,24 @@ INSERT INTO `visitor_users` VALUES ('3046d579-45b1-433f-af64-05a18c099bd4','Ки
 UNLOCK TABLES;
 
 --
--- Dumping events for database 'test'
+-- Dumping events for database 'p-348411_Decter1o'
 --
 
 --
--- Dumping routines for database 'test'
+-- Dumping routines for database 'p-348411_Decter1o'
 --
 /*!50003 DROP PROCEDURE IF EXISTS `CreateVisitor` */;
-ALTER DATABASE `test` CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci ;
+ALTER DATABASE `p-348411_Decter1o` CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci ;
 /*!50003 SET @saved_cs_client      = @@character_set_client */ ;
 /*!50003 SET @saved_cs_results     = @@character_set_results */ ;
 /*!50003 SET @saved_col_connection = @@collation_connection */ ;
 /*!50003 SET character_set_client  = utf8mb4 */ ;
 /*!50003 SET character_set_results = utf8mb4 */ ;
-/*!50003 SET collation_connection  = utf8mb4_0900_ai_ci */ ;
+/*!50003 SET collation_connection  = utf8mb4_general_ci */ ;
 /*!50003 SET @saved_sql_mode       = @@sql_mode */ ;
 /*!50003 SET sql_mode              = 'ONLY_FULL_GROUP_BY,STRICT_TRANS_TABLES,NO_ZERO_IN_DATE,NO_ZERO_DATE,ERROR_FOR_DIVISION_BY_ZERO,NO_ENGINE_SUBSTITUTION' */ ;
 DELIMITER ;;
-CREATE DEFINER=`root`@`localhost` PROCEDURE `CreateVisitor`(
+CREATE PROCEDURE `CreateVisitor`(
 	IN v_id varchar(36),
     IN v_name VARCHAR(256),
     IN v_surname VARCHAR(256),
@@ -329,19 +329,19 @@ DELIMITER ;
 /*!50003 SET character_set_client  = @saved_cs_client */ ;
 /*!50003 SET character_set_results = @saved_cs_results */ ;
 /*!50003 SET collation_connection  = @saved_col_connection */ ;
-ALTER DATABASE `test` CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci ;
+ALTER DATABASE `p-348411_Decter1o` CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci ;
 /*!50003 DROP PROCEDURE IF EXISTS `DeleteVisitor` */;
-ALTER DATABASE `test` CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci ;
+ALTER DATABASE `p-348411_Decter1o` CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci ;
 /*!50003 SET @saved_cs_client      = @@character_set_client */ ;
 /*!50003 SET @saved_cs_results     = @@character_set_results */ ;
 /*!50003 SET @saved_col_connection = @@collation_connection */ ;
 /*!50003 SET character_set_client  = utf8mb4 */ ;
 /*!50003 SET character_set_results = utf8mb4 */ ;
-/*!50003 SET collation_connection  = utf8mb4_0900_ai_ci */ ;
+/*!50003 SET collation_connection  = utf8mb4_general_ci */ ;
 /*!50003 SET @saved_sql_mode       = @@sql_mode */ ;
 /*!50003 SET sql_mode              = 'ONLY_FULL_GROUP_BY,STRICT_TRANS_TABLES,NO_ZERO_IN_DATE,NO_ZERO_DATE,ERROR_FOR_DIVISION_BY_ZERO,NO_ENGINE_SUBSTITUTION' */ ;
 DELIMITER ;;
-CREATE DEFINER=`root`@`localhost` PROCEDURE `DeleteVisitor`(
+CREATE PROCEDURE `DeleteVisitor`(
     IN v_id VARCHAR(36),
     OUT p_status INT
 )
@@ -367,19 +367,19 @@ DELIMITER ;
 /*!50003 SET character_set_client  = @saved_cs_client */ ;
 /*!50003 SET character_set_results = @saved_cs_results */ ;
 /*!50003 SET collation_connection  = @saved_col_connection */ ;
-ALTER DATABASE `test` CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci ;
+ALTER DATABASE `p-348411_Decter1o` CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci ;
 /*!50003 DROP PROCEDURE IF EXISTS `InsertOTP` */;
-ALTER DATABASE `test` CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci ;
+ALTER DATABASE `p-348411_Decter1o` CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci ;
 /*!50003 SET @saved_cs_client      = @@character_set_client */ ;
 /*!50003 SET @saved_cs_results     = @@character_set_results */ ;
 /*!50003 SET @saved_col_connection = @@collation_connection */ ;
 /*!50003 SET character_set_client  = utf8mb4 */ ;
 /*!50003 SET character_set_results = utf8mb4 */ ;
-/*!50003 SET collation_connection  = utf8mb4_0900_ai_ci */ ;
+/*!50003 SET collation_connection  = utf8mb4_general_ci */ ;
 /*!50003 SET @saved_sql_mode       = @@sql_mode */ ;
 /*!50003 SET sql_mode              = 'ONLY_FULL_GROUP_BY,STRICT_TRANS_TABLES,NO_ZERO_IN_DATE,NO_ZERO_DATE,ERROR_FOR_DIVISION_BY_ZERO,NO_ENGINE_SUBSTITUTION' */ ;
 DELIMITER ;;
-CREATE DEFINER=`root`@`localhost` PROCEDURE `InsertOTP`( 
+CREATE PROCEDURE `InsertOTP`( 
     IN p_phone VARCHAR(11),
     IN p_otp VARCHAR(6),
     OUT p_status INT
@@ -404,19 +404,19 @@ DELIMITER ;
 /*!50003 SET character_set_client  = @saved_cs_client */ ;
 /*!50003 SET character_set_results = @saved_cs_results */ ;
 /*!50003 SET collation_connection  = @saved_col_connection */ ;
-ALTER DATABASE `test` CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci ;
+ALTER DATABASE `p-348411_Decter1o` CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci ;
 /*!50003 DROP PROCEDURE IF EXISTS `UpdateVisitor` */;
-ALTER DATABASE `test` CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci ;
+ALTER DATABASE `p-348411_Decter1o` CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci ;
 /*!50003 SET @saved_cs_client      = @@character_set_client */ ;
 /*!50003 SET @saved_cs_results     = @@character_set_results */ ;
 /*!50003 SET @saved_col_connection = @@collation_connection */ ;
 /*!50003 SET character_set_client  = utf8mb4 */ ;
 /*!50003 SET character_set_results = utf8mb4 */ ;
-/*!50003 SET collation_connection  = utf8mb4_0900_ai_ci */ ;
+/*!50003 SET collation_connection  = utf8mb4_general_ci */ ;
 /*!50003 SET @saved_sql_mode       = @@sql_mode */ ;
 /*!50003 SET sql_mode              = 'ONLY_FULL_GROUP_BY,STRICT_TRANS_TABLES,NO_ZERO_IN_DATE,NO_ZERO_DATE,ERROR_FOR_DIVISION_BY_ZERO,NO_ENGINE_SUBSTITUTION' */ ;
 DELIMITER ;;
-CREATE DEFINER=`root`@`localhost` PROCEDURE `UpdateVisitor`(
+CREATE PROCEDURE `UpdateVisitor`(
     IN v_id VARCHAR(36),
     IN v_name VARCHAR(256),
     IN v_surname VARCHAR(256),
@@ -464,7 +464,7 @@ DELIMITER ;
 /*!50003 SET character_set_client  = @saved_cs_client */ ;
 /*!50003 SET character_set_results = @saved_cs_results */ ;
 /*!50003 SET collation_connection  = @saved_col_connection */ ;
-ALTER DATABASE `test` CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci ;
+ALTER DATABASE `p-348411_Decter1o` CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci ;
 /*!40103 SET TIME_ZONE=@OLD_TIME_ZONE */;
 
 /*!40101 SET SQL_MODE=@OLD_SQL_MODE */;

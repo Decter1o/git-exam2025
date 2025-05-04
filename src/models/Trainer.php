@@ -89,22 +89,42 @@ class Trainer extends DB {
         $pdo = $this->connect();
         if ($pdo) {
             try {
-                $query_string = "DELETE FROM trainers WHERE id = :id";
+
+                $query_string = "SELECT photo_url FROM trainer_photos WHERE trainer_id = :id";
                 $sql_query = $pdo->prepare($query_string);
                 $sql_query->execute(['id' => $id]);
+                $photos = $sql_query->fetchAll(PDO::FETCH_COLUMN, 0);
+                foreach ($photos as $photo) {
+                    if (file_exists($photo)) {
+                        unlink($photo);
+                    }
+                }
+                
+                $pdo->beginTransaction();
+    
+                $stmtPhotos = $pdo->prepare("DELETE FROM trainer_photos WHERE trainer_id = :id");
+                $stmtPhotos->execute(['id' => $id]);
+    
+                $stmtTrainer = $pdo->prepare("DELETE FROM trainers WHERE id = :id");
+                $stmtTrainer->execute(['id' => $id]);
+    
+                $pdo->commit();
+    
                 return json_encode(["status" => "success", "message" => "Trainer deleted successfully."]);
             } catch (PDOException $e) {
+                $pdo->rollBack();
                 return json_encode(["error" => "Ошибка запроса: " . $e->getMessage()]);
             }
         }
         return json_encode(["error" => "Database connection error."]);
     }
+    
 
-    public function Update($id, $name, $surname, $phone_number, $training_type_id, $inst, $tg, $whatsapp, $description){
+    public function Update($id, $name, $surname, $phone_number, $training_type_id, $inst, $tg, $whatsapp, $description, $img){
         $pdo = $this->connect();
         if ($pdo) {
             try {
-                $query_string = "UPDATE trainers SET name = :name, surname = :surname, telephone_number = :phone_number, training_type_id = :training_type_id, instagram = :inst, telegram = :tg, whatsapp = :whatsapp, description = :description WHERE id = :id";
+                $query_string = "UPDATE trainers SET name = :name, surname = :surname, telephone_number = :phone_number, training_type = :training_type_id, instagram = :inst, telegram = :tg, whatsapp = :whatsapp, description = :description WHERE id = :id";
                 $sql_query = $pdo->prepare($query_string);
                 $sql_query->execute([
                     'id' => $id,
@@ -117,6 +137,22 @@ class Trainer extends DB {
                     'whatsapp' => $whatsapp,
                     'description' => $description
                 ]);
+                if (!empty($img) && is_array($img)) {
+                    
+                    for ($i=0; $i < count($img); $i++) { 
+                        $trainer_img = preg_replace('#data:image/\w+;base64,#i', '', $img[$i]);
+                        $trainer_img = base64_decode($trainer_img);
+                        $root = realpath(__DIR__ . '/../../');
+                        $file_path = $root . '/img/' . $id . '_' . $i . '.png';
+                        file_put_contents($file_path, $trainer_img);
+                        $query_string = "UPDATE trainer_photos SET photo_url = :photo_url WHERE trainer_id = :trainer_id";
+                        $sql_query = $pdo->prepare($query_string);
+                        $sql_query->execute([
+                            'photo_url' => $file_path,
+                            'trainer_id' => $id
+                        ]);
+                    }
+                }
                 return json_encode(["status" => "success", "message" => "Trainer updated successfully."]);
             } catch (PDOException $e) {
                 return json_encode(["error" => "Ошибка запроса: " . $e->getMessage()]);
