@@ -538,9 +538,6 @@ function UpdateTrainer(trainer) {
                         let store = updateTx.objectStore("trainers");
                         store.put(trainerData);
 
-                        updateTx.oncomplete = () => console.log('Тренер обновлён в IndexedDB');
-                        updateTx.onerror = (event) => console.error('Ошибка при обновлении:', event.target.error);
-
                         form.remove();
                         loadTrainers();
 
@@ -575,7 +572,7 @@ function UpdateTrainer(trainer) {
 function DeleteTrainer(id){
     new jBox('Confirm', {
         title: 'Подтверждение',
-        content: 'Вы уверены, что хотите удалить этого посетителя?',
+        content: 'Вы уверены, что хотите удалить этого тренера?',
         confirmButton: 'Удалить',
         cancelButton: 'Отмена',
         overlay: false,
@@ -618,7 +615,7 @@ function DeleteTrainer(id){
                 transaction.onerror = function (event) {
                     console.error('Ошибка при удалении:', event.target.error);
                     new jBox('Notice', {
-                        content: 'Ошибка при удалении Тренер',
+                        content: 'Ошибка при удалении тренера',
                         color: '#ddd',
                         autoClose: 3000,
                         delayOnHover: false,

@@ -92,14 +92,17 @@ class Trainer extends DB {
         $pdo = $this->connect();
         if ($pdo) {
             try {
-
                 $query_string = "SELECT photo_url FROM trainer_photos WHERE trainer_id = :id";
                 $sql_query = $pdo->prepare($query_string);
                 $sql_query->execute(['id' => $id]);
                 $photos = $sql_query->fetchAll(PDO::FETCH_COLUMN, 0);
+                
+                $root = realpath(__DIR__ . '/../../');
+                // Удаляем физические файлы
                 foreach ($photos as $photo) {
-                    if (file_exists($photo)) {
-                        unlink($photo);
+                    $file_path = $root . $photo;
+                    if (file_exists($file_path)) {
+                        unlink($file_path);
                     }
                 }
                 

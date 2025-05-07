@@ -157,6 +157,18 @@ switch ($_SERVER["REQUEST_METHOD"])
                         $data_reader = new \Trainer();
                         $response = $data_reader->Delete($data["id"]);
                         break;
+                    case 'add_schedule':
+                        $data_reader = new \Schedule();
+                        $response = $data_reader->Create($data["id"], $data["day_of_week"], $data["start_time"], $data["end_time"], $data["training_type_id"], $data["room_name"], $data["trainer"], $data["category"]);
+                        break;
+                    case 'update_schedule':
+                        $data_reader = new \Schedule();
+                        $response = $data_reader->Update($data["id"], $data["day_of_week"], $data["start_time"], $data["end_time"], $data["training_type_id"], $data["room_name"], $data["trainer"], $data["category"]);
+                        break;
+                    case 'delete_schedule':
+                        $data_reader = new \Schedule();
+                        $response = $data_reader->Delete($data["id"]);
+                        break;
                     default:
                         $response = ["status" => false, "message" => "Action is not recognized"];
                         break;

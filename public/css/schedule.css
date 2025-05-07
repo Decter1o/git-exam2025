@@ -1,0 +1,240 @@
+* {
+    transition: all 0.3s ease;
+}
+
+body {
+    font-family: 'Arial', sans-serif;
+    background-color: #f4f4f4;
+    color: #333;
+    padding: 20px;
+}
+
+table {
+    width: 100%;
+    border-collapse: collapse;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    border-radius: 10px;
+    overflow: hidden;
+    background-color: #f9f9f9;
+}
+
+th, td {
+    padding: 12px 15px;
+    text-align: left;
+    border-bottom: 1px solid #ddd;
+}
+
+th {
+    color: white;
+    background-color: #007b3e;
+    font-weight: bold;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+}
+
+td {
+    background-color: #fff;
+    color: #333;
+}
+
+tr:hover td {
+    background-color: #f1f1f1;
+}
+
+.tools{
+    width: 100%;
+    display: flex;
+    align-items: center;
+    flex-direction: row;
+    justify-content: space-between;
+    margin-bottom: 5px
+}
+
+.rooms{
+    display: flex;
+    align-items: center;
+    flex-direction: row;
+    border-radius: 10px;
+    overflow: hidden;
+}
+
+.room{
+    font-size: 18px;
+    padding: 8px 10px;
+    color: white;
+    background-color: #007b3e
+}
+
+.room:hover{
+    background-color: #f1f1f1;
+    color: #007b3e;
+    transition: all 0.3s ease;
+    cursor: pointer;
+}
+
+.week-days{
+    display: flex;
+    align-items: center;
+    flex-direction: row;
+    border-radius: 10px;
+    overflow: hidden;
+}
+
+.day{
+    font-size: 18px;
+    padding: 8px 10px;
+    color: white;
+    background-color: #007b3e
+}
+
+.day:hover{
+    background-color: #f1f1f1;
+    color: #007b3e;
+    transition: all 0.3s ease;
+    cursor: pointer;
+}
+
+.active {
+    background-color: #f1f1f1; /* Зеленый фон */
+    color: #007b3e; /* Белый текст */
+}
+
+
+#add-training{
+    position: relative;
+    top: 0;
+    right: 0;
+}
+
+.button{ 
+    margin-left: 5px;
+    padding: 8px 10px;
+    background-color: #007b3e;
+    color: white;
+    border: none;
+    border-radius: 8px;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+    box-shadow: 0 3px 6px rgba(0, 0, 0, 0.1);
+}
+
+.button:hover {
+    background-color: #005f2b;
+}
+
+.button:focus {
+    outline: none;
+}
+
+.fa-solid{
+    font-size: 20px;
+}
+
+
+.container{
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    flex-direction: column;
+}
+
+.schedule-form {
+    position: fixed; /* Меняем position на fixed */
+    top: 50%; /* Центрирование по вертикали */
+    left: 50%; /* Центрирование по горизонтали */
+    transform: translate(-50%, -50%); /* Сдвиг для точного центрирования */
+    z-index: 1000; /* Поверх других элементов */
+    width: 400px;
+    max-width: 90%; /* Ширина формы */
+    padding: 20px;
+    background-color: #f9f9f9; /* Фон формы */
+    border: 2px solid #007b3e; /* Рамка формы */
+    border-radius: 10px; /* Закругленные углы */
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1); /* Тень */
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+}
+
+.schedule-form h2 {
+    color: #007b3e;
+    margin-bottom: 20px;
+    text-align: center;
+}
+
+.form-group {
+    margin-bottom: 15px;
+}
+
+.form-group label {
+    display: block;
+    margin-bottom: 5px;
+    color: #333;
+    font-weight: bold;
+}
+
+.form-group input {
+    width: 100%;
+    padding: 8px 0;
+    border: 1px solid #ddd;
+    border-radius: 5px;
+    font-size: 16px;
+}
+.form-group select {
+    width: 100%;
+    padding: 8px 5px;
+    border: 1px solid #ddd;
+    border-radius: 5px;
+    font-size: 16px;
+}
+
+.form-group input:focus,
+.form-group select:focus {
+    border-color: #007b3e;
+    outline: none;
+    box-shadow: 0 0 5px rgba(0, 123, 62, 0.2);
+}
+
+.form-actions {
+    display: flex;
+    justify-content: center;
+
+    gap: 10px;
+    margin-top: 20px;
+}
+
+.submit-button{
+    margin-left: 2px;
+    padding: 8px 10px;
+    background-color: #007b3e;
+    color: white;
+    border: none;
+    border-radius: 8px;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+    box-shadow: 0 3px 6px rgba(0, 0, 0, 0.1);
+}
+
+.submit-button:hover {
+    background-color: #005f2b;
+}
+
+.submit-button:focus {
+    outline: none;
+}
+
+.close-button {
+    position: absolute;
+    top: 10px;
+    right: 10px;
+    cursor: pointer;
+    color: #007b3e;
+    background: none;
+    border: none;
+    font-size: 20px;
+    z-index: 1001;
+}
+
+.close-button:hover {
+    color: #005f2b;
+}

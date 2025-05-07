@@ -4,30 +4,48 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta http-equiv="Cache-Control" content="no-cache">
+    <link rel ="stylesheet" href="/public/css/schedule.css">
+    <link rel="stylesheet" href="/public/css/fontawesome-free-6.7.2-web/css/all.min.css">
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/jbox@1.1.1/dist/jBox.min.css" />
-    <script src="https://cdn.jsdelivr.net/npm/jbox@1.1.1/dist/jBox.min.js" defer></script>
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js" defer></script>
+    <script src="https://cdn.jsdelivr.net/gh/StephanWagner/jBox@v1.3.2/dist/jBox.all.min.js" defer></script>
+    <link href="https://cdn.jsdelivr.net/gh/StephanWagner/jBox@v1.3.2/dist/jBox.all.min.css" rel="stylesheet">
+    <script src="/public/js/schedule.js" defer></script>
     <title>Распиание занятий</title>
 </head>
 <body>
     <h1>Расписание занятий</h1>
-    <div class="room">
-        <h2 class="room-name"></h2>
+    <div class="container">
+        <div class="tools">
+            <div class="rooms">
+                <div class="room" id="1">Зал 1</div>
+                <div class="room" id="2">Зал 2</div>
+                <div class="room" id="3">Зал 3</div>
+            </div>
+            <div class="week-days">
+                <div class="day" id="monday">Пн</div>
+                <div class="day" id="tuesday">Вт</div>
+                <div class="day" id="wednesday">Ср</div>
+                <div class="day" id="thursday">Чт</div>
+                <div class="day" id="friday">Пт</div>
+                <div class="day" id="saturday">Сб</div>
+                <div class="day" id="sunday">Вс</div>
+            </div>
+            <div class="button-box">
+                <button id="add-training" class="button"><i class="fa-solid fa-plus"></i></button>
+            </div>
+        </div>
         <table id="schedule-table">
             <thead>
                 <tr>
                     <th>Время</th>
-                    <th>Пн</th>
-                    <th>Вт</th>
-                    <th>Ср</th>
-                    <th>Чт</th>
-                    <th>Пт</th>
-                    <th>Сб</th>
-                    <th>Вс</th>
+                    <th>Тип тренировки</th>
+                    <th>Тренер</th>
+                    <th>Категория</th>
+                    <th>Действия</th>
                 </tr>
             </thead>
-            <tbody id="schedule-body">
-    
-            </tbody>
+            <tbody></tbody>
         </table>
     </div>
 </body>
