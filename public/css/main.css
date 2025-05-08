@@ -109,3 +109,76 @@ a:hover {
     background-color: transparent;
     transform: scale(1.05);
 }
+
+@media screen and (max-width: 1024px) {
+    .content {
+        width: 90%;
+    }
+    
+    .navbar {
+        padding: 0 20px;
+    }
+    
+    .menu-list {
+        gap: 15px;
+    }
+}
+
+@media screen and (max-width: 768px) {
+    .navbar {
+        flex-direction: column;
+        padding: 10px;
+        height: auto;
+    }
+    
+    .menu-list {
+        flex-direction: column;
+        width: 100%;
+        gap: 10px;
+    }
+    
+    .menu-item {
+        width: 100%;
+        text-align: center;
+    }
+    
+    .menu-item a {
+        width: 100%;
+        padding: 10px;
+    }
+    
+    .logo {
+        margin-bottom: 15px;
+    }
+    
+    .user-info {
+        width: 100%;
+        justify-content: center;
+        margin-top: 15px;
+    }
+}
+
+@media screen and (max-width: 480px) {
+    .content {
+        width: 95%;
+        padding: 10px;
+    }
+    
+    .navbar {
+        padding: 5px;
+    }
+    
+    .logo {
+        font-size: 20px;
+    }
+    
+    .user-info {
+        font-size: 14px;
+    }
+    
+    .button {
+        width: 100%;
+        margin: 5px 0;
+        padding: 8px;
+    }
+}

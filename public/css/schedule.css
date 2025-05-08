@@ -238,3 +238,78 @@ tr:hover td {
 .close-button:hover {
     color: #005f2b;
 }
+
+@media screen and (max-width: 1024px) {
+    .schedule-form {
+        width: 85%;
+    }
+    
+    .schedule-card {
+        width: calc(33.33% - 20px);
+    }
+}
+
+@media screen and (max-width: 768px) {
+    .tools {
+        flex-direction: column;
+        gap: 15px;
+    }
+    
+    .schedule-card {
+        width: calc(50% - 20px);
+    }
+    
+    .container-box {
+        flex-direction: column;
+    }
+    
+    th, td {
+        padding: 8px 10px;
+        font-size: 14px;
+    }
+    
+    .schedule-form {
+        width: 90%;
+    }
+    
+    .time-picker {
+        flex-direction: column;
+        gap: 10px;
+    }
+}
+
+@media screen and (max-width: 480px) {
+    body {
+        padding: 10px;
+    }
+    
+    .schedule-form {
+        width: 95%;
+        padding: 15px;
+    }
+    
+    .schedule-card {
+        width: 100%;
+    }
+    
+    .box {
+        flex-direction: column;
+        align-items: flex-start;
+    }
+    
+    th, td {
+        padding: 6px 8px;
+        font-size: 13px;
+    }
+    
+    .button {
+        width: 100%;
+        margin: 5px 0;
+    }
+    
+    input[type="time"],
+    input[type="date"],
+    select {
+        width: 100%;
+    }
+}

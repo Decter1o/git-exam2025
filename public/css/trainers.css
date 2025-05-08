@@ -242,3 +242,75 @@ td {
 tr:hover td {
     background-color: #f1f1f1;
 }
+
+@media screen and (max-width: 1024px) {
+    .trainer-form {
+        width: 85%;
+    }
+    
+    .trainer-card {
+        width: calc(33.33% - 20px);
+    }
+}
+
+@media screen and (max-width: 768px) {
+    .tools {
+        flex-direction: column;
+        gap: 15px;
+    }
+    
+    .trainer-card {
+        width: calc(50% - 20px);
+    }
+    
+    .trainer-form {
+        width: 90%;
+    }
+    
+    .container-box {
+        flex-direction: column;
+    }
+    
+    .trainer-photo {
+        width: 150px;
+        height: 150px;
+    }
+}
+
+@media screen and (max-width: 480px) {
+    body {
+        padding: 10px;
+    }
+    
+    .trainer-form {
+        width: 95%;
+        padding: 15px;
+    }
+    
+    .trainer-card {
+        width: 100%;
+    }
+    
+    .box {
+        flex-direction: column;
+        align-items: flex-start;
+    }
+    
+    .box p {
+        margin-bottom: 5px;
+    }
+    
+    .button {
+        width: 100%;
+        margin: 5px 0;
+    }
+    
+    .trainer-info h3 {
+        font-size: 18px;
+    }
+    
+    .trainer-photo {
+        width: 120px;
+        height: 120px;
+    }
+}

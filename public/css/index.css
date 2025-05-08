@@ -43,3 +43,55 @@ body {
 .login-container button:hover {
     background-color: #4da11b;
 }
+
+@media screen and (max-width: 1024px) {
+    .login-form {
+        width: 400px;
+    }
+}
+
+@media screen and (max-width: 768px) {
+    .login-form {
+        width: 90%;
+        max-width: 350px;
+    }
+    
+    .form-group {
+        margin-bottom: 15px;
+    }
+}
+
+@media screen and (max-width: 480px) {
+    .container {
+        padding: 15px;
+    }
+    
+    .login-form {
+        width: 95%;
+        padding: 20px;
+    }
+    
+    .form-title {
+        font-size: 24px;
+        margin-bottom: 20px;
+    }
+    
+    .form-group label {
+        font-size: 14px;
+    }
+    
+    .form-group input {
+        padding: 8px;
+        font-size: 14px;
+    }
+    
+    .submit-button {
+        padding: 10px;
+        font-size: 16px;
+    }
+    
+    .error-message {
+        font-size: 14px;
+        padding: 8px;
+    }
+}

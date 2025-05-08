@@ -247,3 +247,83 @@ body {
 .close-button:hover {
     color: #005f2b;
 }
+
+@media screen and (max-width: 1024px) {
+    .membership-form {
+        width: 85%;
+    }
+    
+    .search-form {
+        width: 35%;
+    }
+    
+    .membership-card {
+        width: calc(33.33% - 20px);
+    }
+}
+
+@media screen and (max-width: 768px) {
+    .tools {
+        flex-direction: column;
+        gap: 15px;
+    }
+    
+    .search-form {
+        width: 100%;
+    }
+    
+    .membership-card {
+        width: calc(50% - 20px);
+    }
+    
+    .membership-form {
+        width: 90%;
+    }
+    
+    .container-box {
+        flex-direction: column;
+    }
+    
+    th, td {
+        padding: 8px 10px;
+        font-size: 14px;
+    }
+}
+
+@media screen and (max-width: 480px) {
+    body {
+        padding: 10px;
+    }
+    
+    .membership-form {
+        width: 95%;
+        padding: 15px;
+    }
+    
+    .membership-card {
+        width: 100%;
+    }
+    
+    .box {
+        flex-direction: column;
+        align-items: flex-start;
+    }
+    
+    .box p {
+        margin-bottom: 5px;
+    }
+    
+    th, td {
+        padding: 6px 8px;
+        font-size: 13px;
+    }
+    
+    .button {
+        width: 100%;
+        margin: 5px 0;
+    }
+    
+    input, select {
+        width: 100%;
+    }
+}

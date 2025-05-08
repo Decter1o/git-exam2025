@@ -175,3 +175,63 @@ body {
 .fa-solid{
     font-size: 20px;
 }
+
+@media screen and (max-width: 1024px) {
+    .training-type-form {
+        width: 85%;
+    }
+    
+    .search-form {
+        width: 35%;
+    }
+}
+
+@media screen and (max-width: 768px) {
+    .tools {
+        flex-direction: column;
+        gap: 15px;
+    }
+    
+    .search-form {
+        width: 100%;
+    }
+    
+    .training-type-form {
+        width: 90%;
+    }
+    
+    th, td {
+        padding: 8px 10px;
+        font-size: 14px;
+    }
+    
+    .box {
+        flex-direction: column;
+        gap: 10px;
+    }
+}
+
+@media screen and (max-width: 480px) {
+    body {
+        padding: 10px;
+    }
+    
+    .training-type-form {
+        width: 95%;
+        padding: 15px;
+    }
+    
+    th, td {
+        padding: 6px 8px;
+        font-size: 13px;
+    }
+    
+    .button {
+        width: 100%;
+        margin: 5px 0;
+    }
+    
+    input, select, textarea {
+        width: 100%;
+    }
+}

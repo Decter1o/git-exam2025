@@ -669,3 +669,92 @@ function sendRequest(method, data) {
     .catch(error => console.error('Ошибка при выполнении запроса:', error));
 }
 
+function SearchTrainer() {
+    let searchInput = document.getElementById('search-input').value.toLowerCase();
+    let dbRequest = indexedDB.open('FitnessFamyli', 1);
+
+    dbRequest.onsuccess = function(event) {
+        let db = event.target.result;
+        let transaction = db.transaction(['trainers', 'training_types'], 'readonly');
+        let trainers_store = transaction.objectStore("trainers");
+        let training_types_store = transaction.objectStore("training_types");
+        let trainers_store_request = trainers_store.getAll();
+        let training_types_store_request = training_types_store.getAll();
+
+        Promise.all([trainers_store_request, training_types_store_request].map(req => new Promise((resolve, reject) => {
+            req.onsuccess = () => resolve(req.result);
+            req.onerror = () => reject(req.error);
+        }))).then(([trainers, training_types]) => {
+            let tableBody = document.querySelector("#trainersTable tbody");
+            tableBody.innerHTML = "";
+
+            trainers
+                .filter(trainer => {
+                    if (searchInput.startsWith('+')) {
+                        searchInput = searchInput.slice(1);
+                    }
+                    return (
+                        trainer.name.toLowerCase().includes(searchInput) ||
+                        trainer.surname.toLowerCase().includes(searchInput) ||
+                        trainer.phone_number.includes(searchInput)
+                    );
+                })
+                .forEach(trainer => {
+                    let row = document.createElement("tr");
+                
+                    let nameCell = document.createElement("td");
+                    nameCell.textContent = trainer.name;
+                    row.appendChild(nameCell);
+
+                    let surnameCell = document.createElement("td");
+                    surnameCell.textContent = trainer.surname;
+                    row.appendChild(surnameCell);
+
+                    let trainingTypeCell = document.createElement("td");
+                    trainingTypeCell.textContent = training_types.find(type => type.id == trainer.training_type_id).name || 'Неизвестный тип';
+                    row.appendChild(trainingTypeCell);
+
+                    let phoneCell = document.createElement("td");
+                    phoneCell.textContent = '+' + trainer.phone_number;
+                    row.appendChild(phoneCell);
+
+                    let socialMediaCell = document.createElement("td");
+                    socialMediaCell.innerHTML = `<i class="fa-brands fa-instagram"></i> ${trainer.inst}<br><i class="fa-brands fa-telegram"></i> ${trainer.tg}<br><i class="fa-brands fa-whatsapp"></i> ${trainer.whatsapp}`;
+                    row.appendChild(socialMediaCell);
+
+                    let descriptionCell = document.createElement("td");
+                    descriptionCell.textContent = trainer.description;
+                    row.appendChild(descriptionCell);
+
+                    let actionCell = document.createElement('td');
+                    let editButton = document.createElement('button');
+                    editButton.innerHTML = '<i class="fa-solid fa-pen"></i>';
+                    editButton.classList.add('edit-button', 'button');
+                    editButton.onclick = () => UpdateTrainer(trainer);
+                    actionCell.appendChild(editButton);
+
+                    let deleteButton = document.createElement('button');
+                    deleteButton.innerHTML = '<i class="fa-solid fa-trash"></i>';
+                    deleteButton.classList.add('delete-button', 'button');
+                    deleteButton.onclick = () => DeleteTrainer(trainer.id);
+                    actionCell.appendChild(deleteButton);
+
+                    row.appendChild(actionCell);
+                    tableBody.appendChild(row);
+                });
+        }).catch(error => {
+            console.error('Ошибка при загрузке данных из IndexedDB:', error);
+        });
+    }
+}
+
+// Добавляем обработчик события input для живого поиска
+document.addEventListener('DOMContentLoaded', function() {
+    const searchInput = document.getElementById('search-input');
+    if (searchInput) {
+        searchInput.addEventListener('input', function() {
+            SearchTrainer();
+        });
+    }
+});
+
