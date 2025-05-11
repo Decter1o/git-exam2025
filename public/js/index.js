@@ -1,13 +1,10 @@
-// index.html
-  // Функция для отправки данных формы на сервер
-  function handleLogin(event) {
-    event.preventDefault(); // Останавливаем стандартное поведение формы
+function handleLogin(event) {
+    event.preventDefault();
 
-    // Получаем данные из формы
     let username = document.getElementById('username').value;
     let password = document.getElementById('password').value;
 
-    // Формируем JSON-объект
+    
     let requestData = {
         platform: "website",
         action: "auth",
@@ -15,17 +12,17 @@
         password: password
     };
 
-    // Отправляем данные на сервер
-    fetch('/src/helpers/requestreader.php', { // Замените '/login' на реальный URL для проверки
+
+    fetch('/src/helpers/requestreader.php', {
         method: 'POST',
         headers: {
         'Content-Type': 'application/json'
         },
-        body: JSON.stringify(requestData) // Преобразуем объект в JSON
+        body: JSON.stringify(requestData)
     })
     .then(response => {
         if (response.headers.get('content-type')?.includes('application/json')) {
-        return response.json(); // Если ответ в формате JSON
+        return response.json();
         } else {
         throw new Error('Invalid content-type, expected application/json');
         }
@@ -33,8 +30,8 @@
     .then(data => {
         if (data.success) {
             delete data.success;
-            // IndexedDB example
-            let dbRequest = indexedDB.open('FitnessFamyli', 1); // Увеличь версию, если уже создавал
+
+            let dbRequest = indexedDB.open('FitnessFamyli', 1);
 
             dbRequest.onupgradeneeded = function(event) {
                 let db = event.target.result;
@@ -51,7 +48,7 @@
                     let transaction = db.transaction(key, 'readwrite');
                     let store = transaction.objectStore(key);
 
-                    store.clear(); // очищаем перед добавлением
+                    store.clear();
 
                     data[key].forEach(item => {
                         store.put(item);
@@ -73,7 +70,6 @@
 
             window.location.href = '/public/pages/main.html';
         } else {
-        // Если данные неверны, показываем сообщение об ошибке
             document.getElementById('errorMessage').textContent = 'Invalid credentials';
         }
     })
@@ -82,6 +78,5 @@
     });
     }
 
-    // Привязываем функцию к событию клика на кнопке
     document.getElementById('loginButton').addEventListener('click', handleLogin);
 

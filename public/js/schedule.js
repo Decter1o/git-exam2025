@@ -514,6 +514,7 @@ function populateTrainerOptions(trainers) {
 function sendRequest(method, data) {
     fetch('/src/helpers/requestreader.php', {
         method: method,
+        credentials: 'include',
         headers: {
             'Content-Type': 'application/json'
         },

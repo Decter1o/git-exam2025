@@ -23,8 +23,7 @@ class AdminUser extends DB {
         
         if ($pdo) {
             try {
-                // Исправление: в запросе было написано 'loigin', а должно быть 'login'
-                $query_string = "SELECT COUNT(*) FROM admin_users WHERE login = :login AND password = :password";
+                $query_string = "SELECT ID FROM admin_users WHERE login = :login AND password = :password";
                 $sql_query = $pdo->prepare($query_string);
                 $sql_query->execute(['login' => $login, 'password' => $password]);
                 

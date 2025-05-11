@@ -1,4 +1,3 @@
-// Загружаем абонементы из localStorage
 let currentSort = {
     column: null,
     direction: 'asc'
@@ -109,8 +108,6 @@ function loadGymMemberships() {
         console.error('Ошибка при открытии базы данных:', event.target.error);
     };
 }
-
-// Инициализация таблицы при загрузке страницы
 document.addEventListener('DOMContentLoaded', () => {
     loadGymMemberships();
 
@@ -416,10 +413,10 @@ document.addEventListener('DOMContentLoaded', () => {
     document.getElementById('add-membership').addEventListener('click', AddMembershipForm);
 });
 
-// Функция для отправки запросов на сервер с использованием Fetch API
 function sendRequest(method, data) {
     fetch('/src/helpers/requestreader.php', {
         method: method,
+        credentials: 'include',
         headers: {
             'Content-Type': 'application/json'
         },
@@ -438,7 +435,6 @@ function sendRequest(method, data) {
     .catch(error => console.error('Ошибка при выполнении запроса:', error));
 }
 
-// Удаление абонемента
 function DeleteMembership(id) {
     new jBox('Confirm', {
         title: 'Подтверждение',

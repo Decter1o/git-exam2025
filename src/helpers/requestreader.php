@@ -81,6 +81,7 @@ switch ($_SERVER["REQUEST_METHOD"])
                 break;
 
             case 'website':
+                session_start();
                 switch ($data["action"]) {
                     case 'auth':
                         $username = $data["username"] ?? '';
@@ -93,88 +94,163 @@ switch ($_SERVER["REQUEST_METHOD"])
                         $t_data_reader = new \Trainer();
                         $s_data_reader = new \Schedule();
                         $tp_data_reader = new \TrainerPhoto();
-                        $count = $u_data_reader->Auth($username, $password);
+                        $result = $u_data_reader->Auth($username, $password);
 
-                        if ($count == 1) {
+                        if ($result != null) {
+                            $_SESSION["user_id"] = $result;
+                            $_SESSION["username"] = $username;
                             $response = ["success" => true, "visitors" => $v_data_reader-> GetAll(), "gym_memberships" => $gm_data_reader->GetAll(), "visitors_memberships" => $vm_data_reader->GetAll(), "training_types" => $tt_data_reader->GetAll(), "trainers" => $t_data_reader->GetAll(),"schedule" => $s_data_reader->GetAll(), "trainer_photos" => $tp_data_reader->GetAll()];
                         } else {
                             $response = ["success" => false];
                         }
                         break;
+                    case 'logout':
+                        session_unset();
+                        session_destroy();
+                        $response = ["success" => true, "message" => "Logged out successfully"];
+                        break;
                     case 'add_visitor':
-                        $data_reader = new \VisitorUser();
-                        $response = $data_reader->Create($data["id"], $data["name"], $data["surname"], $data["phone_number"], $data["membershipId"], $data["visitor_membership_id"]);
+                        if(isset($_SESSION["user_id"])) {
+                            $data_reader = new \VisitorUser();
+                            $response = $data_reader->Create($data["id"], $data["name"], $data["surname"], $data["phone_number"], $data["membershipId"], $data["visitor_membership_id"]);
+                            break;
+                        } else {
+                            $response = ["status" => false, "message" => "User not authenticated"];
+                        }
                         break;
                     case 'update_visitor':
-                        $data_reader = new \VisitorUser();
-                        $response = $data_reader->Update($data["id"], $data["name"], $data["surname"], $data["phone_number"], $data["membershipId"], $data["visitor_membership_id"]);
+                        if(isset($_SESSION["user_id"])) {
+                            $data_reader = new \VisitorUser();
+                            $response = $data_reader->Update($data["id"], $data["name"], $data["surname"], $data["phone_number"], $data["membershipId"], $data["visitor_membership_id"]);
+                        } else {
+                            $response = ["status" => false, "message" => "User not authenticated"];
+                        }
                         break;
                     case 'delete_visitor':
-                        $data_reader = new \VisitorUser();
-                        $response = $data_reader->Delete($data["id"]);
+                        if(isset($_SESSION["user_id"])) {
+                            $data_reader = new \VisitorUser();
+                            $response = $data_reader->Delete($data["id"]);
+                        } else {
+                            $response = ["status" => false, "message" => "User not authenticated"];
+                        }
                         break;
                     case 'block_visitor':
-                        $data_reader = new \VisitorUser();
-                        $response = $data_reader->Block($data["id"]);
+                        if(isset($_SESSION["user_id"])) {
+                            $data_reader = new \VisitorUser();
+                            $response = $data_reader->Block($data["id"]);
+                        } else {
+                            $response = ["status" => false, "message" => "User not authenticated"];
+                        }
                         break;
                     case 'unblock_visitor':
-                        $data_reader = new \VisitorUser();
-                        $response = $data_reader->Unblock($data["id"]);
+                        if(isset($_SESSION["user_id"])) {
+                            $data_reader = new \VisitorUser();
+                            $response = $data_reader->Unblock($data["id"]);
+                        } else {
+                            $response = ["status" => false, "message" => "User not authenticated"];
+                        }
                         break;
                     case 'add_membership':
-                        $data_reader = new \GymMembership();
-                        $response = $data_reader->Create($data["id"], $data["membership_type"], $data["duration"], $data["price"], $data["special_group"]);
+                        if(isset($_SESSION["user_id"])) {
+                            $data_reader = new \GymMembership();
+                            $response = $data_reader->Create($data["id"], $data["membership_type"], $data["duration"], $data["price"], $data["special_group"]);
+                        } else {
+                            $response = ["status" => false, "message" => "User not authenticated"];
+                        }
                         break;
                     case 'update_membership':
-                        $data_reader = new \GymMembership();
-                        $response = $data_reader->Update($data["id"], $data["membership_type"], $data["duration"], $data["price"], $data["special_group"]);
+                        if(isset($_SESSION["user_id"])) {
+                            $data_reader = new \GymMembership();
+                            $response = $data_reader->Update($data["id"], $data["membership_type"], $data["duration"], $data["price"], $data["special_group"]);
+                        } else {
+                            $response = ["status" => false, "message" => "User not authenticated"];
+                        }
                         break;
                     case 'delete_membership':
-                        $data_reader = new \GymMembership();
-                        $response = $data_reader->Delete($data["id"]);
+                        if(isset($_SESSION["user_id"])) {
+                            $data_reader = new \GymMembership();
+                            $response = $data_reader->Delete($data["id"]);
+                        } else {
+                            $response = ["status" => false, "message" => "User not authenticated"];
+                        }
                         break;
                     case 'add_training_type':
-                        $data_reader = new \TrainingType();
-                        $response = $data_reader->Create($data["id"], $data["name"], $data["description"]);
+                        if(isset($_SESSION["user_id"])) {
+                            $data_reader = new \TrainingType();
+                            $response = $data_reader->Create($data["id"], $data["name"], $data["description"]);
+                        } else {
+                            $response = ["status" => false, "message" => "User not authenticated"];
+                        }
                         break;
                     case 'update_training_type':
-                        $data_reader = new \TrainingType();
-                        $response = $data_reader->Update($data["id"], $data["name"], $data["description"]);
+                        if(isset($_SESSION["user_id"])) {
+                            $data_reader = new \TrainingType();
+                            $response = $data_reader->Update($data["id"], $data["name"], $data["description"]);
+                        } else {
+                            $response = ["status" => false, "message" => "User not authenticated"];
+                        }
                         break;
                     case 'delete_training_type':
-                        $data_reader = new \TrainingType();
-                        $response = $data_reader->Delete($data["id"]);
+                        if(isset($_SESSION["user_id"])) {
+                            $data_reader = new \TrainingType();
+                            $response = $data_reader->Delete($data["id"]);
+                        } else {
+                            $response = ["status" => false, "message" => "User not authenticated"];
+                        }
                         break;
                     case 'add_trainer':
-                        $data_reader = new \Trainer();
-                        $response = $data_reader->Create($data["id"], $data["name"], $data["surname"], $data["phone_number"], $data["training_type_id"], $data["instagram"], $data["telegram"], $data["whatsapp"], $data["description"], $data["images"]);
+                        if(isset($_SESSION["user_id"])) {
+                            $data_reader = new \Trainer();
+                            $response = $data_reader->Create($data["id"], $data["name"], $data["surname"], $data["phone_number"], $data["training_type_id"], $data["instagram"], $data["telegram"], $data["whatsapp"], $data["description"], $data["images"]);
+                        } else {
+                            $response = ["status" => false, "message" => "User not authenticated"];
+                        }
                         break;
                     case 'update_trainer':
-                        $data_reader = new \Trainer();
-                        $response = $data_reader->Update($data["id"], $data["name"], $data["surname"], $data["phone_number"], $data["training_type_id"], $data["instagram"], $data["telegram"], $data["whatsapp"], $data["description"], $data["images"]);
+                        if(isset($_SESSION["user_id"])) {
+                            $data_reader = new \Trainer();
+                            $response = $data_reader->Update($data["id"], $data["name"], $data["surname"], $data["phone_number"], $data["training_type_id"], $data["instagram"], $data["telegram"], $data["whatsapp"], $data["description"], $data["images"]);
+                        } else {
+                            $response = ["status" => false, "message" => "User not authenticated"];
+                        }
                         break;
                     case 'delete_trainer':
-                        $data_reader = new \Trainer();
-                        $response = $data_reader->Delete($data["id"]);
+                        if(isset($_SESSION["user_id"])) {
+                            $data_reader = new \Trainer();
+                            $response = $data_reader->Delete($data["id"]);
+                        } else {
+                            $response = ["status" => false, "message" => "User not authenticated"];
+                        }
                         break;
                     case 'add_schedule':
-                        $data_reader = new \Schedule();
-                        $response = $data_reader->Create($data["id"], $data["day_of_week"], $data["start_time"], $data["end_time"], $data["training_type_id"], $data["room_name"], $data["trainer"], $data["category"]);
+                        if(isset($_SESSION["user_id"])) {
+                            $data_reader = new \Schedule();
+                            $response = $data_reader->Create($data["id"], $data["day_of_week"], $data["start_time"], $data["end_time"], $data["training_type_id"], $data["room_name"], $data["trainer"], $data["category"]);
+                        } else {
+                            $response = ["status" => false, "message" => "User not authenticated"];
+                        }
                         break;
                     case 'update_schedule':
-                        $data_reader = new \Schedule();
-                        $response = $data_reader->Update($data["id"], $data["day_of_week"], $data["start_time"], $data["end_time"], $data["training_type_id"], $data["room_name"], $data["trainer"], $data["category"]);
+                        if(isset($_SESSION["user_id"])) {
+                            $data_reader = new \Schedule();
+                            $response = $data_reader->Update($data["id"], $data["day_of_week"], $data["start_time"], $data["end_time"], $data["training_type_id"], $data["room_name"], $data["trainer"], $data["category"]);
+                        } else {
+                            $response = ["status" => false, "message" => "User not authenticated"];
+                        }
                         break;
                     case 'delete_schedule':
-                        $data_reader = new \Schedule();
-                        $response = $data_reader->Delete($data["id"]);
+                        if(isset($_SESSION["user_id"])) {
+                            $data_reader = new \Schedule();
+                            $response = $data_reader->Delete($data["id"]);
+                        } else {
+                            $response = ["status" => false, "message" => "User not authenticated"];
+                        }
                         break;
                     default:
                         $response = ["status" => false, "message" => "Action is not recognized"];
                         break;
                 }
                 break;
-
             default:
                 $response = ["status" => false, "message" => "Platform is not recognized"];
                 break;
@@ -193,7 +269,31 @@ switch ($_SERVER["REQUEST_METHOD"])
 
         switch ($data["platform"]) {
             case 'mobile':
-                // Логика для мобильной платформы (GET)
+                switch ($data["action"]) {
+                    case 'get_visitor':
+                        $data_reader = new \VisitorUser();
+                        $response = $data_reader->GetAll();
+                        break;
+                    case 'get_membership':
+                        $data_reader = new \GymMembership();
+                        $response = $data_reader->GetAll();
+                        break;
+                    case 'get_training_type':
+                        $data_reader = new \TrainingType();
+                        $response = $data_reader->GetAll();
+                        break;
+                    case 'get_trainer':
+                        $data_reader = new \Trainer();
+                        $response = $data_reader->GetAll();
+                        break;
+                    case 'get_schedule':
+                        $data_reader = new \Schedule();
+                        $response = $data_reader->GetAll();
+                        break;
+                    default:
+                        $response = ["status" => false, "message" => "Action is not recognized"];
+                        break;
+                }
                 break;
             case 'website':
                 // Логика для веб-платформы (GET)
