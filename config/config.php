@@ -2,8 +2,8 @@
     return [
         'db' => [
             'host' => 'localhost',
-            'dbname' => 'test',
-            'user' => 'root',
+            'dbname' => 'exampisis',
+            'user' => 'postgres',
             'password' => 'qwerty',
             'charset' => 'utf8'
         ],

@@ -5,8 +5,8 @@ class DB
 
     function DBConnect(){
         
-        $config = require(__DIR__ . '/../../config/config.php');
-        $connection_string = "mysql:host=" . $config['db']['host'] . ";dbname=" . $config['db']['dbname'] . ";charset=" . $config['db']['charset'];
+        $config = require(DIR . '/../../config/config.php');
+        $connection_string = "pgsql:host=" . $config['db']['host'] . ";dbname=" . $config['db']['dbname'];
 
         try {
             $this->pdo = new PDO($connection_string, $config['db']['user'], $config['db']['password'], [
@@ -15,10 +15,9 @@ class DB
             ]);
             return $this->pdo;
         } catch (PDOException $e) {
+            error_log("Ошибка подключения: " . $e->getMessage(), 3, DIR . '/../../logs/log.txt');
             echo json_encode(["error" => "Ошибка подключения: " . $e->getMessage()]);
             return null;
         }
     }
 }
-
-
