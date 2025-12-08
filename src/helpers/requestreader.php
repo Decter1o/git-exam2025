@@ -259,9 +259,7 @@ switch ($_SERVER["REQUEST_METHOD"])
         break;
 
     case "GET":
-        $jsonData = file_get_contents("php://input");
-        $data = json_decode($jsonData, true);
-
+        $data = $_GET;
         if (!isset($data["platform"])) {
             $response = ["status" => false, "message" => "Platform is required"];
             break;
@@ -270,24 +268,92 @@ switch ($_SERVER["REQUEST_METHOD"])
         switch ($data["platform"]) {
             case 'mobile':
                 switch ($data["action"]) {
-                    case 'get_visitor':
-                        $data_reader = new \VisitorUser();
-                        $response = $data_reader->GetAll();
-                        break;
                     case 'get_membership':
                         $data_reader = new \GymMembership();
                         $response = $data_reader->GetAll();
                         break;
-                    case 'get_training_type':
-                        $data_reader = new \TrainingType();
-                        $response = $data_reader->GetAll();
-                        break;
                     case 'get_trainer':
-                        $data_reader = new \Trainer();
-                        $response = $data_reader->GetAll();
+                        $tt_data_reader = new \TrainingType();
+                        $t_data_reader = new \Trainer();
+                        $tp_data_reader = new \TrainerPhoto();
+                        $training_types = $tt_data_reader->GetAll();
+                        $trainers = $t_data_reader->GetAll();
+                        $trainer_photos = $tp_data_reader->GetAll();
+                        $trainer_query = [];
+                        if($trainers == null) {
+                            $response = ["status" => false, "message" => "Trainers not found"];
+                            break;
+                        }
+                        foreach ($trainers as $trainer) {
+                            $trainer_query[] = [
+                                "id" => $trainer->id,
+                                "name" => $trainer->name,
+                                "surname" => $trainer->surname,
+                                "phone_number" => $trainer->phone_number,
+                                "training_type" => (function() use ($training_types, $trainer) {
+                                    $types = array_filter($training_types, function($type) use ($trainer) {
+                                        return $type->id == $trainer->training_type_id;
+                                    });
+                                    $types = array_values($types); // сбросить ключи
+                                    return isset($types[0]) ? $types[0]->name : null;
+                                })(),
+                                "instagram" => $trainer->inst,
+                                "telegram" => $trainer->tg,
+                                "whatsapp" => $trainer->whatsapp,
+                                "description" => $trainer->description,
+                                "images" => (function() use ($trainer_photos, $trainer) {
+                                    $photos = array_filter($trainer_photos, function($photo) use ($trainer) {
+                                        return $photo->trainer_id == $trainer->id;
+                                    });
+                                    $photos = array_values($photos); // сбросить ключи
+                                    return array_map(function($photo) {
+                                        return $photo->photo_url;
+                                    }, $photos);
+                                })()
+                            ];
+                        }
+                        $response = ["trainers" => $trainer_query];
                         break;
                     case 'get_schedule':
+                        $tt_data_reader = new \TrainingType();
+                        $t_data_reader = new \Trainer();
                         $data_reader = new \Schedule();
+                        $training_types = $tt_data_reader->GetAll();
+                        $trainers = $t_data_reader->GetAll();
+                        $schedule = $data_reader->GetAll();
+                        $schedule_query = [];
+                        if($schedule == null) {
+                            $response = ["status" => false, "message" => "Schedule not found"];
+                            break;
+                        }
+                        foreach ($schedule as $item) {
+                            $schedule_query[] = [
+                                "id" => $item->id,
+                                "day_of_week" => $item->day_of_week,
+                                "start_time" => $item->start_time,
+                                "end_time" => $item->end_time,
+                                "training_type" => (function() use ($training_types, $item) {
+                                    $types = array_filter($training_types, function($type) use ($item) {
+                                        return $type->id == $item->training_type_id;
+                                    });
+                                    $types = array_values($types); // сбросить ключи
+                                    return isset($types[0]) ? $types[0]->name : null;
+                                })(),
+                                "room_name" => $item->room_name,
+                                "trainer" => (function() use ($trainers, $item) {
+                                    $trainers_list = array_filter($trainers, function($trainer) use ($item) {
+                                        return $trainer->id == $item->trainer;
+                                    });
+                                    $trainers_list = array_values($trainers_list); // сбросить ключи
+                                    return isset($trainers_list[0]) ? $trainers_list[0]->name . ' ' . $trainers_list[0]->surname : null;
+                                })(),
+                                "category" => $item->category
+                            ];
+                        }
+                        $response = ["schedule" => $schedule_query];
+                        break;
+                    case 'get_training_type':
+                        $data_reader = new \TrainingType();
                         $response = $data_reader->GetAll();
                         break;
                     default:

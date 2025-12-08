@@ -131,16 +131,16 @@ function AddTrainer() {
                 </div>
                 <div class="box">
                     <p>Telegram</p>
-                    <input type="text" id="Telegram" placeholder="Ссылка на Telegram...">
+                    <input type="text" id="telegram" placeholder="Ссылка на Telegram...">
                 </div>
 
                 <div class="box">
                     <p>Instagram</p>
-                    <input type="text" id="Instagram" placeholder="Ссылка на Instagram...">
+                    <input type="text" id="instagram" placeholder="Ссылка на Instagram...">
                 </div>
                 <div class="box">
                     <p>Whatsapp</p>
-                    <input type="text" id="Whatsapp" placeholder="Ссылка на Whatsapp...">
+                    <input type="text" id="whatsapp" placeholder="Ссылка на Whatsapp...">
                 </div>
             </div>
             <div class="container">
@@ -220,9 +220,9 @@ function AddTrainer() {
                 }
             }
             let training_type_id = form.querySelector('#training-type').value;
-            let instagram = form.querySelector('#Instagram').value;
-            let telegram = form.querySelector('#Telegram').value;
-            let whatsapp = form.querySelector('#Whatsapp').value;
+            let instagram = form.querySelector('#instagram').value;
+            let telegram = form.querySelector('#telegram').value;
+            let whatsapp = form.querySelector('#whatsapp').value;
             let description = form.querySelector('#description').value;
             let photo = form.querySelector('#photo').files;
             let base64Images = [];
@@ -243,8 +243,8 @@ function AddTrainer() {
                                 surname: surname,
                                 phone_number: phone_number,
                                 training_type_id: training_type_id,
-                                instagram: instagram,
-                                telegram: telegram,
+                                inst: instagram,
+                                tg: telegram,
                                 whatsapp: whatsapp,
                                 description: description
                             };
@@ -303,8 +303,8 @@ function AddTrainer() {
                         surname: surname,
                         phone_number: phone_number,
                         training_type_id: training_type_id,
-                        instagram: instagram,
-                        telegram: telegram,
+                        inst: instagram,
+                        tg: telegram,
                         whatsapp: whatsapp,
                         description: description
                     };

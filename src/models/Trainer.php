@@ -144,17 +144,23 @@ class Trainer extends DB {
                     'description' => $description
                 ]);
                 if (!empty($img) && is_array($img)) {
-                    
-                    for ($i=0; $i < count($img); $i++) { 
+                    // Удаляем старые фото
+                    $query_string = "DELETE FROM trainer_photos WHERE trainer_id = :trainer_id";
+                    $sql_query = $pdo->prepare($query_string);
+                    $sql_query->execute(['trainer_id' => $id]);
+
+                    for ($i = 0; $i < count($img); $i++) {
                         $trainer_img = preg_replace('#data:image/\w+;base64,#i', '', $img[$i]);
                         $trainer_img = base64_decode($trainer_img);
                         $root = realpath(__DIR__ . '/../../');
-                        $file_path = $root . '/img/' . $id . '_' . $i . '.png';
+                        $web_path = '/img/' . $id . '_' . $i . '.png';
+                        $file_path = $root . $web_path;
                         file_put_contents($file_path, $trainer_img);
-                        $query_string = "UPDATE trainer_photos SET photo_url = :photo_url WHERE trainer_id = :trainer_id";
+
+                        $query_string = "INSERT INTO trainer_photos (photo_url, trainer_id) VALUES (:photo_url, :trainer_id)";
                         $sql_query = $pdo->prepare($query_string);
                         $sql_query->execute([
-                            'photo_url' => $file_path,
+                            'photo_url' => $web_path,
                             'trainer_id' => $id
                         ]);
                     }
