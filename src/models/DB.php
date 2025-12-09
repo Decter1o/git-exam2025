@@ -5,7 +5,7 @@ class DB
 
     function DBConnect(){
         
-        $config = require(DIR . '/../../config/config.php');
+        $config = require(__DIR__ . '/../../config/config.php');
         $connection_string = "pgsql:host=" . $config['db']['host'] . ";dbname=" . $config['db']['dbname'];
 
         try {

@@ -42,16 +42,11 @@ class VisitorUser extends DB {
         $pdo = $this->connect();
         if ($pdo) {
             try {
-                $query_string = "CALL InsertOTP(:phone, :otp, @p_status)";
-                $pdo->setAttribute(PDO::ATTR_EMULATE_PREPARES, false);
+                $query_string = "SELECT insert_otp(:phone, :otp)";
                 $sql_query = $pdo->prepare($query_string);
                 $sql_query->execute(['phone' => $phone, 'otp' => $otp]);
 
-                $status_query = $pdo->prepare("SELECT @p_status");
-                $status_query->execute();
-                $status = $status_query->fetchColumn();
-
-                return json_encode(["status" => $status ? "success" : "error", "message" => $status ? "OTP inserted/updated successfully." : "Error inserting/updating OTP."]);
+                return json_encode(["status" => "success", "message" => "OTP inserted/updated successfully."]);
             } catch (PDOException $e) {
                 return json_encode(["error" => "Ошибка запроса: " . $e->getMessage()]);
             }
@@ -135,14 +130,11 @@ class VisitorUser extends DB {
         $pdo = $this->connect();
         if ($pdo) {
             try {
-                $query_string = "CALL CreateVisitor(:id, :username, :usersurname, :phone_number, :membership_id, :visitor_membership_id, @status)";
+                $query_string = "SELECT create_visitor(:id, :username, :usersurname, :phone_number, :membership_id, :visitor_membership_id)";
                 $sql_query = $pdo->prepare($query_string);
                 $sql_query->execute(['id' => $id, 'username' => $username, 'usersurname' => $usersurname, 'phone_number' => $phone_number, 'membership_id' => $membership_id, 'visitor_membership_id' => $visitor_membership_id]);
 
-                $status_query = $pdo->prepare("SELECT @status");
-                $status_query->execute();
-                $status = $status_query->fetchColumn();
-                return json_encode(["success" => true, "status" => $status, "message" => "Visitor user created successfully"]);
+                return json_encode(["success" => true, "message" => "Visitor user created successfully"]);
             } catch (PDOException $e) {
                 return json_encode(["error" => "Database connection failed", "details" => $e->getMessage()]);
             }
@@ -155,14 +147,11 @@ class VisitorUser extends DB {
         $pdo = $this->connect();
         if ($pdo) {
             try {
-                $query_string = "CALL UpdateVisitor(:id, :username, :usersurname, :phone_number, :membership_id, :visitor_membership_id, @status)";
+                $query_string = "SELECT update_visitor(:id, :username, :usersurname, :phone_number, :membership_id, :visitor_membership_id)";
                 $sql_query = $pdo->prepare($query_string);
                 $sql_query->execute(['id' => $id, 'username' => $username, 'usersurname' => $usersurname, 'phone_number' => $phone_number, 'membership_id' => $membership_id, 'visitor_membership_id' => $visitor_membership_id]);
 
-                $status_query = $pdo->prepare("SELECT @status");
-                $status_query->execute();
-                $status = $status_query->fetchColumn();
-                return json_encode(["success" => true, "status" => $status, "message" => "Visitor user updated successfully"]);
+                return json_encode(["success" => true, "message" => "Visitor user updated successfully"]);
             } catch (PDOException $e) {
                 return json_encode(["error" => "Database connection failed", "details" => $e->getMessage()]);
             }
@@ -175,14 +164,11 @@ class VisitorUser extends DB {
         $pdo = $this->connect();
         if ($pdo) {
             try {
-                $query_string = "CALL DeleteVisitor(:id, @status)";
+                $query_string = "SELECT delete_visitor(:id)";
                 $sql_query = $pdo->prepare($query_string);
                 $sql_query->execute(['id' => $id]);
 
-                $status_query = $pdo->prepare("SELECT @status");
-                $status_query->execute();
-                $status = $status_query->fetchColumn();
-                return json_encode(["success" => true, "status" => $status, "message" => "Visitor user deleted successfully"]);
+                return json_encode(["success" => true, "message" => "Visitor user deleted successfully"]);
             } catch (PDOException $e) {
                 return json_encode(["error" => "Database connection failed", "details" => $e->getMessage()]);
             }

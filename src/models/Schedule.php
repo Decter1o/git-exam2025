@@ -49,7 +49,7 @@ class Schedule extends DB {
         $pdo = $this->connect();
         if ($pdo) {
             try {
-                $query_string = "INSERT INTO schedule (id, day_of_week, start_time, end_time, training_type_id, room_name, trainer, category) VALUES (:id, :day_of_week, :start_time, :end_time, :training_type_id, :room_name, :trainer, :category)";
+                $query_string = "INSERT INTO schedule (id, day_of_week, start_time, end_time, training_type_id, room_name, trainer, category) VALUES (:id, :day_of_week, :start_time, :end_time, :training_type_id, :room_name, :trainer, :category) ON CONFLICT (id) DO UPDATE SET day_of_week = :day_of_week, start_time = :start_time, end_time = :end_time, training_type_id = :training_type_id, room_name = :room_name, trainer = :trainer, category = :category";
                 $sql_query = $pdo->prepare($query_string);
                 $sql_query->execute([
                     'id' => $id,
@@ -61,11 +61,7 @@ class Schedule extends DB {
                     'trainer' => $trainer,
                     'category' => $category
                 ]);
-                if ($sql_query->execute()) {
-                    return json_encode(["success" => "Schedule created successfully"]);
-                } else {
-                    return json_encode(["error" => "Failed to create schedule"]);
-                }
+                return json_encode(["success" => "Schedule created successfully"]);
             } catch (PDOException $e) {
                 return json_encode(["error" => "Database connection failed", "details" => $e->getMessage()]);
             }
@@ -89,11 +85,7 @@ class Schedule extends DB {
                     'trainer' => $trainer,
                     'category' => $category
                 ]);
-                if ($sql_query->execute()) {
-                    return json_encode(["success" => "Schedule updated successfully"]);
-                } else {
-                    return json_encode(["error" => "Failed to update schedule"]);
-                }
+                return json_encode(["success" => "Schedule updated successfully"]);
             } catch (PDOException $e) {
                 return json_encode(["error" => "Database connection failed", "details" => $e->getMessage()]);
             }
@@ -108,11 +100,7 @@ class Schedule extends DB {
                 $query_string = "DELETE FROM schedule WHERE id = :id";
                 $sql_query = $pdo->prepare($query_string);
                 $sql_query->execute(['id' => $id]);
-                if ($sql_query->execute()) {
-                    return json_encode(["success" => "Schedule deleted successfully"]);
-                } else {
-                    return json_encode(["error" => "Failed to delete schedule"]);
-                }
+                return json_encode(["success" => "Schedule deleted successfully"]);
             } catch (PDOException $e) {
                 return json_encode(["error" => "Database connection failed", "details" => $e->getMessage()]);
             }
