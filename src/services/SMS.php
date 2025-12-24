@@ -11,7 +11,7 @@ class SMS
 
         $DATA = array(
             'recipient' => $phone,
-            'text' => 'affectionate-mcclintock.89-35-125-20.plesk.page. Ваш код: ' . $otp,
+            'text' => $otp,
             'from' => $this->FROM,
             'params' => array(
                 'validity' => $this->VALIDITY
@@ -43,6 +43,10 @@ class SMS
         $otp = $this->GenerateOTP();
         $this-> MobisonKZAPI($phone, $otp);
         return $otp;
+    }
+
+    public function SendCustomSMS($phone, $message){
+        $this-> MobisonKZAPI($phone, $message);
     }
 
     private function GenerateOTP(){

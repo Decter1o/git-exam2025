@@ -1,5 +1,6 @@
 <?php
 include_once(__DIR__ . '/../models/DB.php');
+include_once(__DIR__ . '/../services/SMS.php');
 
 class Analytic extends DB{
     
@@ -23,47 +24,46 @@ class Analytic extends DB{
     }
 
     public function GetAll(){
-    $pdo = $this->connect();
-    if ($pdo) {
-        try {
-            Analytic::Analytic();
-            $query_string = "
-                SELECT 
-                    vu.id,
-                    vu.username as name,
-                    vu.usersurname as surname,
-                    vu.phone_number,
-                    COALESCE(va.avg_check, 0) as avg_check,
-                    TO_CHAR(va.last_visit_date, 'YYYY-MM-DD') as last_visit_date,
-                    COALESCE(va.churn_risk, 'unknown') as churn_risk
-                FROM visitor_users vu
-                LEFT JOIN visitor_analytics va ON vu.id = va.visitor_id
-                ORDER BY COALESCE(va.visits_count, 0) DESC
-            ";
-            $result = $pdo->query($query_string);
-            $analytics = [];
-            while ($row = $result->fetch(PDO::FETCH_ASSOC)) {
-                $analytics[] = [
-                    'id' => $row['id'],
-                    'name' => $row['name'],
-                    'surname' => $row['surname'],
-                    'phone_number' => $row['phone_number'],
-                    'avg_check' => $row['avg_check'],
-                    'last_visit_date' => $row['last_visit_date'] ?? 'нет данных',
-                    'churn_risk' => $row['churn_risk'] ?? 'unknown'
-                ];
+        $pdo = $this->connect();
+        if ($pdo) {
+            try {
+                Analytic::Analytic();
+                $query_string = "
+                    SELECT 
+                        vu.id,
+                        vu.username as name,
+                        vu.usersurname as surname,
+                        vu.phone_number,
+                        COALESCE(va.avg_check, 0) as avg_check,
+                        TO_CHAR(va.last_visit_date, 'YYYY-MM-DD') as last_visit_date,
+                        COALESCE(va.churn_risk, 'unknown') as churn_risk
+                    FROM visitor_users vu
+                    LEFT JOIN visitor_analytics va ON vu.id = va.visitor_id
+                    ORDER BY COALESCE(va.visits_count, 0) DESC
+                ";
+                $result = $pdo->query($query_string);
+                $analytics = [];
+                while ($row = $result->fetch(PDO::FETCH_ASSOC)) {
+                    $analytics[] = [
+                        'id' => $row['id'],
+                        'name' => $row['name'],
+                        'surname' => $row['surname'],
+                        'phone_number' => $row['phone_number'],
+                        'avg_check' => $row['avg_check'],
+                        'last_visit_date' => $row['last_visit_date'] ?? 'нет данных',
+                        'churn_risk' => $row['churn_risk'] ?? 'unknown'
+                    ];
+                }
+                return $analytics;
+            } catch (PDOException $e) {
+                return json_encode([
+                    "error" => "Database query failed", 
+                    "details" => $e->getMessage()
+                ]);
             }
-            return $analytics;
-        } catch (PDOException $e) {
-            return json_encode([
-                "error" => "Database query failed", 
-                "details" => $e->getMessage()
-            ]);
         }
+        return json_encode(["error" => "Database connection error"]);
     }
-    return json_encode(["error" => "Database connection error"]);
-}
-
 
     public function Analytic(){
         $pdo = $this->connect();
@@ -98,4 +98,34 @@ class Analytic extends DB{
         }
         return json_encode(["error" => "Database connection error"]);
     }
-}
+
+    public function GetAllBadBoys(){
+        $pdo = $this->connect();
+        if ($pdo) {
+            try {
+                $stmt = $pdo->prepare("
+                    SELECT 
+                        vu.phone_number
+                    FROM visitor_users vu
+                    JOIN visitor_analytics va
+                        ON va.visitor_id = vu.id
+                    WHERE va.churn_risk IN ('high', 'medium')
+                ");
+
+                $stmt->execute();
+
+                foreach ($stmt as $row) {
+                    SMS::SendCustomSMS(
+                        $row['phone_number'],
+                        'Мы заметили, что вы давно не посещали наш клуб. Приходите на тренировку! Мы скучаем по вам!'
+                    );
+                }
+            } catch (PDOException $e) {
+                return json_encode([
+                    "error" => "Database query failed",
+                    "details" => $e->getMessage()
+                ]);
+            }
+        }
+        return json_encode(["error" => "Database connection error"]);
+    }
