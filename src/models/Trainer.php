@@ -32,11 +32,42 @@ class Trainer extends DB {
         $pdo = $this->connect();
         if ($pdo) {
             try {
-                $query_string = "SELECT id, name, surname, training_type, telephone_number, instagram, telegram, whatsapp, description FROM trainers";
+                $query_string = "
+                    SELECT 
+                        t.id, 
+                        t.name, 
+                        t.surname, 
+                        t.telephone_number as phone_number, 
+                        t.training_type as training_type_id,
+                        t.instagram as inst,
+                        t.telegram as tg,
+                        t.whatsapp,
+                        t.description,
+                        tt.training_name as training_type
+                    FROM trainers t
+                    LEFT JOIN training_types tt ON t.training_type = tt.id
+                ";
                 $result = $pdo->query($query_string);
-                $trainers =[];
+                $trainers = [];
                 while($row = $result->fetch()){
-                    $trainers[] = (new Trainer())->init($row['id'], $row['name'], $row['surname'], $row['telephone_number'], $row['training_type'], $row['instagram'], $row['telegram'], $row['whatsapp'], $row['description']);
+                    $trainer = (new Trainer())->init(
+                        $row['id'], 
+                        $row['name'], 
+                        $row['surname'], 
+                        $row['phone_number'], 
+                        $row['training_type_id'], 
+                        $row['inst'], 
+                        $row['tg'], 
+                        $row['whatsapp'], 
+                        $row['description']
+                    );
+                    // Добавляем поля которые ожидает фронтенд
+                    $trainer->phone_number = $row['phone_number'];
+                    $trainer->training_type_id = $row['training_type_id'];
+                    $trainer->training_type = $row['training_type'] ?? 'Неизвестный тип';
+                    $trainer->inst = $row['inst'];
+                    $trainer->tg = $row['tg'];
+                    $trainers[] = $trainer;
                 }
                 return $trainers;
             } catch (PDOException $e) {

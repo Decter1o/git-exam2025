@@ -1,19 +1,24 @@
-// Загружаем абонементы из localStorage
+// Загружаем тренировки с сервера
 function loadTrainingTypes() {
-    let dbRequest = indexedDB.open('FitnessFamyli', 1);
-    
-    dbRequest.onsuccess = function(event) {
-        let db = event.target.result;
-        let transaction = db.transaction('training_types', 'readonly');
-        let store = transaction.objectStore('training_types');
-        let getAllRequest = store.getAll();
+    let requestData = {
+        platform: "website",
+        action: "get_training_types"
+    };
 
-        getAllRequest.onsuccess = function() {
-            let training_types = getAllRequest.result; 
+    fetch('/src/helpers/requestreader.php', {
+        method: 'POST',
+        credentials: 'include',
+        headers: {
+            'Content-Type': 'application/json'
+        },
+        body: JSON.stringify(requestData)
+    })
+    .then(response => response.json())
+    .then(training_types => {
+        let tableBody = document.querySelector('#trainingTypesTable tbody');
+        tableBody.innerHTML = ''; // Очищаем таблицу перед обновлением
 
-            let tableBody = document.querySelector('#trainingTypesTable tbody');
-            tableBody.innerHTML = ''; // Очищаем таблицу перед обновлением
-
+        if (Array.isArray(training_types)) {
             training_types.forEach(training_type => {
                 let row = document.createElement('tr');
 
@@ -42,16 +47,11 @@ function loadTrainingTypes() {
                 row.appendChild(actionCell);
                 tableBody.appendChild(row);
             });
-        };
-
-        getAllRequest.onerror = function(event) {
-            console.error('Ошибка получения данных из IndexedDB:', event.target.error);
-        };
-    };
-
-    dbRequest.onerror = function(event) {
-        console.error('Ошибка при открытии базы данных:', event.target.error);
-    };
+        }
+    })
+    .catch(error => {
+        console.error('Ошибка при загрузке данных:', error);
+    });
 }
 
 document.addEventListener('DOMContentLoaded', loadTrainingTypes); 
@@ -89,25 +89,6 @@ function AddTrainingType() {
 
             if (name && description) {
                 let id = crypto.randomUUID();
-
-                let training_type = { id, name, description };
-
-                let dbRequest = indexedDB.open('FitnessFamyli', 1);
-    
-                dbRequest.onsuccess = function(event) {
-                    let db = event.target.result;
-                    let transaction = db.transaction('training_types', 'readwrite');
-                    let store = transaction.objectStore('training_types');
-
-                    store.put(training_type);
-                    transaction.oncomplete = function() {
-                        console.log('succes');
-                    };
-                    transaction.onerror = function(event) {
-                        console.error('error', event.target.error);
-                    };
-                
-                }
 
                 let requestData = {
                     platform: "website",
@@ -184,32 +165,12 @@ function UpdateTrainingType(training_type) {
             let description = document.getElementById('description').value;
 
             if (name && description) {
-                training_type.name = name;
-                training_type.description = description;
-
-                let dbRequest = indexedDB.open('FitnessFamyli', 1);
-    
-                dbRequest.onsuccess = function(event) {
-                    let db = event.target.result;
-                    let transaction = db.transaction('training_types', 'readwrite');
-                    let store = transaction.objectStore('training_types');
-
-                    store.put(training_type);
-                    transaction.oncomplete = function() {
-                        console.log('succes');
-                    };
-                    transaction.onerror = function(event) {
-                        console.error('error', event.target.error);
-                    };
-                
-                }
-
                 let requestData = {
                     platform: "website",
                     action: "update_training_type",
                     id: training_type.id,
-                    name: training_type.name,
-                    description: training_type.description,
+                    name: name,
+                    description: description,
                 };
 
                 sendRequest('POST', requestData);
@@ -271,66 +232,40 @@ function sendRequest(method, data) {
     .catch(error => console.error('Ошибка при выполнении запроса:', error));
 }
 
-// Удаление абонемента
+// Удаление тренировки
 function DeleteTrainigType(id) {
     new jBox('Confirm', {
         title: 'Подтверждение',
-        content: 'Вы уверены, что хотите удалить этого посетителя?',
+        content: 'Вы уверены, что хотите удалить эту тренировку?',
         confirmButton: 'Удалить',
         cancelButton: 'Отмена',
         overlay: false,
         closeButton: false,
         confirm: function () {
-            let dbRequest = indexedDB.open('FitnessFamyli', 1);
-
-            dbRequest.onsuccess = function(event) {
-                let db = event.target.result;
-                let transaction = db.transaction('training_types', 'readwrite');
-                let store = transaction.objectStore('training_types');
-
-                store.delete(id);
-                transaction.oncomplete = function() {
-                    // Формируем JSON-объект для отправки запроса на удаление
-                    let requestData = {
-                        platform: "website",
-                        action: "delete_training_type",
-                        id: id
-                    };
-
-                    // Отправляем запрос на сервер для удаления
-                    sendRequest('POST', requestData);
-
-                    // Перезагружаем таблицу
-                    loadTrainingTypes();
-                    new jBox('Notice', {
-                        content: 'Тренировка удалена!',
-                        color: '#ddd',
-                        autoClose: 3000,
-                        delayOnHover: false,
-                        animation: 'fade',
-                        offset: { x: -15, y: 20 },
-                        position: {
-                            x: 'right',
-                            y: 'top'
-                        }
-                    });
-                };
-                transaction.onerror = function(event) {
-                    console.error('Ошибка при удалении абонемента:', event.target.error);
-                    new jBox('Notice', {
-                        content: 'Ошибка удаления',
-                        color: '#ddd',
-                        autoClose: 3000,
-                        delayOnHover: false,
-                        animation: 'fade',
-                        offset: { x: -15, y: 20 },
-                        position: {
-                            x: 'right',
-                            y: 'top'
-                        }
-                    });
-                };
+            // Формируем JSON-объект для отправки запроса на удаление
+            let requestData = {
+                platform: "website",
+                action: "delete_training_type",
+                id: id
             };
+
+            // Отправляем запрос на сервер для удаления
+            sendRequest('POST', requestData);
+
+            // Перезагружаем таблицу
+            loadTrainingTypes();
+            new jBox('Notice', {
+                content: 'Тренировка удалена!',
+                color: '#ddd',
+                autoClose: 3000,
+                delayOnHover: false,
+                animation: 'fade',
+                offset: { x: -15, y: 20 },
+                position: {
+                    x: 'right',
+                    y: 'top'
+                }
+            });
         }
     }).open();
 }

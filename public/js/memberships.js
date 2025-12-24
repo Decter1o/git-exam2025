@@ -46,20 +46,25 @@ function sortMemberships(memberships, column) {
 }
 
 function loadGymMemberships() {
-    let dbRequest = indexedDB.open('FitnessFamyli', 1);
-    
-    dbRequest.onsuccess = function(event) {
-        let db = event.target.result;
-        let transaction = db.transaction('gym_memberships', 'readonly');
-        let store = transaction.objectStore('gym_memberships');
-        let getAllRequest = store.getAll();
+    let requestData = {
+        platform: "website",
+        action: "get_memberships"
+    };
 
-        getAllRequest.onsuccess = function() {
-            let memberships = getAllRequest.result; 
+    fetch('/src/helpers/requestreader.php', {
+        method: 'POST',
+        credentials: 'include',
+        headers: {
+            'Content-Type': 'application/json'
+        },
+        body: JSON.stringify(requestData)
+    })
+    .then(response => response.json())
+    .then(memberships => {
+        let tableBody = document.querySelector('#gymMembershipsTable tbody');
+        tableBody.innerHTML = ''; // Очищаем таблицу перед обновлением
 
-            let tableBody = document.querySelector('#gymMembershipsTable tbody');
-            tableBody.innerHTML = ''; // Очищаем таблицу перед обновлением
-
+        if (Array.isArray(memberships)) {
             memberships.forEach(membership => {
                 if(membership.type != "нет абонемента"){
                     let row = document.createElement('tr');
@@ -97,16 +102,11 @@ function loadGymMemberships() {
                     tableBody.appendChild(row);
                 }
             });
-        };
-
-        getAllRequest.onerror = function(event) {
-            console.error('Ошибка получения данных из IndexedDB:', event.target.error);
-        };
-    };
-
-    dbRequest.onerror = function(event) {
-        console.error('Ошибка при открытии базы данных:', event.target.error);
-    };
+        }
+    })
+    .catch(error => {
+        console.error('Ошибка при загрузке данных:', error);
+    });
 }
 document.addEventListener('DOMContentLoaded', () => {
     loadGymMemberships();
@@ -115,20 +115,28 @@ document.addEventListener('DOMContentLoaded', () => {
     document.querySelectorAll('th.sortable').forEach(th => {
         th.addEventListener('click', () => {
             const column = th.textContent.toLowerCase().split(' ')[0];
-            let dbRequest = indexedDB.open('FitnessFamyli', 1);
+            let requestData = {
+                platform: "website",
+                action: "get_memberships"
+            };
 
-            dbRequest.onsuccess = function(event) {
-                let db = event.target.result;
-                let transaction = db.transaction('gym_memberships', 'readonly');
-                let store = transaction.objectStore('gym_memberships');
+            fetch('/src/helpers/requestreader.php', {
+                method: 'POST',
+                credentials: 'include',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify(requestData)
+            })
+            .then(response => response.json())
+            .then(memberships => {
+                let sortedMemberships = sortMemberships(memberships, column);
                 
-                store.getAll().onsuccess = function(event) {
-                    let sortedMemberships = sortMemberships(event.target.result, column);
-                    
-                    // Обновляем таблицу с отсортированными данными
-                    let tableBody = document.querySelector('#gymMembershipsTable tbody');
-                    tableBody.innerHTML = '';
-                    
+                // Обновляем таблицу с отсортированными данными
+                let tableBody = document.querySelector('#gymMembershipsTable tbody');
+                tableBody.innerHTML = '';
+                
+                if (Array.isArray(sortedMemberships)) {
                     sortedMemberships.forEach(membership => {
                         if(membership.type != "нет абонемента"){
                             let row = document.createElement('tr');
@@ -166,8 +174,11 @@ document.addEventListener('DOMContentLoaded', () => {
                             tableBody.appendChild(row);
                         }
                     });
-                };
-            };
+                }
+            })
+            .catch(error => {
+                console.error('Ошибка при загрузке данных:', error);
+            });
         });
     });
 });
@@ -225,25 +236,7 @@ function AddMembershipForm() {
 
             if (type && duration && price && specialGroup) {
                 let id = crypto.randomUUID();
-                let membership = { id, type, duration, price, specialGroup };
 
-                let dbRequest = indexedDB.open('FitnessFamyli', 1);
-    
-                dbRequest.onsuccess = function(event) {
-                    let db = event.target.result;
-                    let transaction = db.transaction('gym_memberships', 'readwrite');
-                    let store = transaction.objectStore('gym_memberships');
-
-                    store.put(membership);
-                    transaction.oncomplete = function() {
-                        console.log('succes');
-                    };
-                    transaction.onerror = function(event) {
-                        console.error('error', event.target.error);
-                    };
-                
-                }
-        
                 let requestData = {
                     platform: "website",
                     action: "add_membership",
@@ -344,29 +337,6 @@ function UpdateMembershipForm(membership) {
             let specialGroup = document.getElementById('specialGroup').value;
 
             if (type && duration && price && specialGroup) {
-                membership.type = type;
-                membership.duration = duration;
-                membership.price = price;
-                membership.specialGroup = specialGroup;
-
-                
-                let dbRequest = indexedDB.open('FitnessFamyli', 1);
-    
-                dbRequest.onsuccess = function(event) {
-                    let db = event.target.result;
-                    let transaction = db.transaction('gym_memberships', 'readwrite');
-                    let store = transaction.objectStore('gym_memberships');
-
-                    store.put(membership);
-                    transaction.oncomplete = function() {
-                        console.log('succes');
-                    };
-                    transaction.onerror = function(event) {
-                        console.error('error', event.target.error);
-                    };
-                
-                }
-
                 let requestData = {
                     platform: "website",
                     action: "update_membership",
@@ -444,56 +414,27 @@ function DeleteMembership(id) {
         overlay: false,
         closeButton: false,
         confirm: function () {
-            let dbRequest = indexedDB.open('FitnessFamyli', 1);
-
-            dbRequest.onsuccess = function(event) {
-                let db = event.target.result;
-                let transaction = db.transaction('gym_memberships', 'readwrite');
-                let store = transaction.objectStore('gym_memberships');
-
-                store.delete(id);
-                transaction.oncomplete = function() {
-                    // Формируем JSON-объект для отправки запроса на удаление
-                    let requestData = {
-                        platform: "website",
-                        action: "delete_membership",
-                        id: id
-                    };
-                
-                    // Отправляем запрос на сервер для удаления
-                    sendRequest('POST', requestData);
-                
-                    // Перезагружаем таблицу
-                    loadGymMemberships();
-                    new jBox('Notice', {
-                        content: 'Абонемент удален',
-                        color: '#ddd',
-                        autoClose: 3000,
-                        delayOnHover: false,
-                        animation: 'fade',
-                        offset: { x: -15, y: 20 },
-                        position: {
-                            x: 'right',
-                            y: 'top'
-                        }
-                    });
-                };
-                transaction.onerror = function(event) {
-                    console.error('Ошибка при удалении абонемента:', event.target.error);
-                    new jBox('Notice', {
-                        content: 'Ошибка при удалении абонемента',
-                        color: '#ddd',
-                        autoClose: 3000,
-                        delayOnHover: false,
-                        animation: 'fade',
-                        offset: { x: -15, y: 20 },
-                        position: {
-                            x: 'right',
-                            y: 'top'
-                        }
-                    });
-                };
+            let requestData = {
+                platform: "website",
+                action: "delete_membership",
+                id: id
             };
+        
+            sendRequest('POST', requestData);
+        
+            loadGymMemberships();
+            new jBox('Notice', {
+                content: 'Абонемент удален',
+                color: '#ddd',
+                autoClose: 3000,
+                delayOnHover: false,
+                animation: 'fade',
+                offset: { x: -15, y: 20 },
+                position: {
+                    x: 'right',
+                    y: 'top'
+                }
+            });
         }
     }).open();
 }
@@ -582,15 +523,22 @@ function AddFilterForm() {
             let priceMaxFilter = parseFloat(document.getElementById('price_filter_max').value);
             let groupFilter = document.getElementById('group_filter').value;
 
-            let dbRequest = indexedDB.open('FitnessFamyli', 1);
-            
-            dbRequest.onsuccess = function(event) {
-                let db = event.target.result;
-                let transaction = db.transaction('gym_memberships', 'readonly');
-                let store = transaction.objectStore('gym_memberships');
-                
-                store.getAll().onsuccess = function(event) {
-                    let memberships = event.target.result;
+            let requestData = {
+                platform: "website",
+                action: "get_memberships"
+            };
+
+            fetch('/src/helpers/requestreader.php', {
+                method: 'POST',
+                credentials: 'include',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify(requestData)
+            })
+            .then(response => response.json())
+            .then(data => {
+                let memberships = Array.isArray(data) ? data : [];
                     let hasActiveFilters = typeFilter || durationFilter || priceMinFilter || priceMaxFilter || groupFilter;
                     
                     if (hasActiveFilters) {
@@ -653,8 +601,8 @@ function AddFilterForm() {
                             form.remove();
                         }
                     });
-                };
-            };
+            })
+            .catch(error => console.error('Ошибка при загрузке данных:', error));
         });
     }
 }

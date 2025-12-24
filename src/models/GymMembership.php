@@ -29,7 +29,11 @@ class GymMembership extends DB {
                 $result = $pdo->query($query_string);
                 $memberships = [];
                 while($row = $result->fetch()){
-                    $memberships[] = (new GymMembership()) -> init($row['id'], $row['membership_type'], $row['duration'], $row['price'], $row['special_group']);
+                    $membership = (new GymMembership())->init($row['id'], $row['membership_type'], $row['duration'], $row['price'], $row['special_group']);
+                    // Добавляем поля для совместимости с фронтенда
+                    $membership->type = $row['membership_type'];
+                    $membership->specialGroup = $row['special_group'];
+                    $memberships[] = $membership;
                 }
                 return $memberships;
 

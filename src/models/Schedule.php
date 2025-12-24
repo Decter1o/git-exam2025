@@ -31,11 +31,26 @@ class Schedule extends DB {
         $pdo = $this->connect();
         if ($pdo) {
             try {
-                $query_string = "SELECT id, training_type_id, start_time, end_time, day_of_week, room_name, trainer, category FROM schedule";
+                $query_string = "
+                    SELECT 
+                        s.id, 
+                        s.training_type_id, 
+                        s.start_time, 
+                        s.end_time, 
+                        s.day_of_week, 
+                        s.room_name, 
+                        s.trainer, 
+                        s.category
+                    FROM schedule s
+                ";
                 $result = $pdo->query($query_string);
                 $schedules = [];
-                while ($row = $result->fetch()) {
-                    $schedules[] = (new Schedule()) -> init($row['id'], $row['day_of_week'], $row['start_time'], $row['end_time'], $row['training_type_id'], $row['room_name'], $row['trainer'], $row['category']);
+                while ($row = $result->fetch(PDO::FETCH_ASSOC)) {
+                    // Преобразуем room_name в формат "Зал N"
+                    if (is_numeric($row['room_name'])) {
+                        $row['room_name'] = 'Зал ' . $row['room_name'];
+                    }
+                    $schedules[] = $row;
                 }
                 return $schedules;
             } catch (PDOException $e) {

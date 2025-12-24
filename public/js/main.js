@@ -11,7 +11,6 @@ document.getElementById('exit-button').addEventListener('click', function() {
                 platfortm: 'website',
                 action: 'logout'
             });
-            indexedDB.deleteDatabase('FitnessFamyli');
             window.location.href = '/index.html';
         },
     }).open();

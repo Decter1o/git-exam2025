@@ -26,7 +26,10 @@ class TrainingType extends DB {
                 $result = $pdo->query($query_string);
                 $training_types = [];
                 while ($row = $result->fetch()) {
-                    $training_types[] = (new TrainingType()) -> init($row['id'], $row['training_name'], $row['description']);
+                    $type = (new TrainingType())->init($row['id'], $row['training_name'], $row['description']);
+                    // Добавляем поле 'name' для совместимости с фронтенда
+                    $type->name = $row['training_name'];
+                    $training_types[] = $type;
                 }
                 return $training_types;
             } catch (PDOException $e) {

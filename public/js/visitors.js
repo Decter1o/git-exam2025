@@ -2,24 +2,23 @@ function loadVisitors() {
     let tableBody = document.querySelector('#visitorsTable tbody');
     tableBody.innerHTML = '';
 
-    let dbRequest = indexedDB.open('FitnessFamyli', 1);
+    let requestData = {
+        platform: "website",
+        action: "get_visitors"
+    };
 
-    dbRequest.onsuccess = function(event) {
-        let db = event.target.result;
-        let transaction = db.transaction(['visitors', 'gym_memberships', 'visitors_memberships'], 'readonly');
-        let visitorsStore = transaction.objectStore('visitors');
-        let membershipsStore = transaction.objectStore('gym_memberships');
-        let visitorMembershipsStore = transaction.objectStore('visitors_memberships');
-
-        let visitorsRequest = visitorsStore.getAll();
-        let membershipsRequest = membershipsStore.getAll();
-        let visitorMembershipsRequest = visitorMembershipsStore.getAll();
-
-        Promise.all([visitorsRequest, membershipsRequest, visitorMembershipsRequest].map(req => new Promise((resolve, reject) => {
-            req.onsuccess = () => resolve(req.result);
-            req.onerror = () => reject(req.error);
-        }))).then(([visitors, memberships, visitor_memberships]) => {
-            visitors.forEach(visitor => {
+    fetch('/src/helpers/requestreader.php', {
+        method: 'POST',
+        credentials: 'include',
+        headers: {
+            'Content-Type': 'application/json'
+        },
+        body: JSON.stringify(requestData)
+    })
+    .then(response => response.json())
+    .then(data => {
+        if (data && Array.isArray(data)) {
+            data.forEach(visitor => {
                 let row = document.createElement('tr');
 
                 let nameCell = document.createElement('td');
@@ -34,15 +33,12 @@ function loadVisitors() {
                 phoneCell.textContent = '+' + visitor.phone_number;
                 row.appendChild(phoneCell);
 
-                let visitor_membership = visitor_memberships.find(vm => vm.visitorId === visitor.id);
-                let membership = visitor_membership ? memberships.find(m => m.id === visitor_membership.membershipId) : null;
-
                 let visitor_membershipTypeCell = document.createElement('td');
-                visitor_membershipTypeCell.textContent = membership ? membership.type : 'Нет абонемента';
+                visitor_membershipTypeCell.textContent = visitor.membership_type || 'Нет абонемента';
                 row.appendChild(visitor_membershipTypeCell);
 
                 let membershipVisitsLeft = document.createElement('td');
-                membershipVisitsLeft.textContent = visitor_membership ? visitor_membership.visitsLeft + ' занятий' : 'Нет абонемента';
+                membershipVisitsLeft.textContent = visitor.visits_left ? visitor.visits_left + ' занятий' : 'Нет абонемента';
                 row.appendChild(membershipVisitsLeft);
 
                 let statusCell = document.createElement('td');
@@ -79,368 +75,85 @@ function loadVisitors() {
                 row.appendChild(actionsCell);
                 tableBody.appendChild(row);
             });
-        }).catch(error => {
-            console.error('Ошибка при загрузке данных из IndexedDB:', error);
-        });
-    };
-
-    dbRequest.onerror = function(event) {
-        console.error('Ошибка при открытии базы данных:', event.target.error);
-    };
+        }
+    })
+    .catch(error => {
+        console.error('Ошибка при загрузке данных:', error);
+    });
 }
 
 document.addEventListener('DOMContentLoaded', loadVisitors);
 
 function AddUserForm() {
-    let dbRequest = indexedDB.open('FitnessFamyli', 1);
-
-    dbRequest.onsuccess = function(event) {
-        let db =event.target.result;
-        let transaction = db.transaction(['gym_memberships'], 'readonly');
-        let membershipsStore = transaction.objectStore('gym_memberships');
-        let membershipsRequest = membershipsStore.getAll();
-
-        Promise.all([membershipsRequest].map(req => new Promise((resolve, reject) => {
-            req.onsuccess = () => resolve(req.result);
-            req.onerror = () => reject(req.error);
-        }))).then(([memberships]) => {
-            let form = document.querySelector('.visitor-form');
-
-            if (form) {
-                form.remove();
-            } else {
-                form = document.createElement('div');
-                form.classList.add('visitor-form');
-                form.innerHTML = `
-                    <button class="close-button"><i class="fa-solid fa-xmark"></i></button>
-                    <h2>Посетитель</h2>
-                    <div class="container-box">
-                        <div class="container">
-                            <div class="box">
-                                <p>Имя:</p>
-                                <input type="text" id="name" placeholder="Введите имя">
-                            </div>
-                            <div class="box">
-                                <p>Телефон:</p>
-                                <input type="text" id="phone" placeholder="Введите телефон">
-                            </div>
-                        </div>
-                        <div class="container">
-                            <div class="box">
-                                <p>Фамилия:</p>
-                                <input type="text" id="surname" placeholder="Введите фамилию">
-                            </div>
-                            <div class="box">
-                                <p>Абонемент:</p>
-                                <select id="membership" required>
-                                    <option value="">Выберите абонемент</option>
-                                </select>
-                            </div>
-                        </div>
-                    </div>
-                    <button class="add-submit-button submit-button">Сохранить</button>
-                `;
-
-                document.body.appendChild(form);
-
-                form.querySelector('.close-button').addEventListener('click', () => form.remove());
-
-                populateMembershipOptions(memberships);
-
-                form.querySelector('.add-submit-button').addEventListener('click', () => {
-                    let dbRequest = indexedDB.open('FitnessFamyli', 1);
-
-                    dbRequest.onsuccess = function(event) {
-                        let db = event.target.result;
-                        let transaction = db.transaction(['visitors', 'visitors_memberships', 'gym_memberships'], 'readwrite');
-                        let visitorsStore = transaction.objectStore('visitors');
-                        let visitorMembershipsStore = transaction.objectStore('visitors_memberships');
-                        let membershipsStore = transaction.objectStore('gym_memberships');
-
-                        let id = crypto.randomUUID();
-                        let visitor_membership_id = crypto.randomUUID();
-                        let name = document.getElementById('name').value;
-                        let phone_number = document.getElementById('phone').value;
-                        if (phone_number.startsWith('+')) {
-                            phone_number = phone_number.slice(1);
-                            if(phone_number.length > 11){
-                                new jBox('Notice', {
-                                    content: 'Неверный номер телефона!',
-                                    color: 'red',
-                                    autoClose: 3000,
-                                    animation: 'fade',
-                                    offset: { x: -15, y: 20 },
-                                    position: {
-                                        x: 'right',
-                                        y: 'top'    
-                                    }
-                                });
-                                return;
-                            }
-                        }
-                        let surname = document.getElementById('surname').value;
-                        let membershipId = document.getElementById('membership').value;
-
-                        if (name && phone_number && surname && membershipId) {
-                            membershipsStore.get(membershipId).onsuccess = function(event) {
-                                let status = 1;
-                                let membership = event.target.result;
-                                let visitsLeft = 0;
-
-                                switch (membership.duration) {
-                                    case 'одноразовый':
-                                        visitsLeft = 1;
-                                        break;
-                                    case '1 месяц':
-                                        visitsLeft = 12;
-                                        break;
-                                    case '3 месяца':
-                                        visitsLeft = 36;
-                                        break;
-                                    case '6 месяцев':
-                                        visitsLeft = 72;
-                                        break;
-                                    case '1 год':
-                                        visitsLeft = 144;
-                                        break;
-                                    default:
-                                        break;
-                                }
-
-                                let visitor = { id, name, surname, phone_number, status};
-                                visitorsStore.add(visitor);
-
-                                let visitor_membership = { id: visitor_membership_id, visitorId: id, membershipId, visitsLeft };
-                                visitorMembershipsStore.add(visitor_membership);
-
-                                let requestData = {
-                                    platform: "website",
-                                    action: "add_visitor",
-                                    id: id,
-                                    name: name,
-                                    surname: surname,
-                                    phone_number: phone_number,
-                                    membershipId: membershipId,
-                                    visitor_membership_id: visitor_membership_id
-                                };
-
-                                sendRequest('POST', requestData);
-                                form.remove();
-                                loadVisitors();
-                                new jBox('Notice', {
-                                    content: 'Посетитель добавлен',
-                                    color: '#ddd',
-                                    autoClose: 3000,
-                                    animation: 'fade',
-                                    offset: { x: -15, y: 20 },
-                                    position: {
-                                        x: 'right', 
-                                        y: 'top'
-                                    }
-                                });
-                            };
-                        } else {
-                            new jBox('Notice', {
-                                content: 'Пожалуйста, заполните все поля!',
-                                color: '#ddd',
-                                autoClose: 3000,
-                                animation: 'fade',
-                                offset: { x: -15, y: 20 },
-                                position: {
-                                    x: 'right',
-                                    y: 'top'    
-                                }
-                            });
-                        }
-                    };
-
-                    dbRequest.onerror = function(event) {
-                        console.error('Ошибка при открытии базы данных:', event.target.error);
-                    };
-                });
-            }
-        }).catch(error => {
-            console.error('Ошибка при загрузке данных из IndexedDB:', error);
-        });
+    let requestData = {
+        platform: "website",
+        action: "get_memberships"
     };
 
-    dbRequest.onerror = function(event) {
-        console.error('Ошибка при открытии базы данных:', event.target.error);
-    };
-}
+    fetch('/src/helpers/requestreader.php', {
+        method: 'POST',
+        credentials: 'include',
+        headers: {
+            'Content-Type': 'application/json'
+        },
+        body: JSON.stringify(requestData)
+    })
+    .then(response => response.json())
+    .then(memberships => {
+        let form = document.querySelector('.visitor-form');
 
-function UpdateUserForm(visitor) {
-    let dbRequest = indexedDB.open('FitnessFamyli', 1);
-
-    dbRequest.onsuccess = function(event) {
-        let db = event.target.result;
-        let transaction = db.transaction(['gym_memberships', 'visitors_memberships', 'visitors'], 'readonly');
-        let membershipsStore = transaction.objectStore('gym_memberships');
-        let visitorMembershipsStore = transaction.objectStore('visitors_memberships');
-        let visitorsStore = transaction.objectStore('visitors');
-
-        let visitorMembershipRequest = visitorMembershipsStore.getAll();
-        let membershipsRequest = membershipsStore.getAll();
-
-        Promise.all([visitorMembershipRequest, membershipsRequest].map(req => new Promise((resolve, reject) => {
-            req.onsuccess = () => resolve(req.result);
-            req.onerror = () => reject(req.error);
-        }))).then(([visitor_memberships, memberships]) => {
-            let visitor_membership = visitor_memberships.find(vm => vm.visitorId === visitor.id);
-            if (!visitor_membership) {
-                new jBox('Notice', {
-                    content: 'Абонемент для данного посетителя не найден!',
-                    color: '#ddd',
-                    autoClose: 3000,
-                    animation: 'fade',
-                    offset: { x: -15, y: 20 },
-                    position: {
-                        x: 'right',
-                        y: 'top'
-                    }
-                });
-                return;
-            }
-
-            let form = document.querySelector('.visitor-form');
-
-            if (form) {
-                form.remove();
-            } else {
-                form = document.createElement('div');
-                form.classList.add('visitor-form');
-                form.innerHTML = `
-                    <button class="close-button"><i class="fa-solid fa-xmark"></i></button>
-                    <h2>Редактировать посетителя</h2>
-                    <div class="container-box">
-                        <div class="container">
-                            <div class="box">
-                                <p>Имя:</p>
-                                <input type="text" id="name" value="${visitor.name}" placeholder="Введите имя">
-                            </div>
-                            <div class="box">
-                                <p>Телефон:</p>
-                                <input type="text" id="phone" value="+${visitor.phone_number}" placeholder="Введите телефон">
-                            </div>
+        if (form) {
+            form.remove();
+        } else {
+            form = document.createElement('div');
+            form.classList.add('visitor-form');
+            form.innerHTML = `
+                <button class="close-button"><i class="fa-solid fa-xmark"></i></button>
+                <h2>Посетитель</h2>
+                <div class="container-box">
+                    <div class="container">
+                        <div class="box">
+                            <p>Имя:</p>
+                            <input type="text" id="name" placeholder="Введите имя">
                         </div>
-                        <div class="container">
-                            <div class="box">
-                                <p>Фамилия:</p>
-                                <input type="text" id="surname" value="${visitor.surname}" placeholder="Введите фамилию">
-                            </div>
-                            <div class="box">
-                                <p>Абонемент:</p>
-                                <select id="membership" required>
-                                    <option value="">Выберите абонемент</option>
-                                </select>
-                            </div>
+                        <div class="box">
+                            <p>Телефон:</p>
+                            <input type="text" id="phone" placeholder="Введите телефон">
                         </div>
                     </div>
-                    <button class="update-submit-button submit-button">Сохранить</button>
-                `;
+                    <div class="container">
+                        <div class="box">
+                            <p>Фамилия:</p>
+                            <input type="text" id="surname" placeholder="Введите фамилию">
+                        </div>
+                        <div class="box">
+                            <p>Абонемент:</p>
+                            <select id="membership" required>
+                                <option value="">Выберите абонемент</option>
+                            </select>
+                        </div>
+                    </div>
+                </div>
+                <button class="add-submit-button submit-button">Сохранить</button>
+            `;
 
-                document.body.appendChild(form);
+            document.body.appendChild(form);
 
-                form.querySelector('.close-button').addEventListener('click', () => form.remove());
+            form.querySelector('.close-button').addEventListener('click', () => form.remove());
 
-                populateMembershipOptions(memberships);
-                document.getElementById('membership').value = visitor_membership.membershipId || '';
-                
+            populateMembershipOptions(memberships);
 
-                form.querySelector('.update-submit-button').addEventListener('click', () => {
-                    let name = document.getElementById('name').value.trim();
-                    let phone_number = document.getElementById('phone').value.trim();
-                    if (phone_number.startsWith('+')) {
-                        phone_number = phone_number.slice(1);
-                        if(phone_number.length > 11){
-                            new jBox('Notice', {
-                                content: 'Неверный номер телефона!',
-                                color: 'red',
-                                autoClose: 3000,
-                                animation: 'fade',
-                                offset: { x: -15, y: 20 },
-                                position: {
-                                    x: 'right',
-                                    y: 'top'    
-                                }
-                            });
-                            return;
-                        }
-                    }
-                    let surname = document.getElementById('surname').value.trim();
-                    let membershipId = document.getElementById('membership').value;
-
-                    if (name && phone_number && surname && membershipId) {
-                        let transaction = db.transaction(['visitors', 'visitors_memberships', 'gym_memberships'], 'readwrite');
-                        let visitorsStore = transaction.objectStore('visitors');
-                        let visitorMembershipsStore = transaction.objectStore('visitors_memberships');
-                        let membershipsStore = transaction.objectStore('gym_memberships');
-
-                        visitor.name = name;
-                        visitor.phone_number = phone_number;
-                        visitor.surname = surname;
-                        visitor_membership.membershipId = membershipId;
-
-                        membershipsStore.get(membershipId).onsuccess = function(event) {
-                            let membership = event.target.result;
-                            let visitsLeft = 0;
-
-                            switch (membership.duration) {
-                                case 'одноразовый':
-                                    visitsLeft = 1;
-                                    break;
-                                case '1 месяц':
-                                    visitsLeft = 12;
-                                    break;
-                                case '3 месяца':
-                                    visitsLeft = 36;
-                                    break;
-                                case '6 месяцев':
-                                    visitsLeft = 72;
-                                    break;
-                                case '1 год':
-                                    visitsLeft = 144;
-                                    break;
-                                default:
-                                    break;
-                            }
-
-                            visitor_membership.visitsLeft = visitsLeft;
-
-                            visitorsStore.put(visitor);
-                            visitorMembershipsStore.put(visitor_membership);
-
-                            let requestData = {
-                                platform: "website",
-                                action: "update_visitor",
-                                id: visitor.id,
-                                name: visitor.name,
-                                surname: visitor.surname,
-                                phone_number: visitor.phone_number,
-                                membershipId: visitor_membership.membershipId,
-                                visitor_membership_id: visitor_membership.id
-                            };
-
-                            sendRequest('POST', requestData);
-
-                            form.remove();
-                            loadVisitors();
-                            new jBox('Notice', {
-                                content: 'Посетитель обновлен',
-                                color: '#ddd',
-                                autoClose: 3000,
-                                animation: 'fade',
-                                offset: { x: -15, y: 20 },
-                                position: {
-                                    x: 'right', 
-                                    y: 'top'
-                                }
-                            });
-                        };
-                    } else {
+            form.querySelector('.add-submit-button').addEventListener('click', () => {
+                let id = crypto.randomUUID();
+                let visitor_membership_id = crypto.randomUUID();
+                let name = document.getElementById('name').value;
+                let phone_number = document.getElementById('phone').value;
+                if (phone_number.startsWith('+')) {
+                    phone_number = phone_number.slice(1);
+                    if(phone_number.length > 11){
                         new jBox('Notice', {
-                            content: 'Пожалуйста, заполните все поля!',
-                            color: '#ddd',
+                            content: 'Неверный номер телефона!',
+                            color: 'red',
                             autoClose: 3000,
                             animation: 'fade',
                             offset: { x: -15, y: 20 },
@@ -449,17 +162,190 @@ function UpdateUserForm(visitor) {
                                 y: 'top'    
                             }
                         });
+                        return;
                     }
-                });
-            }
-        }).catch(error => {
-            console.error('Ошибка при загрузке данных из IndexedDB:', error);
-        });
+                }
+                let surname = document.getElementById('surname').value;
+                let membershipId = document.getElementById('membership').value;
+
+                if (name && phone_number && surname && membershipId) {
+                    let requestData = {
+                        platform: "website",
+                        action: "add_visitor",
+                        id: id,
+                        name: name,
+                        surname: surname,
+                        phone_number: phone_number,
+                        membership_id: membershipId,
+                        visitor_membership_id: visitor_membership_id
+                    };
+
+                    sendRequest('POST', requestData);
+                    form.remove();
+                    loadVisitors();
+                    new jBox('Notice', {
+                        content: 'Посетитель добавлен',
+                        color: '#ddd',
+                        autoClose: 3000,
+                        animation: 'fade',
+                        offset: { x: -15, y: 20 },
+                        position: {
+                            x: 'right', 
+                            y: 'top'
+                        }
+                    });
+                } else {
+                    new jBox('Notice', {
+                        content: 'Пожалуйста, заполните все поля!',
+                        color: '#ddd',
+                        autoClose: 3000,
+                        animation: 'fade',
+                        offset: { x: -15, y: 20 },
+                        position: {
+                            x: 'right',
+                            y: 'top'    
+                        }
+                    });
+                }
+            });
+        }
+    })
+    .catch(error => {
+        console.error('Ошибка при загрузке данных:', error);
+    });
+}
+
+function UpdateUserForm(visitor) {
+    let requestData = {
+        platform: "website",
+        action: "get_memberships"
     };
 
-    dbRequest.onerror = function(event) {
-        console.error('Ошибка при открытии базы данных:', event.target.error);
-    };
+    fetch('/src/helpers/requestreader.php', {
+        method: 'POST',
+        credentials: 'include',
+        headers: {
+            'Content-Type': 'application/json'
+        },
+        body: JSON.stringify(requestData)
+    })
+    .then(response => response.json())
+    .then(memberships => {
+        let form = document.querySelector('.visitor-form');
+
+        if (form) {
+            form.remove();
+        } else {
+            form = document.createElement('div');
+            form.classList.add('visitor-form');
+            form.innerHTML = `
+                <button class="close-button"><i class="fa-solid fa-xmark"></i></button>
+                <h2>Редактировать посетителя</h2>
+                <div class="container-box">
+                    <div class="container">
+                        <div class="box">
+                            <p>Имя:</p>
+                            <input type="text" id="name" value="${visitor.name}" placeholder="Введите имя">
+                        </div>
+                        <div class="box">
+                            <p>Телефон:</p>
+                            <input type="text" id="phone" value="+${visitor.phone_number}" placeholder="Введите телефон">
+                        </div>
+                    </div>
+                    <div class="container">
+                        <div class="box">
+                            <p>Фамилия:</p>
+                            <input type="text" id="surname" value="${visitor.surname}" placeholder="Введите фамилию">
+                        </div>
+                        <div class="box">
+                            <p>Абонемент:</p>
+                            <select id="membership" required>
+                                <option value="">Выберите абонемент</option>
+                            </select>
+                        </div>
+                    </div>
+                </div>
+                <button class="update-submit-button submit-button">Сохранить</button>
+            `;
+
+            document.body.appendChild(form);
+
+            form.querySelector('.close-button').addEventListener('click', () => form.remove());
+
+            populateMembershipOptions(memberships);
+            if (visitor.membership_id) {
+                document.getElementById('membership').value = visitor.membership_id || '';
+            }
+
+            form.querySelector('.update-submit-button').addEventListener('click', () => {
+                let name = document.getElementById('name').value.trim();
+                let phone_number = document.getElementById('phone').value.trim();
+                if (phone_number.startsWith('+')) {
+                    phone_number = phone_number.slice(1);
+                    if(phone_number.length > 11){
+                        new jBox('Notice', {
+                            content: 'Неверный номер телефона!',
+                            color: 'red',
+                            autoClose: 3000,
+                            animation: 'fade',
+                            offset: { x: -15, y: 20 },
+                            position: {
+                                x: 'right',
+                                y: 'top'    
+                            }
+                        });
+                        return;
+                    }
+                }
+                let surname = document.getElementById('surname').value.trim();
+                let membershipId = document.getElementById('membership').value;
+
+                if (name && phone_number && surname && membershipId) {
+                    let requestData = {
+                        platform: "website",
+                        action: "update_visitor",
+                        id: visitor.id,
+                        name: name,
+                        surname: surname,
+                        phone_number: phone_number,
+                        membership_id: membershipId,
+                        visitor_membership_id: visitor.visitor_membership_id
+                    };
+
+                    sendRequest('POST', requestData);
+
+                    form.remove();
+                    loadVisitors();
+                    new jBox('Notice', {
+                        content: 'Посетитель обновлен',
+                        color: '#ddd',
+                        autoClose: 3000,
+                        animation: 'fade',
+                        offset: { x: -15, y: 20 },
+                        position: {
+                            x: 'right', 
+                            y: 'top'
+                        }
+                    });
+                } else {
+                    new jBox('Notice', {
+                        content: 'Пожалуйста, заполните все поля!',
+                        color: '#ddd',
+                        autoClose: 3000,
+                        animation: 'fade',
+                        offset: { x: -15, y: 20 },
+                        position: {
+                            x: 'right',
+                            y: 'top'    
+                        }
+                    });
+                }
+            });
+        }
+    })
+    .catch(error => {
+        console.error('Ошибка при загрузке данных:', error);
+    });
 }
 
 function populateMembershipOptions(memberships) {
@@ -505,65 +391,27 @@ function DeleteVisitor(visitorId) {
         overlay: false,
         closeButton: false,
         confirm: function () {
-            let dbRequest = indexedDB.open('FitnessFamyli', 1);
-
-            dbRequest.onsuccess = function (event) {
-                let db = event.target.result;
-                let transaction = db.transaction(['visitors', 'visitors_memberships'], 'readwrite');
-                let visitorsStore = transaction.objectStore('visitors');
-                let membershipsStore = transaction.objectStore('visitors_memberships');
-
-                visitorsStore.delete(visitorId);
-
-                membershipsStore.getAll().onsuccess = function (event) {
-                    let items = event.target.result.filter(item => item.visitorId === visitorId);
-                    items.forEach(item => membershipsStore.delete(item.id));
-                };
-
-                transaction.oncomplete = function () {
-                    let requestData = {
-                        platform: "website",
-                        action: "delete_visitor",
-                        id: visitorId
-                    };
-                    sendRequest('POST', requestData);
-
-                    new jBox('Notice', {
-                        content: 'Посетитель удален',
-                        color: '#ddd',
-                        autoClose: 3000,
-                        delayOnHover: false,
-                        animation: 'fade',
-                        offset: { x: -15, y: 20 },
-                        position: {
-                            x: 'right',
-                            y: 'top'
-                        }
-                    });
-
-                    loadVisitors();
-                };
-
-                transaction.onerror = function (event) {
-                    console.error('Ошибка при удалении:', event.target.error);
-                    new jBox('Notice', {
-                        content: 'Ошибка при удалении посетителя',
-                        color: '#ddd',
-                        autoClose: 3000,
-                        delayOnHover: false,
-                        animation: 'fade',
-                        offset: { x: -15, y: 20 },
-                        position: {
-                            x: 'right',
-                            y: 'top'
-                        }
-                    });
-                };
+            let requestData = {
+                platform: "website",
+                action: "delete_visitor",
+                id: visitorId
             };
+            sendRequest('POST', requestData);
 
-            dbRequest.onerror = function (event) {
-                console.error('Ошибка при открытии базы данных:', event.target.error);
-            };
+            new jBox('Notice', {
+                content: 'Посетитель удален',
+                color: '#ddd',
+                autoClose: 3000,
+                delayOnHover: false,
+                animation: 'fade',
+                offset: { x: -15, y: 20 },
+                position: {
+                    x: 'right',
+                    y: 'top'
+                }
+            });
+
+            loadVisitors();
         }
     }).open();
 }
@@ -571,27 +419,26 @@ function DeleteVisitor(visitorId) {
 
 function SearchVisitor() {
     let searchInput = document.getElementById('search-input').value.toLowerCase();
-    let dbRequest = indexedDB.open('FitnessFamyli', 1);
+    let requestData = {
+        platform: "website",
+        action: "get_visitors"
+    };
 
-    dbRequest.onsuccess = function(event) {
-        let db = event.target.result;
-        let transaction = db.transaction(['visitors', 'gym_memberships', 'visitors_memberships'], 'readonly');
-        let visitorsStore = transaction.objectStore('visitors');
-        let membershipsStore = transaction.objectStore('gym_memberships');
-        let visitorMembershipsStore = transaction.objectStore('visitors_memberships');
+    fetch('/src/helpers/requestreader.php', {
+        method: 'POST',
+        credentials: 'include',
+        headers: {
+            'Content-Type': 'application/json'
+        },
+        body: JSON.stringify(requestData)
+    })
+    .then(response => response.json())
+    .then(data => {
+        let tableBody = document.querySelector('#visitorsTable tbody');
+        tableBody.innerHTML = '';
 
-        let visitorsRequest = visitorsStore.getAll();
-        let membershipsRequest = membershipsStore.getAll();
-        let visitorMembershipsRequest = visitorMembershipsStore.getAll();
-
-        Promise.all([visitorsRequest, membershipsRequest, visitorMembershipsRequest].map(req => new Promise((resolve, reject) => {
-            req.onsuccess = () => resolve(req.result);
-            req.onerror = () => reject(req.error);
-        }))).then(([visitors, memberships, visitor_memberships]) => {
-            let tableBody = document.querySelector('#visitorsTable tbody');
-            tableBody.innerHTML = '';
-
-            visitors
+        if (data && Array.isArray(data)) {
+            data
                 .filter(visitor => {
                     if (searchInput.startsWith('+')) {
                         searchInput = searchInput.slice(1);
@@ -617,15 +464,12 @@ function SearchVisitor() {
                     phoneCell.textContent = '+' + visitor.phone_number;
                     row.appendChild(phoneCell);
 
-                    let visitor_membership = visitor_memberships.find(vm => vm.visitorId === visitor.id);
-                    let membership = visitor_membership ? memberships.find(m => m.id === visitor_membership.membershipId) : null;
-
                     let visitor_membershipTypeCell = document.createElement('td');
-                    visitor_membershipTypeCell.textContent = membership ? membership.type : 'Нет абонемента';
+                    visitor_membershipTypeCell.textContent = visitor.membership_type || 'Нет абонемента';
                     row.appendChild(visitor_membershipTypeCell);
 
                     let membershipVisitsLeft = document.createElement('td');
-                    membershipVisitsLeft.textContent = visitor_membership ? visitor_membership.visitsLeft + ' занятий' : 'Нет абонемента';
+                    membershipVisitsLeft.textContent = visitor.visits_left ? visitor.visits_left + ' занятий' : 'Нет абонемента';
                     row.appendChild(membershipVisitsLeft);
 
                     let statusCell = document.createElement('td');
@@ -662,14 +506,11 @@ function SearchVisitor() {
                     row.appendChild(actionsCell);
                     tableBody.appendChild(row);
                 });
-        }).catch(error => {
-            console.error('Ошибка при загрузке данных из IndexedDB:', error);
-        });
-    };
-
-    dbRequest.onerror = function(event) {
-        console.error('Ошибка при открытии базы данных:', event.target.error);
-    };
+        }
+    })
+    .catch(error => {
+        console.error('Ошибка при загрузке данных:', error);
+    });
 }
 
 document.addEventListener('DOMContentLoaded', function() {
@@ -681,66 +522,67 @@ document.addEventListener('DOMContentLoaded', function() {
 });
 
 function VisitorsAction(visitorId) {
-    let dbRequest = indexedDB.open('FitnessFamyli', 1);
-
-    dbRequest.onsuccess = function(event) {
-        let db = event.target.result;
-        let transaction = db.transaction(['visitors'], 'readwrite');
-        let visitorsStore = transaction.objectStore('visitors');
-
-        visitorsStore.get(visitorId).onsuccess = function(event) {
-            let visitor = event.target.result;
-            
-            if(visitor.status == 1) {
-                visitor.status = 0;
-                visitorsStore.put(visitor);
-
-                new jBox('Notice', {
-                    content: 'Посетитель заблокирован',
-                    color: '#ddd',
-                    autoClose: 3000,
-                    animation: 'fade',
-                    offset: { x: -15, y: 20 },
-                    position: {
-                        x: 'right',
-                        y: 'top'    
-                    }
-                });
-
-                let requestData = {
-                    platform: "website",
-                    action: "block_visitor",
-                    id: visitor.id,
-                };
-                sendRequest('POST', requestData);
-            }else {
-                visitor.status = 1;
-                visitorsStore.put(visitor);
-
-                new jBox('Notice', {
-                    content: 'Посетитель разблокирован',
-                    color: '#ddd',
-                    autoClose: 3000,
-                    animation: 'fade',
-                    offset: { x: -15, y: 20 },
-                    position: {
-                        x: 'right',
-                        y: 'top'    
-                    }
-                });
-
-                let requestData = {
-                    platform: "website",
-                    action: "unblock_visitor",
-                    id: visitor.id,
-                };
-                sendRequest('POST', requestData);
-            }
-            loadVisitors();
-        };
+    // Получаем текущего посетителя для определения его статуса
+    let requestData = {
+        platform: "website",
+        action: "get_visitors"
     };
 
-    dbRequest.onerror = function(event) {
-        console.error('Ошибка при открытии базы данных:', event.target.error);
-    };
+    fetch('/src/helpers/requestreader.php', {
+        method: 'POST',
+        credentials: 'include',
+        headers: {
+            'Content-Type': 'application/json'
+        },
+        body: JSON.stringify(requestData)
+    })
+    .then(response => response.json())
+    .then(visitors => {
+        let visitor = visitors.find(v => v.id === visitorId);
+        if (!visitor) return;
+
+        if(visitor.status == 1) {
+            let blockData = {
+                platform: "website",
+                action: "block_visitor",
+                id: visitor.id,
+            };
+            sendRequest('POST', blockData);
+
+            new jBox('Notice', {
+                content: 'Посетитель заблокирован',
+                color: '#ddd',
+                autoClose: 3000,
+                animation: 'fade',
+                offset: { x: -15, y: 20 },
+                position: {
+                    x: 'right',
+                    y: 'top'    
+                }
+            });
+        } else {
+            let unblockData = {
+                platform: "website",
+                action: "unblock_visitor",
+                id: visitor.id,
+            };
+            sendRequest('POST', unblockData);
+
+            new jBox('Notice', {
+                content: 'Посетитель разблокирован',
+                color: '#ddd',
+                autoClose: 3000,
+                animation: 'fade',
+                offset: { x: -15, y: 20 },
+                position: {
+                    x: 'right',
+                    y: 'top'    
+                }
+            });
+        }
+        loadVisitors();
+    })
+    .catch(error => {
+        console.error('Ошибка при загрузке данных:', error);
+    });
 }

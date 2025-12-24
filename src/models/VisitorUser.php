@@ -111,11 +111,32 @@ class VisitorUser extends DB {
         $pdo = $this->connect();
         if ($pdo) {
             try {
-                $query_string = "SELECT id, username, usersurname, phone_number, status FROM visitor_users";
+                $query_string = "
+                    SELECT 
+                        vu.id, 
+                        vu.username, 
+                        vu.usersurname, 
+                        vu.phone_number, 
+                        vu.status,
+                        vm.id as visitor_membership_id,
+                        vm.membership_id,
+                        gm.membership_type,
+                        vm.visits_left
+                    FROM visitor_users vu
+                    LEFT JOIN visitor_memberships vm ON vu.id = vm.visitor_id
+                    LEFT JOIN gym_memberships gm ON vm.membership_id = gm.id
+                ";
                 $result = $pdo->query($query_string);
                 $visitor_users = [];
                 while ($row = $result->fetch()) {
-                    $visitor_users[] = (new VisitorUser()) -> init($row['id'], $row['username'], $row['usersurname'], $row['phone_number'], $row['status']);
+                    $visitor = new VisitorUser();
+                    $visitor = $visitor->init($row['id'], $row['username'], $row['usersurname'], $row['phone_number'], $row['status']);
+                    // Добавляем дополнительные поля
+                    $visitor->membership_id = $row['membership_id'];
+                    $visitor->visitor_membership_id = $row['visitor_membership_id'];
+                    $visitor->membership_type = $row['membership_type'];
+                    $visitor->visits_left = $row['visits_left'];
+                    $visitor_users[] = $visitor;
                 }
                 return $visitor_users;
             } catch (PDOException $e) {

@@ -1,20 +1,23 @@
 function loadTrainers() {
     let tableBody = document.querySelector("#trainersTable tbody");
     tableBody.innerHTML = "";
-    let dbRequest = indexedDB.open('FitnessFamyli', 1);
 
-    dbRequest.onsuccess = function(event) {
-        let db = event.target.result;
-        let transaction = db.transaction(['trainers', 'training_types'], 'readonly');
-        let trainers_store = transaction.objectStore("trainers");
-        let training_types_store = transaction.objectStore("training_types");
-        let trainers_store_request = trainers_store.getAll();
-        let training_types_store_request = training_types_store.getAll();
+    let requestData = {
+        platform: "website",
+        action: "get_trainers"
+    };
 
-        Promise.all([trainers_store_request, training_types_store_request].map(req => new Promise((resolve, reject) => {
-            req.onsuccess = () => resolve(req.result);
-            req.onerror = () => reject(req.error);
-        }))).then(([trainers, training_types]) => {
+    fetch('/src/helpers/requestreader.php', {
+        method: 'POST',
+        credentials: 'include',
+        headers: {
+            'Content-Type': 'application/json'
+        },
+        body: JSON.stringify(requestData)
+    })
+    .then(response => response.json())
+    .then(trainers => {
+        if (Array.isArray(trainers)) {
             trainers.forEach(trainer => {
                 let row = document.createElement("tr");
                 
@@ -27,7 +30,7 @@ function loadTrainers() {
                 row.appendChild(surnameCell);
 
                 let trainingTypeCell = document.createElement("td");
-                trainingTypeCell.textContent = training_types.find(type => type.id == trainer.training_type_id).name || 'Неизвестный тип';
+                trainingTypeCell.textContent = trainer.training_type || 'Неизвестный тип';
                 row.appendChild(trainingTypeCell);
 
                 let phoneCell = document.createElement("td");
@@ -59,52 +62,50 @@ function loadTrainers() {
                 row.appendChild(actionCell);
                 tableBody.appendChild(row);
             });
-        }).catch(error => {
-            console.error('Ошибка при загрузке данных из IndexedDB:', error);
-        });
-    }
-    dbRequest.onerror = function(event) {
-        console.error('Ошибка при открытии базы данных:', event.target.error);
-    };
+        }
+    })
+    .catch(error => {
+        console.error('Ошибка при загрузке данных:', error);
+    });
 }
 
 document.addEventListener("DOMContentLoaded", loadTrainers);
 
 function populateTrainingTypeOptions() {
     return new Promise((resolve, reject) => {
-        let dbRequest = indexedDB.open('FitnessFamyli', 1);
+        let requestData = {
+            platform: "website",
+            action: "get_training_types"
+        };
 
-        dbRequest.onsuccess = function(event) {
-            let db = event.target.result;
-            let transaction = db.transaction('training_types', 'readonly');
-            let store = transaction.objectStore('training_types');
-            let getAllRequest = store.getAll();
+        fetch('/src/helpers/requestreader.php', {
+            method: 'POST',
+            credentials: 'include',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify(requestData)
+        })
+        .then(response => response.json())
+        .then(types => {
+            let trainingTypeSelect = document.getElementById('training-type');
+            trainingTypeSelect.innerHTML = '<option value="">Выберите тип тренировок</option>';
 
-            getAllRequest.onsuccess = function() {
-                let types = getAllRequest.result;
-                let trainingTypeSelect = document.getElementById('training-type');
-                trainingTypeSelect.innerHTML = '<option value="">Выберите тип тренировок</option>';
-
+            if (Array.isArray(types)) {
                 types.forEach(type => {
                     let option = document.createElement('option');
                     option.value = type.id;
                     option.textContent = type.name;
                     trainingTypeSelect.appendChild(option);
                 });
+            }
 
-                resolve();
-            };
-
-            getAllRequest.onerror = function(event) {
-                console.error('Ошибка получения данных из IndexedDB:', event.target.error);
-                reject(event.target.error);
-            };
-        };
-
-        dbRequest.onerror = function(event) {
-            console.error('Ошибка при открытии базы данных:', event.target.error);
-            reject(event.target.error);
-        };
+            resolve();
+        })
+        .catch(error => {
+            console.error('Ошибка при загрузке данных:', error);
+            reject(error);
+        });
     });
 }
 
@@ -266,22 +267,6 @@ function AddTrainer() {
         
                             sendRequest('POST', requestData);
         
-                            let dbRequest = indexedDB.open("FitnessFamyli", 1);
-
-                            dbRequest.onsuccess = function(event) {
-                                let db = event.target.result;
-                                let transaction = db.transaction("trainers", "readwrite");
-                                let store = transaction.objectStore("trainers");
-                                store.put(trainer);
-
-                                transaction.oncomplete = function() {
-                                    console.log('succes');
-                                };
-                                transaction.onerror = function(event) {
-                                    console.error('error', event.target.error);
-                                };
-                            }
-
                             form.remove();
                             let addNotification = new jBox('Notice', {
                                 content: 'Тренер добавлен!',
@@ -325,22 +310,6 @@ function AddTrainer() {
                     };
 
                     sendRequest('POST', requestData);
-
-                    let dbRequest = indexedDB.open("FitnessFamyli", 1);
-
-                    dbRequest.onsuccess = function(event) {
-                        let db = event.target.result;
-                        let transaction = db.transaction("trainers", "readwrite");
-                        let store = transaction.objectStore("trainers");
-                        store.put(trainer);
-
-                        transaction.oncomplete = function() {
-                            console.log('succes');
-                        };
-                        transaction.onerror = function(event) {
-                            console.error('error', event.target.error);
-                        };
-                    }
         
                     form.remove();
                     let addNotification = new jBox('Notice', {
@@ -368,205 +337,198 @@ function AddTrainer() {
 }
 
 function UpdateTrainer(trainer) {
-    let dbRequest = indexedDB.open('FitnessFamyli', 1);
+    let requestData = {
+        platform: "website",
+        action: "get_training_types"
+    };
 
-    dbRequest.onsuccess = function(event) {
-        let db = event.target.result;
-        let transaction = db.transaction(['trainers', 'training_types'], 'readonly');
-        let trainers_store = transaction.objectStore("trainers");
-        let training_types_store = transaction.objectStore("training_types");
-        let trainers_store_request = trainers_store.getAll();
-        let training_types_store_request = training_types_store.getAll();
+    fetch('/src/helpers/requestreader.php', {
+        method: 'POST',
+        credentials: 'include',
+        headers: {
+            'Content-Type': 'application/json'
+        },
+        body: JSON.stringify(requestData)
+    })
+    .then(response => response.json())
+    .then(training_types => {
+        let form = document.querySelector('.trainer-form');
 
-        Promise.all([trainers_store_request, training_types_store_request].map(req => new Promise((resolve, reject) => {
-            req.onsuccess = () => resolve(req.result);
-            req.onerror = () => reject(req.error);
-        }))).then(([trainers, training_types]) => {
-            let form = document.querySelector('.trainer-form');
+        if (form) {
+            form.remove();
+        }
 
-            if (form) {
-                form.remove();
+        form = document.createElement('div');
+        form.classList.add('trainer-form');
+        form.innerHTML = `
+            <button class="close-button"><i class="fa-solid fa-xmark"></i></button>
+            <h2>Тренер</h2>
+            <div class="container-box">
+                <div class="container">
+                    <div class="box">
+                        <p>Имя:</p>
+                        <input type="text" id="name" value="${trainer.name}" placeholder="Введите имя">
+                    </div>
+                    <div class="box">
+                        <p>Телефон:</p>
+                        <input type="text" id="phone" value="+${trainer.phone_number}" placeholder="Введите телефон">
+                    </div>
+                    <div class="box">
+                        <p>Telegram</p>
+                        <input type="text" id="Telegram" value="${trainer.tg}" placeholder="Ссылка на Telegram...">
+                    </div>
+                    <div class="box">
+                        <p>Instagram</p>
+                        <input type="text" id="Instagram" value="${trainer.inst}" placeholder="Ссылка на Instagram...">
+                    </div>
+                    <div class="box">
+                        <p>Whatsapp</p>
+                        <input type="text" id="Whatsapp" value="${trainer.whatsapp}" placeholder="Ссылка на Whatsapp...">
+                    </div>
+                </div>
+                <div class="container">
+                    <div class="box">
+                        <p>Фамилия:</p>
+                        <input type="text" id="surname" value="${trainer.surname}" placeholder="Введите фамилию">
+                    </div>
+                    <div class="box">
+                        <p>Тип тренировок:</p>
+                        <select id="training-type" required>
+                            <option value="">Выберите тип тренировок</option>
+                        </select>
+                    </div>
+                    <div class="box">
+                        <p>Описание:</p>
+                        <textarea id="description" placeholder="Введите описание">${trainer.description}</textarea>
+                    </div>
+                </div>
+            </div>
+            <div class="photo-container">
+                <div class="box">
+                    <p>Фото:</p>
+                    <input type="file" id="photo" accept="image/*" multiple/>
+                    <div id="previewContainer"></div>
+                </div>
+            </div>
+            <button class="update-submit-button submit-button">Сохранить</button>`;
+
+        document.body.appendChild(form);
+
+        document.getElementById("photo").addEventListener("change", function(event) {
+            const previewContainer = document.getElementById("previewContainer");
+            previewContainer.innerHTML = ""; // Очистить старые превью
+        
+            const files = event.target.files;
+            for (let i = 0; i < files.length; i++) {
+                const file = files[i];
+                const reader = new FileReader();
+                
+                reader.onload = function(e) {
+                    const imgElement = document.createElement("img");
+                    imgElement.src = e.target.result;
+                    imgElement.style.width = "100px"; // размер превью
+                    imgElement.style.margin = "5px";
+                    previewContainer.appendChild(imgElement);
+                };
+                
+                reader.readAsDataURL(file);
+            }
+        });
+        
+        form.querySelector('.close-button').addEventListener('click', () => form.remove());
+
+        // Populate select options
+        let trainingTypeSelect = document.getElementById('training-type');
+        trainingTypeSelect.innerHTML = '<option value="">Выберите тип тренировок</option>';
+        if (Array.isArray(training_types)) {
+            training_types.forEach(type => {
+                let option = document.createElement('option');
+                option.value = type.id;
+                option.textContent = type.name;
+                trainingTypeSelect.appendChild(option);
+            });
+        }
+        document.getElementById('training-type').value = trainer.training_type_id || '';
+
+        form.querySelector('.update-submit-button').addEventListener('click', () => {
+            let name = form.querySelector('#name').value;
+            let surname = form.querySelector('#surname').value;
+            let phone_number = form.querySelector('#phone').value;
+            if (phone_number.startsWith('+')) {
+                phone_number = phone_number.slice(1);
+            }
+            if (phone_number.length > 11) {
+                new jBox('Notice', {
+                    content: 'Неверный номер телефона!',
+                    color: 'red',
+                    autoClose: 3000,
+                    animation: 'fade',
+                    offset: { x: -15, y: 20 },
+                    position: { x: 'right', y: 'top' }
+                });
+                return;
             }
 
-            form = document.createElement('div');
-            form.classList.add('trainer-form');
-            form.innerHTML = `
-                <button class="close-button"><i class="fa-solid fa-xmark"></i></button>
-                <h2>Тренер</h2>
-                <div class="container-box">
-                    <div class="container">
-                        <div class="box">
-                            <p>Имя:</p>
-                            <input type="text" id="name" value="${trainer.name}" placeholder="Введите имя">
-                        </div>
-                        <div class="box">
-                            <p>Телефон:</p>
-                            <input type="text" id="phone" value="+${trainer.phone_number}" placeholder="Введите телефон">
-                        </div>
-                        <div class="box">
-                            <p>Telegram</p>
-                            <input type="text" id="Telegram" value="${trainer.tg}" placeholder="Ссылка на Telegram...">
-                        </div>
-                        <div class="box">
-                            <p>Instagram</p>
-                            <input type="text" id="Instagram" value="${trainer.inst}" placeholder="Ссылка на Instagram...">
-                        </div>
-                        <div class="box">
-                            <p>Whatsapp</p>
-                            <input type="text" id="Whatsapp" value="${trainer.whatsapp}" placeholder="Ссылка на Whatsapp...">
-                        </div>
-                    </div>
-                    <div class="container">
-                        <div class="box">
-                            <p>Фамилия:</p>
-                            <input type="text" id="surname" value="${trainer.surname}" placeholder="Введите фамилию">
-                        </div>
-                        <div class="box">
-                            <p>Тип тренировок:</p>
-                            <select id="training-type" required>
-                                <option value="">Выберите тип тренировок</option>
-                            </select>
-                        </div>
-                        <div class="box">
-                            <p>Описание:</p>
-                            <textarea id="description" placeholder="Введите описание">${trainer.description}</textarea>
-                        </div>
-                    </div>
-                </div>
-                <div class="photo-container">
-                    <div class="box">
-                        <p>Фото:</p>
-                        <input type="file" id="photo" accept="image/*" multiple/>
-                        <div id="previewContainer"></div>
-                    </div>
-                </div>
-                <button class="update-submit-button submit-button">Сохранить</button>`;
+            let training_type_id = form.querySelector('#training-type').value;
+            let instagram = form.querySelector('#Instagram').value;
+            let telegram = form.querySelector('#Telegram').value;
+            let whatsapp = form.querySelector('#Whatsapp').value;
+            let description = form.querySelector('#description').value;
+            let photo = form.querySelector('#photo').files;
 
-            document.body.appendChild(form);
+            if (name && surname && phone_number && training_type_id) {
+                let fileArray = Array.from(photo);
+                let filesPromises = fileArray.map(file => readFileBase64(file));
 
-            document.getElementById("photo").addEventListener("change", function(event) {
-                const previewContainer = document.getElementById("previewContainer");
-                previewContainer.innerHTML = ""; // Очистить старые превью
-            
-                const files = event.target.files;
-                for (let i = 0; i < files.length; i++) {
-                    const file = files[i];
-                    const reader = new FileReader();
-                    
-                    reader.onload = function(e) {
-                        const imgElement = document.createElement("img");
-                        imgElement.src = e.target.result;
-                        imgElement.style.width = "100px"; // размер превью
-                        imgElement.style.margin = "5px";
-                        previewContainer.appendChild(imgElement);
+                Promise.all(filesPromises).then(base64Array => {
+                    let base64Images = base64Array;
+
+                    let id = trainer.id;
+
+                    let requestData = {
+                        platform: "website",
+                        action: "update_trainer",
+                        id: id,
+                        name: name,
+                        surname: surname,
+                        phone_number: phone_number,
+                        training_type_id: training_type_id,
+                        instagram: instagram,
+                        telegram: telegram,
+                        whatsapp: whatsapp,
+                        description: description,
+                        images: base64Images
                     };
-                    
-                    reader.readAsDataURL(file);
-                }
-            });
-            
-            form.querySelector('.close-button').addEventListener('click', () => form.remove());
 
-            populateTrainingTypeOptions().then(() => {
-                document.getElementById('training-type').value = trainer.training_type_id || '';
-            });
+                    sendRequest('POST', requestData);
 
-            form.querySelector('.update-submit-button').addEventListener('click', () => {
-                let name = form.querySelector('#name').value;
-                let surname = form.querySelector('#surname').value;
-                let phone_number = form.querySelector('#phone').value;
-                if (phone_number.startsWith('+')) {
-                    phone_number = phone_number.slice(1);
-                }
-                if (phone_number.length > 11) {
+                    form.remove();
+                    loadTrainers();
+
                     new jBox('Notice', {
-                        content: 'Неверный номер телефона!',
-                        color: 'red',
-                        autoClose: 3000,
-                        animation: 'fade',
-                        offset: { x: -15, y: 20 },
-                        position: { x: 'right', y: 'top' }
-                    });
-                    return;
-                }
-
-                let training_type_id = form.querySelector('#training-type').value;
-                let instagram = form.querySelector('#Instagram').value;
-                let telegram = form.querySelector('#Telegram').value;
-                let whatsapp = form.querySelector('#Whatsapp').value;
-                let description = form.querySelector('#description').value;
-                let photo = form.querySelector('#photo').files;
-
-                if (name && surname && phone_number && training_type_id) {
-                    let fileArray = Array.from(photo);
-                    let filesPromises = fileArray.map(file => readFileBase64(file));
-
-                    Promise.all(filesPromises).then(base64Array => {
-                        let base64Images = base64Array;
-
-                        let id = trainer.id;
-                        let trainerData = {
-                            id,
-                            name,
-                            surname,
-                            phone_number,
-                            training_type_id: training_type_id,
-                            inst: instagram,
-                            tg: telegram,
-                            whatsapp,
-                            description
-                        };
-
-                        let requestData = {
-                            platform: "website",
-                            action: "update_trainer",
-                            id: id,
-                            name: name,
-                            surname: surname,
-                            phone_number: phone_number,
-                            training_type_id: training_type_id,
-                            instagram: instagram,
-                            telegram: telegram,
-                            whatsapp: whatsapp,
-                            description: description,
-                            images: base64Images
-                        };
-
-                        sendRequest('POST', requestData);
-
-                        let updateTx = db.transaction("trainers", "readwrite");
-                        let store = updateTx.objectStore("trainers");
-                        store.put(trainerData);
-
-                        form.remove();
-                        loadTrainers();
-
-                        new jBox('Notice', {
-                            content: 'Тренер обновлен!',
-                            color: '#ddd',
-                            autoClose: 3000,
-                            animation: 'fade',
-                            offset: { x: -15, y: 20 },
-                            position: { x: 'right', y: 'top' }
-                        });
-                    });
-                } else {
-                    new jBox('Notice', {
-                        content: 'Пожалуйста, заполните все обязательные поля!',
+                        content: 'Тренер обновлен!',
                         color: '#ddd',
                         autoClose: 3000,
                         animation: 'fade',
                         offset: { x: -15, y: 20 },
                         position: { x: 'right', y: 'top' }
                     });
-                }
-            });
+                });
+            } else {
+                new jBox('Notice', {
+                    content: 'Пожалуйста, заполните все обязательные поля!',
+                    color: '#ddd',
+                    autoClose: 3000,
+                    animation: 'fade',
+                    offset: { x: -15, y: 20 },
+                    position: { x: 'right', y: 'top' }
+                });
+            }
         });
-    };
-
-    dbRequest.onerror = function(event) {
-        console.error('Ошибка при открытии базы данных:', event.target.error);
-    };
+    })
+    .catch(error => {
+        console.error('Ошибка при загрузке данных:', error);
+    });
 }
 
 function DeleteTrainer(id){
@@ -578,60 +540,27 @@ function DeleteTrainer(id){
         overlay: false,
         closeButton: false,
         confirm: function () {
-            let dbRequest = indexedDB.open('FitnessFamyli', 1);
-
-            dbRequest.onsuccess = function (event) {
-                let db = event.target.result;
-                let transaction = db.transaction('trainers', 'readwrite');
-                let store = transaction.objectStore('trainers');
-                
-
-                store.delete(id);
-
-                transaction.oncomplete = function () {
-                    let requestData = {
-                        platform: "website",
-                        action: "delete_trainer",
-                        id: id
-                    };
-                    sendRequest('POST', requestData);
-
-                    new jBox('Notice', {
-                        content: 'Тренер удален',
-                        color: '#ddd',
-                        autoClose: 3000,
-                        delayOnHover: false,
-                        animation: 'fade',
-                        offset: { x: -15, y: 20 },
-                        position: {
-                            x: 'right',
-                            y: 'top'
-                        }
-                    });
-
-                    loadTrainers();
-                };
-
-                transaction.onerror = function (event) {
-                    console.error('Ошибка при удалении:', event.target.error);
-                    new jBox('Notice', {
-                        content: 'Ошибка при удалении тренера',
-                        color: '#ddd',
-                        autoClose: 3000,
-                        delayOnHover: false,
-                        animation: 'fade',
-                        offset: { x: -15, y: 20 },
-                        position: {
-                            x: 'right',
-                            y: 'top'
-                        }
-                    });
-                };
+            let requestData = {
+                platform: "website",
+                action: "delete_trainer",
+                id: id
             };
+            sendRequest('POST', requestData);
 
-            dbRequest.onerror = function (event) {
-                console.error('Ошибка при открытии базы данных:', event.target.error);
-            };
+            new jBox('Notice', {
+                content: 'Тренер удален',
+                color: '#ddd',
+                autoClose: 3000,
+                delayOnHover: false,
+                animation: 'fade',
+                offset: { x: -15, y: 20 },
+                position: {
+                    x: 'right',
+                    y: 'top'
+                }
+            });
+
+            loadTrainers();
         }
     }).open();
 }
@@ -672,28 +601,47 @@ function sendRequest(method, data) {
 
 function SearchTrainer() {
     let searchInput = document.getElementById('search-input').value.toLowerCase();
-    let dbRequest = indexedDB.open('FitnessFamyli', 1);
+    
+    if (searchInput.startsWith('+')) {
+        searchInput = searchInput.slice(1);
+    }
 
-    dbRequest.onsuccess = function(event) {
-        let db = event.target.result;
-        let transaction = db.transaction(['trainers', 'training_types'], 'readonly');
-        let trainers_store = transaction.objectStore("trainers");
-        let training_types_store = transaction.objectStore("training_types");
-        let trainers_store_request = trainers_store.getAll();
-        let training_types_store_request = training_types_store.getAll();
+    let requestData = {
+        platform: "website",
+        action: "get_trainers"
+    };
 
-        Promise.all([trainers_store_request, training_types_store_request].map(req => new Promise((resolve, reject) => {
-            req.onsuccess = () => resolve(req.result);
-            req.onerror = () => reject(req.error);
-        }))).then(([trainers, training_types]) => {
-            let tableBody = document.querySelector("#trainersTable tbody");
-            tableBody.innerHTML = "";
+    fetch('/src/helpers/requestreader.php', {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json',
+        },
+        credentials: 'include',
+        body: JSON.stringify(requestData)
+    })
+    .then(response => response.json())
+    .then(trainers => {
+        let tableBody = document.querySelector("#trainersTable tbody");
+        tableBody.innerHTML = "";
 
+        // Fetch training types for mapping
+        let trainingTypesRequest = {
+            platform: "website",
+            action: "get_training_types"
+        };
+
+        return fetch('/src/helpers/requestreader.php', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            credentials: 'include',
+            body: JSON.stringify(trainingTypesRequest)
+        })
+        .then(response => response.json())
+        .then(training_types => {
             trainers
                 .filter(trainer => {
-                    if (searchInput.startsWith('+')) {
-                        searchInput = searchInput.slice(1);
-                    }
                     return (
                         trainer.name.toLowerCase().includes(searchInput) ||
                         trainer.surname.toLowerCase().includes(searchInput) ||
@@ -712,7 +660,7 @@ function SearchTrainer() {
                     row.appendChild(surnameCell);
 
                     let trainingTypeCell = document.createElement("td");
-                    trainingTypeCell.textContent = training_types.find(type => type.id == trainer.training_type_id).name || 'Неизвестный тип';
+                    trainingTypeCell.textContent = training_types.find(type => type.id == trainer.training_type_id)?.name || 'Неизвестный тип';
                     row.appendChild(trainingTypeCell);
 
                     let phoneCell = document.createElement("td");
@@ -743,10 +691,11 @@ function SearchTrainer() {
                     row.appendChild(actionCell);
                     tableBody.appendChild(row);
                 });
-        }).catch(error => {
-            console.error('Ошибка при загрузке данных из IndexedDB:', error);
         });
-    }
+    })
+    .catch(error => {
+        console.error('Ошибка при загрузке данных:', error);
+    });
 }
 
 // Добавляем обработчик события input для живого поиска

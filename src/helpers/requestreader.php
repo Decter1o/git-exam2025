@@ -9,6 +9,8 @@ include(__DIR__ . '/../models/TrainingType.php');
 include(__DIR__ . '/../models/Schedule.php');
 include(__DIR__ . '/../models/Trainer.php');
 include(__DIR__ . '/../models/TrainerPhoto.php');
+include(__DIR__ . '/../models/Visits.php');
+include(__DIR__ . '/../models/Analytic.php');
 
 header("Content-Type: application/json");
 
@@ -112,7 +114,7 @@ switch ($_SERVER["REQUEST_METHOD"])
                     case 'add_visitor':
                         if(isset($_SESSION["user_id"])) {
                             $data_reader = new \VisitorUser();
-                            $response = $data_reader->Create($data["id"], $data["name"], $data["surname"], $data["phone_number"], $data["membershipId"], $data["visitor_membership_id"]);
+                            $response = $data_reader->Create($data["id"], $data["name"], $data["surname"], $data["phone_number"], $data["membership_id"], $data["visitor_membership_id"]);
                             break;
                         } else {
                             $response = ["status" => false, "message" => "User not authenticated"];
@@ -121,7 +123,7 @@ switch ($_SERVER["REQUEST_METHOD"])
                     case 'update_visitor':
                         if(isset($_SESSION["user_id"])) {
                             $data_reader = new \VisitorUser();
-                            $response = $data_reader->Update($data["id"], $data["name"], $data["surname"], $data["phone_number"], $data["membershipId"], $data["visitor_membership_id"]);
+                            $response = $data_reader->Update($data["id"], $data["name"], $data["surname"], $data["phone_number"], $data["membership_id"], $data["visitor_membership_id"]);
                         } else {
                             $response = ["status" => false, "message" => "User not authenticated"];
                         }
@@ -246,6 +248,101 @@ switch ($_SERVER["REQUEST_METHOD"])
                             $response = ["status" => false, "message" => "User not authenticated"];
                         }
                         break;
+                    case 'get_visitors':
+                        if(isset($_SESSION["user_id"])) {
+                            $data_reader = new \VisitorUser();
+                            $response = $data_reader->GetAll();
+                        } else {
+                            $response = ["status" => false, "message" => "User not authenticated"];
+                        }
+                        break;
+                    case 'get_memberships':
+                        if(isset($_SESSION["user_id"])) {
+                            $data_reader = new \GymMembership();
+                            $response = $data_reader->GetAll();
+                        } else {
+                            $response = ["status" => false, "message" => "User not authenticated"];
+                        }
+                        break;
+                    case 'get_visitor_memberships':
+                        if(isset($_SESSION["user_id"])) {
+                            $data_reader = new \VisitorMembership();
+                            $response = $data_reader->GetAll();
+                        } else {
+                            $response = ["status" => false, "message" => "User not authenticated"];
+                        }
+                        break;
+                    case 'visit':
+                        if(isset($_SESSION["user_id"])) {
+                            $data_reader = new \Visits();
+                            $response = $data_reader->Visit($data["visitor_id"], $data["membership_id"]);
+                        } else {
+                            $response = ["status" => false, "message" => "User not authenticated"];
+                        }
+                        break;
+                    case 'get_training_types':
+                        if(isset($_SESSION["user_id"])) {
+                            $data_reader = new \TrainingType();
+                            $response = $data_reader->GetAll();
+                        } else {
+                            $response = ["status" => false, "message" => "User not authenticated"];
+                        }
+                        break;
+                    case 'get_trainers':
+                        if(isset($_SESSION["user_id"])) {
+                            $data_reader = new \Trainer();
+                            $response = $data_reader->GetAll();
+                        } else {
+                            $response = ["status" => false, "message" => "User not authenticated"];
+                        }
+                        break;
+                    case 'get_schedule':
+                        if(isset($_SESSION["user_id"])) {
+                            $schedule_reader = new \Schedule();
+                            $training_type_reader = new \TrainingType();
+                            $trainer_reader = new \Trainer();
+                            
+                            $response = [
+                                'schedule' => $schedule_reader->GetAll(),
+                                'training_types' => $training_type_reader->GetAll(),
+                                'trainers' => $trainer_reader->GetAll()
+                            ];
+                        } else {
+                            $response = ["status" => false, "message" => "User not authenticated"];
+                        }
+                        break;
+                    case 'get_trainer_photos':
+                        if(isset($_SESSION["user_id"])) {
+                            $data_reader = new \TrainerPhoto();
+                            $response = $data_reader->GetAll();
+                        } else {
+                            $response = ["status" => false, "message" => "User not authenticated"];
+                        }
+                        break;
+                    case 'get_analytics':
+                        if(isset($_SESSION["user_id"])) {
+                            $data_reader = new \Analytic();
+                            $response = $data_reader->GetAll();
+                        } else {
+                            $response = ["status" => false, "message" => "User not authenticated"];
+                        }
+                        break;
+                    case 'update_analytics':
+                        if(isset($_SESSION["user_id"])) {
+                            $data_reader = new \Analytic();
+                            $response = json_decode($data_reader->Analytic(), true);
+                        } else {
+                            $response = ["status" => false, "message" => "User not authenticated"];
+                        }
+                        break;
+                    case 'get_visits':
+                        if(isset($_SESSION["user_id"])) {
+                            $data_reader = new \Visits();
+                            $response = $data_reader->GetAll();
+                        } else {
+                            $response = ["status" => false, "message" => "User not authenticated"];
+                        }
+                        break;
                     default:
                         $response = ["status" => false, "message" => "Action is not recognized"];
                         break;
@@ -362,7 +459,7 @@ switch ($_SERVER["REQUEST_METHOD"])
                 }
                 break;
             case 'website':
-                // Логика для веб-платформы (GET)
+                // Логика для веб-платформы (GET) - не используется, так как все запросы через POST
                 break;
             default:
                 $response["error"] = "Platform is not recognized";

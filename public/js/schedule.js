@@ -1,5 +1,13 @@
 let selected_day_of_week = "Понедельник";
-let selected_room_name = "1";
+let selected_room_name = "Зал 1";
+
+document.addEventListener('DOMContentLoaded', function() {
+    // Устанавливаем активные классы для первого дня и первого зала
+    document.getElementById('monday').classList.add('active');
+    document.getElementById('1').classList.add('active');
+    
+    loadSchedule(selected_day_of_week, selected_room_name);
+});
 
 document.querySelectorAll('.day').forEach(day => {
     day.addEventListener('click', function () {
@@ -22,7 +30,11 @@ document.querySelectorAll('.room').forEach(room => {
     room.addEventListener('click', function () {
         document.querySelectorAll('.room').forEach(r => r.classList.remove('active'));
         this.classList.add('active');
-        selected_room_name = this.id;
+        switch (this.id) {
+            case '1': selected_room_name = "Зал 1"; break;
+            case '2': selected_room_name = "Зал 2"; break;
+            case '3': selected_room_name = "Зал 3"; break;
+        }
         loadSchedule(selected_day_of_week, selected_room_name);
     });
 });
@@ -31,25 +43,35 @@ function loadSchedule(selected_day_of_week, selected_room_name) {
     let tableBody = document.querySelector("#schedule-table tbody");
     tableBody.innerHTML = "";
 
-    let dbRequest = indexedDB.open("FitnessFamyli", 1);
-    dbRequest.onsuccess = function (event) {
-        let db = event.target.result;
-        let transaction = db.transaction(['schedule', 'trainers', 'training_types'], 'readonly');
-        let scheduleStore = transaction.objectStore('schedule');
-        let trainersStore = transaction.objectStore('trainers');
-        let training_types_store = transaction.objectStore('training_types');
-        let schedule_request = scheduleStore.getAll();
-        let trainers_request = trainersStore.getAll();
-        let training_types_request = training_types_store.getAll();
+    let requestData = {
+        platform: "website",
+        action: "get_schedule"
+    };
 
-        Promise.all([schedule_request, trainers_request, training_types_request].map(req => new Promise((resolve, reject) => {
-            req.onsuccess = () => resolve(req.result);
-            req.onerror = () => reject(req.error);
-        }))).then(([schedules_data, trainers, training_types]) => {
-            let schedules = schedules_data.filter(schedule =>
-                schedule.day_of_week === selected_day_of_week &&
-                schedule.room_name === selected_room_name
-            );
+    fetch('/src/helpers/requestreader.php', {
+        method: 'POST',
+        credentials: 'include',
+        headers: {
+            'Content-Type': 'application/json'
+        },
+        body: JSON.stringify(requestData)
+    })
+    .then(response => response.json())
+    .then(data => {
+        let schedules_data = data.schedule || [];
+        let trainers = data.trainers || [];
+        let training_types = data.training_types || [];
+        
+        console.log('Selected day:', selected_day_of_week, 'Selected room:', selected_room_name);
+        console.log('All schedules:', schedules_data);
+        
+        let schedules = schedules_data.filter(schedule => {
+            console.log('Comparing schedule:', schedule.day_of_week, '===', selected_day_of_week, 'and', schedule.room_name, '===', selected_room_name);
+            return schedule.day_of_week === selected_day_of_week &&
+                schedule.room_name == selected_room_name;
+        });
+        
+        console.log('Filtered schedules:', schedules);
 
             if (schedules.length === 0) {
                 let row = document.createElement("tr");
@@ -77,7 +99,9 @@ function loadSchedule(selected_day_of_week, selected_room_name) {
                 let row = document.createElement("tr");
 
                 let timeCell = document.createElement("td");
-                timeCell.textContent = `${schedule.start_time.split(' ')[0].slice(0, 5)} - ${schedule.end_time.split(' ')[0].slice(0, 5)}`;
+                const startTime = schedule.start_time.includes(' ') ? schedule.start_time.split(' ')[0] : schedule.start_time;
+                const endTime = schedule.end_time.includes(' ') ? schedule.end_time.split(' ')[0] : schedule.end_time;
+                timeCell.textContent = `${startTime.slice(0, 5)} - ${endTime.slice(0, 5)}`;
                 row.appendChild(timeCell);
 
                 let trainingTypeCell = document.createElement("td");
@@ -109,14 +133,9 @@ function loadSchedule(selected_day_of_week, selected_room_name) {
                 row.appendChild(actionCell);
                 tableBody.appendChild(row);
             });
-        }).catch(error => {
-            console.error('Ошибка при загрузке данных из IndexedDB:', error);
-        });
-    }
-
-    dbRequest.onerror = function (event) {
-        console.error('Ошибка при открытии базы данных:', event.target.error);
-    };
+    }).catch(error => {
+        console.error('Ошибка при загрузке расписания:', error);
+    });
 }
 
 document.addEventListener("DOMContentLoaded", function () {
@@ -126,20 +145,23 @@ document.addEventListener("DOMContentLoaded", function () {
 });
 
 function AddSchedule(selected_day_of_week, selected_room_name) {
-    let dbRequest = indexedDB.open('FitnessFamyli', 1);
+    let requestData = {
+        platform: "website",
+        action: "get_schedule"
+    };
 
-    dbRequest.onsuccess = function (event) {
-        let db = event.target.result;
-        let transaction = db.transaction([ 'trainers', 'training_types'], 'readonly');
-        let trainersStore = transaction.objectStore('trainers');
-        let training_types_store = transaction.objectStore('training_types');
-        let trainers_request = trainersStore.getAll();
-        let training_types_request = training_types_store.getAll();
-
-        Promise.all([trainers_request, training_types_request].map(req=> new Promise((resolve, reject) => {
-            req.onsuccess = () => resolve(req.result);
-            req.onerror = () => reject(req.error);
-        }))).then(([trainers, training_types]) => {
+    fetch('/src/helpers/requestreader.php', {
+        method: 'POST',
+        credentials: 'include',
+        headers: {
+            'Content-Type': 'application/json'
+        },
+        body: JSON.stringify(requestData)
+    })
+    .then(response => response.json())
+    .then(data => {
+        let trainers = data.trainers || [];
+        let training_types = data.training_types || [];
             let form = document.querySelector('.schedule-form');
             if(form) {
                 form.remove();
@@ -224,24 +246,16 @@ function AddSchedule(selected_day_of_week, selected_room_name) {
                             category: category
                         };
                         sendRequest("POST", requestData);
-
-                        let dbRequest = indexedDB.open('FitnessFamyli', 1);
-                        dbRequest.onsuccess = function(event) {
-                            let db = event.target.result;
-                            let transaction = db.transaction('schedule', 'readwrite');
-                            let store = transaction.objectStore('schedule');
-                            let addRequest = store.put(schedule);
-                            form.remove();
-                            loadSchedule(selected_day_of_week, selected_room_name);
-                            let addNotification = new jBox('Notice', {
-                                content: 'Занятие добавлено!',
-                                color: '#ddd',
-                                autoClose: 3000,
-                                animation: 'fade',
-                                offset: { x: -15, y: 20 },
-                                position: { x: 'right', y: 'top' }
-                            });
-                        };
+                        form.remove();
+                        loadSchedule(selected_day_of_week, selected_room_name);
+                        new jBox('Notice', {
+                            content: 'Занятие добавлено!',
+                            color: '#ddd',
+                            autoClose: 3000,
+                            animation: 'fade',
+                            offset: { x: -15, y: 20 },
+                            position: { x: 'right', y: 'top' }
+                        });
                     } else {
                         new jBox('Notice', {
                             content: 'Пожалуйста, заполните все поля!',
@@ -257,11 +271,8 @@ function AddSchedule(selected_day_of_week, selected_room_name) {
                     }
                 });
             }
-        });
-    };
-    dbRequest.onerror = function (event) {
-        console.error('Ошибка при открытии базы данных:', event.target.error);
-    };
+        })
+    .catch(error => console.error('Ошибка при добавлении расписания:', error));
 }
 
 document.addEventListener('DOMContentLoaded', () => {
@@ -272,20 +283,23 @@ document.addEventListener('DOMContentLoaded', () => {
 
 
 function UpdateSchedule(schedule) {
-    let dbRequest = indexedDB.open('FitnessFamyli', 1);
+    let requestData = {
+        platform: "website",
+        action: "get_schedule"
+    };
 
-    dbRequest.onsuccess = function (event) {
-        let db = event.target.result;
-        let transaction = db.transaction([ 'trainers', 'training_types'], 'readonly');
-        let trainersStore = transaction.objectStore('trainers');
-        let training_types_store = transaction.objectStore('training_types');
-        let trainers_request = trainersStore.getAll();
-        let training_types_request = training_types_store.getAll();
-
-        Promise.all([trainers_request, training_types_request].map(req=> new Promise((resolve, reject) => {
-            req.onsuccess = () => resolve(req.result);
-            req.onerror = () => reject(req.error);
-        }))).then(([trainers, training_types]) => {
+    fetch('/src/helpers/requestreader.php', {
+        method: 'POST',
+        credentials: 'include',
+        headers: {
+            'Content-Type': 'application/json'
+        },
+        body: JSON.stringify(requestData)
+    })
+    .then(response => response.json())
+    .then(data => {
+        let trainers = data.trainers || [];
+        let training_types = data.training_types || [];
             let form = document.querySelector('.schedule-form');
             
             if(form) {
@@ -392,33 +406,19 @@ function UpdateSchedule(schedule) {
                 };
 
                 sendRequest("POST", requestData);
-
-                let dbRequest = indexedDB.open('FitnessFamyli', 1);
-                dbRequest.onsuccess = function(event) {
-                    let db = event.target.result;
-                    let transaction = db.transaction('schedule', 'readwrite');
-                    let store = transaction.objectStore('schedule');
-                    let addRequest = store.put(schedule);
-
-                    addRequest.onsuccess = function() {
-                        loadSchedule(selected_day_of_week, selected_room_name);
-                        form.remove();
-                        new jBox('Notice', {
-                            content: 'Занятие обновлено!',
-                            color: '#ddd',
-                            autoClose: 3000,
-                            animation: 'fade',
-                            offset: { x: -15, y: 20 },
-                            position: { x: 'right', y: 'top' }
-                        });
-                    };
-                };
+                loadSchedule(selected_day_of_week, selected_room_name);
+                form.remove();
+                new jBox('Notice', {
+                    content: 'Занятие обновлено!',
+                    color: '#ddd',
+                    autoClose: 3000,
+                    animation: 'fade',
+                    offset: { x: -15, y: 20 },
+                    position: { x: 'right', y: 'top' }
+                });
             });
-        });
-    };
-    dbRequest.onerror = function (event) {
-        console.error('Ошибка при открытии базы данных:', event.target.error);
-    };
+    })
+    .catch(error => console.error('Ошибка при обновлении расписания:', error));
 }
                     
 function DeleteSchedule(id) {
@@ -430,60 +430,27 @@ function DeleteSchedule(id) {
         overlay: false,
         closeButton: false,
         confirm: function () {
-            let dbRequest = indexedDB.open('FitnessFamyli', 1);
-
-            dbRequest.onsuccess = function (event) {
-                let db = event.target.result;
-                let transaction = db.transaction('schedule', 'readwrite');
-                let store = transaction.objectStore('schedule');
-                
-
-                store.delete(id);
-
-                transaction.oncomplete = function () {
-                    let requestData = {
-                        platform: "website",
-                        action: "delete_schedule",
-                        id: id
-                    };
-                    sendRequest('POST', requestData);
-
-                    new jBox('Notice', {
-                        content: 'Занятие удалено',
-                        color: '#ddd',
-                        autoClose: 3000,
-                        delayOnHover: false,
-                        animation: 'fade',
-                        offset: { x: -15, y: 20 },
-                        position: {
-                            x: 'right',
-                            y: 'top'
-                        }
-                    });
-
-                    loadSchedule(selected_day_of_week, selected_room_name);
-                };
-
-                transaction.onerror = function (event) {
-                    console.error('Ошибка при удалении:', event.target.error);
-                    new jBox('Notice', {
-                        content: 'Ошибка при удалении занятия',
-                        color: '#ddd',
-                        autoClose: 3000,
-                        delayOnHover: false,
-                        animation: 'fade',
-                        offset: { x: -15, y: 20 },
-                        position: {
-                            x: 'right',
-                            y: 'top'
-                        }
-                    });
-                };
+            let requestData = {
+                platform: "website",
+                action: "delete_schedule",
+                id: id
             };
+            sendRequest('POST', requestData);
 
-            dbRequest.onerror = function (event) {
-                console.error('Ошибка при открытии базы данных:', event.target.error);
-            };
+            new jBox('Notice', {
+                content: 'Занятие удалено',
+                color: '#ddd',
+                autoClose: 3000,
+                delayOnHover: false,
+                animation: 'fade',
+                offset: { x: -15, y: 20 },
+                position: {
+                    x: 'right',
+                    y: 'top'
+                }
+            });
+
+            loadSchedule(selected_day_of_week, selected_room_name);
         }
     }).open();
 }

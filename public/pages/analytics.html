@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="Cache-Control" content="no-cache">
+    <link rel="stylesheet" href="/public/css/analytics.css">
+    <link rel="stylesheet" href="/public/css/fontawesome-free-6.7.2-web/css/all.css">
+    <script src="/public/js/chart.js" defer></script>
+    <script src="/public/js/analytics.js" defer></script>
+    <title>Аналитика</title>
+</head>
+<body>
+    <h1>Аналитика</h1>
+    
+    <div class="main-box">
+        <div class="canvas-box">
+            <div class="chart-wrapper">
+                <canvas id="Chart1"></canvas>
+            </div>
+            <div class="chart-wrapper">
+                <canvas id="Chart2"></canvas>
+            </div>
+        </div>
+        
+        <div class="canvas-box">
+            <div class="chart-wrapper" style="grid-column: 1 / -1;">
+                <canvas id="Chart3"></canvas>
+            </div>
+        </div>
+        
+        <div class="analytics-table-container">
+        <h2>Аналитика по посетителям</h2>
+        <div class="tools">
+            <div id="search-form" class="search-form">
+                <input id="search-input" type="text" placeholder="Введите имя, фамилию или номер телефона...">
+                <button id="search-button" type="button"><i class="fa-solid fa-magnifying-glass"></i></button>
+            </div>
+        </div>
+        <table id="analyticsTable" class="analytics-table">
+            <thead>
+                <tr>
+                    <th>Имя</th>
+                    <th>Фамилия</th>
+                    <th>Телефон</th>
+                    <th>Средний чек</th>
+                    <th>Последнее посещение</th>
+                    <th>Риск ухода</th>
+                </tr>
+            </thead>
+            <tbody></tbody>
+        </table>
+    </div>
+    </div>
+</body>
+</html>
