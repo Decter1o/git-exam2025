@@ -343,6 +343,14 @@ switch ($_SERVER["REQUEST_METHOD"])
                             $response = ["status" => false, "message" => "User not authenticated"];
                         }
                         break;
+                    case 'get_all_bad_boys':
+                        if(isset($_SESSION["user_id"])) {
+                            $data_reader = new \Analytic();
+                            $response = $data_reader->GetAllBadBoys();
+                        } else {
+                            $response = ["status" => false, "message" => "User not authenticated"];
+                        }
+                        break;
                     default:
                         $response = ["status" => false, "message" => "Action is not recognized"];
                         break;

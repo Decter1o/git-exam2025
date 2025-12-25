@@ -111,15 +111,15 @@ class Analytic extends DB{
                         ON va.visitor_id = vu.id
                     WHERE va.churn_risk IN ('high', 'medium')
                 ");
-
                 $stmt->execute();
-
+                $sms = new SMS();
                 foreach ($stmt as $row) {
-                    SMS::SendCustomSMS(
+                    $sms->SendCustomSMS(
                         $row['phone_number'],
                         'Мы заметили, что вы давно не посещали наш клуб. Приходите на тренировку! Мы скучаем по вам!'
                     );
                 }
+                return json_encode(["success" => true, "message" => "SMS sent to all bad boys"]);
             } catch (PDOException $e) {
                 return json_encode([
                     "error" => "Database query failed",
@@ -129,3 +129,4 @@ class Analytic extends DB{
         }
         return json_encode(["error" => "Database connection error"]);
     }
+}
