@@ -1,0 +1,70 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layer-list xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <!-- Основной фон -->
+    <item>
+        <shape android:shape="rectangle">
+            <solid android:color="#A3FCA3"/>
+            <corners android:topLeftRadius="20dp" android:topRightRadius="20dp"
+                android:bottomLeftRadius="15dp" android:bottomRightRadius="15dp"/>
+        </shape>
+    </item>
+
+    <!-- Первая волна (центрированная) -->
+    <item>
+        <vector
+            android:width="300dp"
+            android:height="370dp"
+            android:viewportWidth="300"
+            android:viewportHeight="370">
+            <path
+                android:fillColor="#90F790"
+                android:strokeWidth="0"
+                android:pathData="M0,160
+                C60,170 150,200 250,190
+                S400,180 300,240
+                Q300,260 270,260
+                C200,280 100,280 30,260
+                Q26,260 0,240 Z"/>
+        </vector>
+    </item>
+
+    <!-- Вторая волна (центрированная) -->
+    <item>
+        <vector
+            android:width="300dp"
+            android:height="370dp"
+            android:viewportWidth="300"
+            android:viewportHeight="370">
+            <path
+                android:fillColor="#78E878"
+                android:strokeWidth="0"
+                android:pathData="M0,200
+                C80,220 130,230 340,210
+                S300,200 300,260
+                Q300,280 270,280
+                C200,300 100,300 30,280
+                Q25,280 0,260 Z"/>
+        </vector>
+    </item>
+
+    <!-- Третья волна (центрированная) -->
+    <item>
+        <vector
+            android:width="300dp"
+            android:height="370dp"
+            android:viewportWidth="300"
+            android:viewportHeight="370">
+            <path
+                android:fillColor="#60DA60"
+                android:strokeWidth="0"
+                android:pathData="M0,240
+                C100,280 180,250 370,240
+                S300,230 300,280
+                Q400,300 290,300
+                C200,320 100,320 30,300
+                Q2,290 0,290 Z"/>
+        </vector>
+    </item>
+
+</layer-list>

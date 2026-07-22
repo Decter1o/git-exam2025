@@ -1,0 +1,20 @@
+<layer-list xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <!-- Иконка (разместится поверх фона) -->
+    <item
+        android:height="24dp"
+
+        android:width="24dp"
+        android:right="15dp">
+
+        <inset>
+            <bitmap
+                android:src="@drawable/searchicon"
+                android:tint="#80000000">
+            </bitmap>
+
+            android:gravity="start|center_vertical"/>
+        </inset>
+    </item>
+
+</layer-list>

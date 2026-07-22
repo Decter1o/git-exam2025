@@ -1,0 +1,147 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/main"
+    android:background="#FFFFFF"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context=".ScheduleActivity">
+
+    <ImageView
+        android:id="@+id/menuIcon2"
+        android:layout_width="38dp"
+        android:layout_height="50dp"
+
+        android:contentDescription="Фильтр"
+        android:src="@drawable/burgermenu"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.276"
+
+        app:layout_constraintStart_toEndOf="@+id/searchBar"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintVertical_bias="0.23" />
+
+    <ImageView
+        android:id="@+id/imageViewBack"
+        android:layout_width="22sp"
+        android:layout_height="25sp"
+        android:src="@drawable/arrow"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.064"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintVertical_bias="0.084"
+        tools:ignore="OnClick,TouchTargetSizeCheck" />
+
+    <!-- Логотип или заголовок -->
+    <ImageView
+        android:id="@+id/imageViewLogo"
+        android:layout_width="136sp"
+        android:layout_height="69sp"
+        android:src="@drawable/logoff"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.498"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintVertical_bias="0.069" />
+
+    <!-- Поиск -->
+    <EditText
+        android:id="@+id/searchBar"
+        android:layout_width="280sp"
+        android:layout_height="50sp"
+        android:background="@drawable/search"
+        android:drawableStart="@drawable/myicon"
+        android:fontFamily="@font/montserrat_semibold"
+        android:hint="Поиск"
+        android:inputType="text"
+        android:padding="14dp"
+        android:paddingStart="30dp"
+        android:textColor="@color/black"
+        android:textSize="16dp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.19"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintVertical_bias="0.23"
+        tools:ignore="MissingConstraints" />
+
+    <!-- Заголовок страницы -->
+    <TextView
+        android:id="@+id/textViewTitle"
+        android:layout_width="174sp"
+        android:layout_height="59sp"
+        android:fontFamily="@font/montserrat_bold"
+        android:text="Выбери своё занятие"
+        android:textColor="#8C000000"
+        android:textSize="20dp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.105"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintVertical_bias="0.145"
+        tools:ignore="MissingConstraints" />
+
+    <!-- RecyclerView для списка тренеров -->
+    <androidx.recyclerview.widget.RecyclerView
+        android:id="@+id/recyclerViewSchedule"
+        android:layout_width="360sp"
+        android:layout_height="450sp"
+        android:layout_marginTop="24sp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.49"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/searchBar"
+        app:layout_constraintVertical_bias="0.0" />
+
+    <!-- BottomNavigationView -->
+    <com.google.android.material.bottomnavigation.BottomNavigationView
+        android:id="@+id/bottom_navigation"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="@color/white"
+        android:layout_marginBottom="10sp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.0"
+        app:layout_constraintStart_toStartOf="parent"
+        app:menu="@drawable/bottom_nav_menu"
+        app:itemTextColor="@color/selector_bottom_nav"
+        app:itemIconTint="@color/selector_bottom_nav"/>
+
+    <!-- Иконка уведомлений -->
+    <ImageView
+        android:id="@+id/bell_icon"
+        android:layout_width="27sp"
+        android:layout_height="27sp"
+        android:layout_marginTop="10dp"
+        android:alpha="0.5"
+        android:src="@drawable/ic_bell"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.872"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintVertical_bias="0.087"
+        tools:ignore="OnClick" />
+
+    <!-- Индикатор уведомлений -->
+    <View
+        android:id="@+id/notification_badge"
+        android:layout_width="12dp"
+        android:layout_height="12dp"
+        android:background="@drawable/badge_background"
+        android:visibility="gone"
+        android:layout_marginEnd="2dp"
+        android:layout_marginTop="2dp"
+        app:layout_constraintEnd_toEndOf="@id/bell_icon"
+        app:layout_constraintTop_toTopOf="@id/bell_icon" />
+
+</androidx.constraintlayout.widget.ConstraintLayout>

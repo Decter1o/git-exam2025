@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <color name="black">#FF000000</color>
+    <color name="white">#FFFFFFFF</color>
+    <color name="orange">#FF6600</color>
+    <color name="yellow">#FFE0B2</color>
+    <color name="gray">#808080</color>
+    <color name="StatusActive">#FFFF</color>
+
+    <color name="card_standard">#FFE1F5FE</color>
+    <color name="card_day">#FFF1F8E9</color>
+    <color name="card_unlimited">#FFFCE4EC</color>
+    <color name="card_default">#FFFFFFFF</color>
+    <color name="background">#FFF5F5F5</color>
+</resources>

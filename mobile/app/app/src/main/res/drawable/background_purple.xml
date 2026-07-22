@@ -1,0 +1,54 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layer-list xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <!-- Закругленный основной фон -->
+    <item>
+        <shape android:shape="rectangle">
+            <solid android:color="#999EFF"/>
+            <corners android:radius="20dp"/>
+        </shape>
+    </item>
+
+    <!-- Светлые облака -->
+    <item>
+        <vector
+            xmlns:android="http://schemas.android.com/apk/res/android"
+            android:width="300dp"
+            android:height="200dp"
+            android:viewportWidth="300"
+            android:viewportHeight="200">
+            <!-- Облако, идущее от левого края до правого -->
+            <path
+                android:fillColor="#7A85FF"
+                android:strokeWidth="0"
+                android:pathData="M0,80
+                    C50,60 100,100 150,70
+                    S250,90 300,60
+                    L300,160
+                    C250,140 200,180 150,150
+                    S50,170 0,140 Z"/>
+        </vector>
+    </item>
+
+    <!-- Темные облака -->
+    <item>
+        <vector
+            xmlns:android="http://schemas.android.com/apk/res/android"
+            android:width="300dp"
+            android:height="200dp"
+            android:viewportWidth="300"
+            android:viewportHeight="200">
+            <!-- Облако, идущее от левого края до правого -->
+            <path
+                android:fillColor="#5A64CC"
+                android:strokeWidth="0"
+                android:pathData="M0,100
+                    C50,80 100,120 150,90
+                    S250,110 300,80
+                    L300,160
+                    C250,140 200,180 150,150
+                    S50,170 0,140 Z"/>
+        </vector>
+    </item>
+
+</layer-list>

@@ -1,0 +1,253 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/main"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="#FFFFFF"
+    tools:context=".Main"
+    tools:ignore="ExtraText">
+
+    <ImageView
+        android:id="@+id/imageView9"
+        android:layout_width="136sp"
+        android:layout_height="69sp"
+        android:src="@drawable/logoff"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.101"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintVertical_bias="0.037" />
+
+    <!-- Иконка колокольчика -->
+
+    <ImageView
+        android:id="@+id/bell_icon"
+        android:layout_width="27sp"
+        android:layout_height="27sp"
+        android:alpha="0.5"
+        android:src="@drawable/ic_bell"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.854"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintVertical_bias="0.065"
+        tools:ignore="OnClick" />
+
+    <View
+        android:id="@+id/notification_badge"
+        android:layout_width="12dp"
+        android:layout_height="12dp"
+        android:background="@drawable/badge_background"
+        android:visibility="gone"
+        android:layout_marginEnd="2dp"
+        android:layout_marginTop="2dp"
+        app:layout_constraintEnd_toEndOf="@id/bell_icon"
+        app:layout_constraintTop_toTopOf="@id/bell_icon"/>
+
+
+    <com.google.android.material.bottomnavigation.BottomNavigationView
+        android:id="@+id/bottom_navigation"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="@color/StatusActive"
+        android:layout_marginBottom="10sp"
+        app:itemBackground="@android:color/transparent"
+        android:backgroundTint="@color/white"
+        app:itemIconTint="@color/selector_bottom_nav"
+        app:itemRippleColor="@android:color/transparent"
+        app:itemTextColor="@color/selector_bottom_nav"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.0"
+        app:layout_constraintStart_toStartOf="parent"
+        app:menu="@drawable/bottom_nav_menu" />
+
+    <androidx.cardview.widget.CardView
+        android:id="@+id/cardView"
+        android:layout_width="334sp"
+        android:layout_height="190sp"
+        android:clipChildren="true"
+        android:clipToPadding="true"
+        app:cardCornerRadius="30dp"
+        app:cardElevation="4dp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.500"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintVertical_bias="0.200"
+        tools:ignore="MissingConstraints">
+
+        <androidx.viewpager2.widget.ViewPager2
+            android:id="@+id/viewPager"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:clipChildren="false"
+            android:clipToPadding="false" />
+    </androidx.cardview.widget.CardView>
+
+
+    <FrameLayout
+        android:id="@+id/frameLayout3"
+        android:layout_width="160sp"
+        android:layout_height="110sp"
+        android:background="@drawable/background_blue"
+        android:onClick="startAboniment"
+        android:padding="16dp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.107"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintVertical_bias="0.763">
+
+        <!-- Текст в левом верхнем углу -->
+
+        <TextView
+            android:layout_width="109sp"
+            android:layout_height="wrap_content"
+            android:layout_gravity="start|top"
+            android:fontFamily="@font/montserrat_bold"
+            android:text="Абонементы"
+            android:textColor="@color/black"
+            android:textSize="14sp"
+            app:backgroundTint="@null" />
+
+        <!-- Картинка в правом нижнем углу -->
+        <ImageView
+            android:layout_width="45dp"
+            android:layout_height="39dp"
+            android:layout_gravity="end|bottom"
+            android:layout_margin="8dp"
+            android:alpha="0.6"
+            android:src="@drawable/abon" />
+    </FrameLayout>
+
+    <FrameLayout
+        android:id="@+id/frameLayout2"
+        android:layout_width="160sp"
+        android:layout_height="110sp"
+        android:background="@drawable/background_orange"
+        android:onClick="startExercise"
+        android:padding="16dp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.107"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintVertical_bias="0.579">
+
+        <!-- Текст в левом верхнем углу -->
+
+        <TextView
+            android:layout_width="109sp"
+            android:layout_height="wrap_content"
+            android:layout_gravity="start|top"
+            android:fontFamily="@font/montserrat_bold"
+            android:text="Упражнения"
+            android:textColor="@color/black"
+            android:textSize="14sp"
+            app:backgroundTint="@null" />
+
+        <!-- Картинка в правом нижнем углу -->
+
+        <ImageView
+            android:layout_width="43dp"
+            android:layout_height="41dp"
+            android:layout_gravity="end|bottom"
+            android:layout_margin="8dp"
+            android:alpha="0.6"
+            android:src="@drawable/jump" />
+    </FrameLayout>
+
+    <FrameLayout
+        android:layout_width="160sp"
+        android:layout_height="110sp"
+        android:background="@drawable/background_green"
+        android:padding="16dp"
+        android:onClick="startTreners"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.885"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintVertical_bias="0.579">
+
+        <!-- Текст в левом верхнем углу -->
+
+        <TextView
+            android:layout_width="109sp"
+            android:layout_height="wrap_content"
+            android:layout_gravity="start|top"
+            android:fontFamily="@font/montserrat_bold"
+            android:text="Тренера"
+            android:textColor="@color/black"
+            android:textSize="14sp"
+            app:backgroundTint="@null" />
+
+        <!-- Картинка в правом нижнем углу -->
+        <ImageView
+            android:layout_width="44dp"
+            android:layout_height="41dp"
+            android:layout_gravity="end|bottom"
+            android:layout_margin="8dp"
+            android:alpha="0.6"
+            android:src="@drawable/trener" />
+    </FrameLayout>
+
+    <TextView
+        android:id="@+id/textView6"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:fontFamily="@font/montserrat_semibold"
+        android:text="Категории"
+        android:textColor="@color/black"
+        android:textSize="20sp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.094"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintVertical_bias="0.473"
+        tools:ignore="MissingConstraints" />
+
+    <FrameLayout
+        android:layout_width="160sp"
+        android:layout_height="110sp"
+        android:background="@drawable/background_purple"
+        android:onClick="startAboutClub"
+        android:padding="16dp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.885"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintVertical_bias="0.763">
+
+        <!-- Текст в левом верхнем углу -->
+        <TextView
+            android:layout_width="109sp"
+            android:layout_height="wrap_content"
+            android:layout_gravity="start|top"
+            android:fontFamily="@font/montserrat_bold"
+            android:text="Информация"
+            android:textColor="@color/black"
+            android:textSize="14sp"
+            app:backgroundTint="@null" />
+
+        <!-- Картинка в правом нижнем углу -->
+        <ImageView
+            android:layout_width="46dp"
+            android:layout_height="39dp"
+            android:layout_gravity="end|bottom"
+            android:layout_margin="8dp"
+            android:alpha="0.6"
+            android:src="@drawable/info" />
+    </FrameLayout>
+
+
+</androidx.constraintlayout.widget.ConstraintLayout>

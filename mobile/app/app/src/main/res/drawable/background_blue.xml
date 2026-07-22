@@ -1,0 +1,72 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layer-list xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <!-- Основной фон (закругление только сверху и снизу) -->
+    <item>
+        <shape android:shape="rectangle">
+            <solid android:color="#A3E9FC"/>
+            <corners android:topLeftRadius="20dp" android:topRightRadius="20dp" android:bottomLeftRadius="15dp" android:bottomRightRadius="15dp"/>
+        </shape>
+    </item>
+
+    <!-- Первая волна (еще выше) -->
+    <item>
+        <vector
+            xmlns:android="http://schemas.android.com/apk/res/android"
+            android:width="300dp"
+            android:height="370dp"
+            android:viewportWidth="300"
+            android:viewportHeight="370">
+            <path
+                android:fillColor="#90D8F7"
+                android:strokeWidth="0"
+                android:pathData="M0,140
+                    C50,150 150,260 250,230
+                    S300,210 300,300
+                    Q300,330 270,330
+                    C200,350 100,350 30,330
+                    Q26,330 0,300 Z"/>
+        </vector>
+    </item>
+
+    <!-- Вторая волна (еще выше) -->
+    <item>
+        <vector
+            xmlns:android="http://schemas.android.com/apk/res/android"
+            android:width="300dp"
+            android:height="370dp"
+            android:viewportWidth="300"
+            android:viewportHeight="370">
+            <path
+                android:fillColor="#78C4E8"
+                android:strokeWidth="0"
+                android:pathData="M0,180
+                    C70,240 160,280 240,240
+                    S300,220 300,300
+                    Q300,330 270,330
+                    C200,360 100,360 30,330
+                    Q25,330 0,300 Z"/>
+        </vector>
+    </item>
+
+    <!-- Третья волна (еще выше) -->
+    <item>
+        <vector
+            xmlns:android="http://schemas.android.com/apk/res/android"
+            android:width="300dp"
+            android:height="370dp"
+            android:viewportWidth="300"
+            android:viewportHeight="370">
+            <path
+                android:fillColor="#60B0DA"
+                android:strokeWidth="0"
+                android:pathData="M0,220
+                    C90,320 180,300 270,260
+                    S300,240 300,320
+                    Q300,330 270,330
+                    C200,370 100,370 30,330
+                    Q2,330 0,300 Z"/>
+        </vector>
+    </item>
+
+</layer-list>

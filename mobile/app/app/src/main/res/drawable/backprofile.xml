@@ -1,0 +1,21 @@
+<layer-list xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <!-- Тень -->
+    <item>
+        <shape android:shape="rectangle">
+            <corners android:radius="28dp"/>
+            <solid android:color="#80000000"/> <!-- Полупрозрачный черный -->
+        </shape>
+    </item>
+
+    <!-- Основной фон с границей -->
+    <item>
+        <shape android:shape="rectangle">
+            <solid android:color="#FFFFFF"/> <!-- Цвет фона -->
+            <stroke
+                android:width="0.5dp"
+                android:color="#888787"/> <!-- Серый бордер -->
+        </shape>
+    </item>
+
+</layer-list>

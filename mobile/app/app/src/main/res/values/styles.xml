@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <style name="NoRippleBottomNavigation" parent="Widget.MaterialComponents.BottomNavigationView">
+        <item name="itemRippleColor">@android:color/transparent</item>
+        <item name="itemBackground">@android:color/transparent</item>
+        <item name="android:background">@color/StatusActive</item> <!-- фон панели -->
+        <item name="elevation">0dp</item> <!-- 💥 Убирает тень -->
+        <item name="android:elevation">0dp</item> <!-- 💥 Некоторые версии требуют и так -->
+
+    </style>
+</resources>

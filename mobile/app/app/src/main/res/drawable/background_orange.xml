@@ -1,0 +1,60 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layer-list xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <!-- Закругленный основной фон -->
+    <item>
+        <shape android:shape="rectangle">
+            <solid android:color="#FCC1A3"/>
+            <corners android:radius="20dp"/>
+        </shape>
+    </item>
+
+    <!-- Светлый силуэт гор -->
+    <item>
+        <vector
+            xmlns:android="http://schemas.android.com/apk/res/android"
+            android:width="200dp"
+            android:height="200dp"
+            android:viewportWidth="300"
+            android:viewportHeight="150">
+            <path
+                android:fillColor="#D9A18A"
+                android:strokeWidth="0"
+                android:pathData="M0,95
+                    C25,105 45,30 65,70
+                    S105,50 115,95
+                    S160,85 190,95
+                    S220,60 260,85
+                    S290,75 300,95
+                    L300,125
+                    Q275,145 250,125
+                    Q150,165 50,125
+                    Q25,145 0,125 Z"/>
+        </vector>
+    </item>
+
+    <!-- Темный силуэт гор -->
+    <item>
+        <vector
+            xmlns:android="http://schemas.android.com/apk/res/android"
+            android:width="300dp"
+            android:height="300dp"
+            android:viewportWidth="300"
+            android:viewportHeight="150">
+            <path
+                android:fillColor="#C58871"
+                android:strokeWidth="0"
+                android:pathData="M0,105
+                    C30,120 50,20 70,80
+                    S110,40 120,105
+                    S170,95 200,105
+                    S230,50 270,95
+                    S290,85 300,105
+                    L300,125
+                    Q275,145 250,125
+                    Q150,165 50,125
+                    Q25,155 0,125 Z"/>
+        </vector>
+    </item>
+
+</layer-list>

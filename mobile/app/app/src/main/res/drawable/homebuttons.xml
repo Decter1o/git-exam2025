@@ -1,0 +1,26 @@
+<layer-list xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <!-- Фон с закруглёнными углами -->
+    <item>
+        <shape>
+            <solid android:color="#FCC1A3"/> <!-- Цвет фона -->
+            <corners android:radius="30dp"/> <!-- Скруглённые углы -->
+            <stroke
+                android:width="3dp"
+                android:color="#FCC1A3"/>
+        </shape>
+    </item>
+
+    <!-- Изображение с уменьшенным размером -->
+    <item
+        android:top="1000dp"
+        android:bottom="1000dp"
+        android:left="1000dp"
+        android:right="1000dp">
+        <bitmap
+            android:src="@drawable/jump"
+            android:gravity="center"
+            android:alpha="0.5"/>
+    </item>
+
+</layer-list>
